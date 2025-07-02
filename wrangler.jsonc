@@ -4,21 +4,9 @@
   "compatibility_date": "2025-07-01",
   "compatibility_flags": ["nodejs_compat"],
 
-  "site": {
-    "bucket": "./",
-    "include": [
-      "*.html",
-      "*.css",
-      "*.js",
-      "*.png",
-      "*.jpg",
-      "*.jpeg",
-      "*.gif",
-      "*.svg",
-      "*.woff2",
-      "*.woff",
-      "*.ttf"
-    ]
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS"
   },
   
   // Note: JWT_SECRET and ADMIN_PASSWORD_HASH secrets must be set via:

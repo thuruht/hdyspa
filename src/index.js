@@ -479,17 +479,59 @@ app.get('*', async (c) => {
       pathname = '/index.html';
     }
 
-    const response = await c.env.ASSETS.fetch(c.req.url);
-    
-    if (response.status === 404 && !pathname.includes('.')) {
-      // Fallback to index.html for client-side routing
-      return await c.env.ASSETS.fetch(new URL('/index.html', c.req.url).toString());
-    }
+    // Try to serve static files if ASSETS is available
+    if (c.env.ASSETS) {
+      const response = await c.env.ASSETS.fetch(c.req.url);
+      
+      if (response.status === 404 && !pathname.includes('.')) {
+        // Fallback to index.html for client-side routing
+        return await c.env.ASSETS.fetch(new URL('/index.html', c.req.url).toString());
+      }
 
-    return response;
+      return response;
+    } else {
+      // Fallback: return a basic HTML response for development
+      if (pathname === '/index.html' || pathname === '/') {
+        return c.html(`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>HOWDY DIY THRIFT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      background: #000; 
+      color: #fff; 
+      text-align: center; 
+      padding: 2rem; 
+    }
+    .error { color: #ff6b6b; }
+    .success { color: #51cf66; }
+  </style>
+</head>
+<body>
+  <h1>HOWDY DIY THRIFT API</h1>
+  <p class="success">✅ Worker is running successfully!</p>
+  <p>API endpoints are available:</p>
+  <ul style="text-align: left; display: inline-block;">
+    <li>GET /api/health - Health check</li>
+    <li>GET /api/posts - Get posts</li>
+    <li>GET /api/content/mission - Get mission</li>
+    <li>GET /api/content/hours - Get hours</li>
+    <li>GET /api/featured - Get featured content</li>
+  </ul>
+  <p><strong>Note:</strong> For full SPA, use Cloudflare Pages or configure static assets.</p>
+</body>
+</html>
+        `);
+      }
+      return c.notFound();
+    }
   } catch (error) {
     console.error('Static serve error:', error);
-    return c.notFound();
+    return c.text('Worker Error: ' + error.message, 500);
   }
 });
 
