@@ -523,27 +523,57 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    // Modal utility functions
+    function openModal(modal) {
+        if (modal) {
+            modal.style.display = 'flex';
+            modal.classList.add('show');
+            // Focus management
+            const firstInput = modal.querySelector('input, button, textarea, select');
+            if (firstInput) firstInput.focus();
+            // Prevent body scroll
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeModal(modal) {
+        if (modal) {
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+            // Restore body scroll
+            document.body.style.overflow = '';
+            // Return focus to trigger element
+            if (adminLoginButton) adminLoginButton.focus();
+        }
+    }
+
     // Event Listeners
     if (adminLoginButton) {
         adminLoginButton.addEventListener('click', () => {
-            if (loginModal) {
-                loginModal.style.display = 'flex';
-            }
+            openModal(loginModal);
         });
     }
 
     if (closeButton) {
         closeButton.addEventListener('click', () => {
-            if (loginModal) {
-                loginModal.style.display = 'none';
-            }
+            closeModal(loginModal);
         });
     }
 
     if (loginModal) {
+        // Close on backdrop click
         loginModal.addEventListener('click', (e) => {
             if (e.target === loginModal) {
-                loginModal.style.display = 'none';
+                closeModal(loginModal);
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && loginModal.classList.contains('show')) {
+                closeModal(loginModal);
             }
         });
     }
@@ -561,9 +591,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const success = await adminApi.login(password);
             if (success) {
                 adminLoggedIn = true;
-                if (loginModal) {
-                    loginModal.style.display = 'none';
-                }
+                closeModal(loginModal);
                 document.getElementById('password').value = '';
                 showAdminPanel();
             } else {

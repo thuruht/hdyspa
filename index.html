@@ -152,27 +152,25 @@
 <body class="howdy-active">
   <!-- Header  -->
   <header class="feader howder" style="scale:0.87; min-height:128px; max-height:224px;">
-    
-     <h2 style="color:var(--redd); font-size:clamp(2.5rem, 3.9vw, 6.5rem); scale:0.69; display: inline-block;">
-      
+    <div class="header-container" style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0.5rem;">
+      <h2 style="color:var(--redd); font-size:clamp(2.5rem, 3.9vw, 6.5rem); scale:0.69; display: inline-block;">
         <span class="flip">D</span>I<span class="flip">Y</span>
-     </h2><h1 class="header-title" style="scale:0.87; display:inline-block;">
-      <span class="span2 flip" style="color:var(--blew); font-size:clamp(5.9rem, 11.6vw, 17rem);">
-        HOWDY
-      </span>
-    </h1>
-   <h2 style="color:var(--redd); font-size:clamp(2.5rem, 3.9vw, 6.5rem); scale:0.69; display: inline-block;">
-      <span class="flip">
-        T<span class="flipp">H</span><span class="flip">R</span>I<span class="flipp">
-        F<span class="flip">T</span>
-      </span>
-    </h2>
+      </h2>
+      
+      <h1 class="header-title" style="scale:0.87; display:inline-block;">
+        <span class="span2 flip" style="color:var(--blew); font-size:clamp(5.9rem, 11.6vw, 17rem);">
+          HOWDY
+        </span>
+      </h1>
+      
+      <h2 style="color:var(--redd); font-size:clamp(2.5rem, 3.9vw, 6.5rem); scale:0.69; display: inline-block;">
+        <span class="flip">
+          T<span class="flipp">H</span><span class="flip">R</span>I<span class="flipp">
+          F<span class="flip">T</span>
+        </span>
+      </h2>
+    </div>
   </header>
-
-  <!-- Admin Login Button -->
-  <div id="admin-login-button-container">
-    <button id="admin-login-button" class="admin-btn">Admin Login</button>
-  </div>
 
   <!-- Admin Panel -->
   <div id="admin-panel" class="admin-panel" style="display: none;">
@@ -184,12 +182,12 @@
   </div>
 
   <!-- Login Modal -->
-  <div id="login-modal" class="modal" style="display: none;">
+  <div id="login-modal" class="modal" role="dialog" aria-labelledby="modal-title" aria-modal="true" style="display: none;">
     <div class="modal-content">
-      <span class="close-button">&times;</span>
-      <h2>Admin Login</h2>
+      <button class="close-button" aria-label="Close modal">&times;</button>
+      <h2 id="modal-title">Admin Login</h2>
       <form id="login-form">
-        <input type="password" id="password" placeholder="Password" required>
+        <input type="password" id="password" placeholder="Password" required aria-label="Admin password">
         <button type="submit">Login</button>
       </form>
     </div>
@@ -197,6 +195,10 @@
 <main style="scale:0.87;">
   <!-- Mission Statement Section -->
   <section id="mission-statement" class="card">
+    <!-- Logo accent -->
+    <div style="text-align: center; margin-bottom: 1rem;">
+      <img src="./hdiy.png" alt="Howdy DIY Logo" style="height: 60px; width: auto; opacity: 0.8;">
+    </div>
     <h2>Our Mission</h2>
     <div id="mission-content"></div>
   </section>
@@ -220,14 +222,22 @@
   <section id="hours-section" class="card">
     <h2>Hours</h2>
     <div id="hours-content"></div>
+    <!-- Temporary hours image -->
+    <div class="hours-image-container" style="text-align: center; margin-top: 1rem;">
+      <img src="./mxdiyjuly.png" alt="Howdy DIY Thrift Hours - July Schedule" style="max-width: 100%; height: auto; border: 1px solid var(--nav-border-color);">
+    </div>
   </section>
 
-  <!-- Instagram QR Code -->
-  <div class="social-section">
-    <a href="https://www.instagram.com/howdydiythrift/">
-      <img src="./hyqr.png" alt="howdy diy thrift qr code and link for instagram" style="width:33vw;">
-    </a>
-  </div>
+  <!-- Social Media Section -->
+  <section id="social-section" class="card">
+    <h2>Follow Us</h2>
+    <div style="text-align: center;">
+      <p style="margin-bottom: 1rem; font-family: var(--font-main);">Connect with us on social media and check out our linktree for more!</p>
+      <a href="https://www.instagram.com/howdydiythrift/" style="display: inline-block;">
+        <img src="./hyqr.png" alt="Howdy DIY Thrift QR code for Instagram and social links" style="width: min(250px, 33vw); height: auto; border: 1px solid rgba(255,255,255,0.3);">
+      </a>
+    </div>
+  </section>
 </main>
   <!-- Footer Image (if applicable) -->
   <div id="fwr">
@@ -237,7 +247,15 @@
   <!-- Footer (unchanged) -->
   <footer>
     <div>
+      <!-- Logo accent in footer -->
+      <div style="text-align: center; margin-bottom: 1rem;">
+        <img src="./hdytr.png" alt="Howdy Thrift Logo" style="height: 50px; width: auto; opacity: 0.7;">
+      </div>
       <p id="address">6523 STADIUM DRIVE, KANSAS CITY MISSOURI</p>
+      <!-- Admin Login Button -->
+      <div id="admin-login-button-container" style="margin-top: 1rem;">
+        <button id="admin-login-button" class="admin-btn">Admin</button>
+      </div>
     </div>
   </footer>
 

@@ -18,7 +18,7 @@ const app = new Hono();
 
 // CORS configuration
 app.use('*', cors({
-  origin: ['https://howdythrift.farewellcafe.com', 'https://farewellcafe.com'],
+  origin: ['https://hdyspa.jojo-829.workers.dev', 'https://howdythrift.farewellcafe.com', 'https://farewellcafe.com'],
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization'],
   credentials: true,

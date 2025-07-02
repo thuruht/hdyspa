@@ -117,7 +117,7 @@ body {
   justify-content: flex-start; /* Aligns child elements to the top */
   margin: 0 auto;
   margin-bottom:24px;
-  font-family: var(--font-hnm11);
+  font-family: var(--font-main); /* hnb2 for main content */
   background-color: #f0ffff;
   color: var(--text-color);
   padding: var(--padding-medium);
@@ -297,17 +297,8 @@ nav ul li a {
    7. Newsletter Styles
 ============================== */
 #newsletter {
-  background: var(--secondary-bg-color);
-  text-align: center;
-  padding: var(--padding-medium);
-    width: 96%;
-  margin: 0 auto;
-  /*margin-bottom:12px;*/
-  border: 1px solid var(--nav-border-color);
-  border-radius: 0px; /* Optional: Rounded corners */
-  color:#000;
-  grid-column: 2;      /* right column */
-  grid-row: 1;         /* row 1 only */
+  /* Removed - newsletter section deprecated */
+  display: none;
 }
 
 #newsletter h2 { color: #fff;
@@ -328,7 +319,7 @@ nav ul li a {
   gap: 0.5rem; /* Reduced spacing between input and button */
   align-items: stretch; /* Ensures children take full width */
   width: 93%; /* Ensure form takes full width of the container */
-  max-width: 666px; /* Limit form width for better readability */
+  max-width: 100%; /* Use full width of parent card */
   margin: 0 auto; /* Center the form within its container */
   text-align: center;
   justify-content: center;
@@ -461,15 +452,12 @@ width: 96%;
    10. Footer Styles
 ============================== */
 footer div {
-  background: #ffffff;
+  /* Removed card styling - let footer elements hang out naturally */
   color: var(--text-color);
-  border: 1px solid var(--nav-border-color);
-  box-shadow: -12px 18px 0px var(--nav-border-color);
   padding: var(--padding-small);
   width: 100%;
   margin: 20px 0;
   text-align: center;
-  border-radius: 0px; /* Optional: Rounded corners */
   letter-spacing: 0.5rem; 
   line-height: 1.3rem; 
   font-size: 1.2rem;
@@ -513,6 +501,7 @@ p {
   gap: 32px;
   padding: var(--padding-medium);
   width: 100%;
+  max-width: 1400px; /* Wider content area for desktop */
   margin: 0 auto;
   text-align: center;
   justify-content: center; /* Centers the grid items */
@@ -666,7 +655,7 @@ body.howdy-active a:hover { /* Only the hover color changes */
 
 body.howdy-active {
     --text-color: #000;
-    --newsletter-bg-color: #ff2b13;
+    /* --newsletter-bg-color: #ff2b13; // Removed */
     --header-bg-color: #00e2ff;
     --button-bg-color: #00e2ff;
     --link-hover-color: #d990ff;
@@ -674,7 +663,7 @@ body.howdy-active {
 }
 
 body.howdy-active .header-title {
-    font-family: 'mt';
+    font-family: 'mt' !important; /* Ensure howdy state uses mt font */
 }
 body.howdy-active .header-title .sulk {
     font-size: clamp(1.3rem, 2.7vw, 2.9rem); cursor: crosshair;
@@ -685,7 +674,7 @@ body.howdy-active .header-title .sulk:hover {
 
 
 body.howdy-active .header-title .span2 {
-    font-family: 'mt';
+    font-family: 'mt' !important; /* Ensure howdy state uses mt font */
     font-weight: 200;
     letter-spacing: 0.00209em;
     color: #ff2b13;
@@ -710,27 +699,13 @@ body.howdy-active #contact {
     background-color: #00e2ff;
 }
 
-body.howdy-active #newsletter {
-    background-color: #ff2b13;
-}
-
-body.howdy-active #newsletter input {
-    border-color: #000000;
-}
-
-body.howdy-active #newsletter button {
-    border-color: #000000;
-    background-color: #00e2ff;
-}
+/* Newsletter styles removed from howdy-active state */
 
 body.howdy-active #contact h2 { color: #fff;
     -webkit-text-stroke: 1px #000000; /* Black outline */
      text-shadow: -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000, 1px 1px 0 #000000; /*Black text shadow*/
 }
-body.howdy-active #newsletter h2 { color: #000;
-    -webkit-text-stroke: 1px #ffffff; /* White outline */
-     text-shadow: -1px -1px 0 #ffffff, 1px -1px 0 #ffffff, -1px 1px 0 #ffffff, 1px 1px 0 #ffffff; /*White text shadow*/
-}
+/* Newsletter h2 styles removed */
 footer p{
     color: #000;
 }
@@ -956,41 +931,77 @@ select, option {
     grid-row: auto; /* Each item stacks vertically */
   }
 }
-/* General Modal Styles */
+/* ==============================
+   Modal Styles - Proper Implementation
+============================== */
 .modal {
-   /* position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%); */
-    width: 80%;
-    height: 80%; 
-    background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: none; /* Hidden by default */
     align-items: center;
     justify-content: center;
-    z-index: 1000; /* Ensure it sits above other elements */
-    overflow: auto; /* Enable scrolling for small displays */
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal.show {
+    display: flex;
+    opacity: 1;
 }
 
 .modal-content {
-    background: #222; /* Medium dark theme */
-    color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    padding: 32px;
-   /* max-width: 500px;*/
-    width: 90%;
-    font-family: 'hnm11', sans-serif;
+    /* Use card styling for consistency */
+    background-color: var(--card-bg-color);
+    color: #000;
+    border: 1px solid var(--nav-border-color);
+    box-shadow: -17px 20px 0px var(--nav-border-color);
+    padding: var(--padding-medium);
     position: relative;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+.modal.show .modal-content {
+    transform: scale(1);
+}
+
+.close-button {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #666;
+    cursor: pointer;
+    padding: 0;
+    width: auto;
+    transition: color 0.3s ease;
+}
+
+.close-button:hover {
+    color: var(--redd);
+}
+    border-radius: 0;
+    padding: var(--padding-small);
+    width: 90%;
+    max-width: 500px;
+    font-family: var(--font-main);
+    position: relative;
 }
 
 /* Header Styles */
 .modal-content h2 {
-    font-family: 'ds';
+    font-family: 'db', sans-serif;
+    font-size: 3rem;
+    color: var(--redd);
+    letter-spacing: 0.22rem;
     font-weight: 200;
-    -webkit-text-stroke: 1px #000000; /* White outline */
-    text-shadow: -3px -2px 0 #a0e600, 1px -1px 0 #000000, -1px 1px 0 #000000, 2px 3px 0 #e60000;
     text-align: center;
     margin-bottom: 20px;
 }
@@ -1409,6 +1420,20 @@ button[disabled] {
     margin-bottom: var(--padding-medium);
     border-radius: 4px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%; /* Full width of grid cell */
+    max-width: none; /* Remove any width restrictions */
+}
+
+/* Wider cards on larger screens */
+@media (min-width: 1200px) {
+  .grid-container {
+    max-width: 1600px; /* Even wider on very large screens */
+    padding: var(--padding-large);
+  }
+  
+  .card {
+    padding: var(--padding-large);
+  }
 }
 
 .card h2 {
@@ -1542,39 +1567,53 @@ button[disabled] {
 }
 
 .admin-panel {
-    background-color: #1a1a1a;
-    border: 2px solid var(--redd);
-    border-radius: 8px;
-    padding: 2rem;
-    margin: 2rem 0;
+    /* Use the same card styling as content sections */
+    background-color: var(--card-bg-color);
+    border: 1px solid var(--nav-border-color);
+    box-shadow: -17px 20px 0px var(--nav-border-color);
+    border-radius: 0; /* Keep card's sharp corners */
+    padding: var(--padding-small);
+    margin: 2rem auto;
     max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
+    color: #000;
 }
 
 .admin-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid var(--nav-border-color);
     padding-bottom: 1rem;
     margin-bottom: 2rem;
 }
 
 .admin-header h2 {
     color: var(--redd);
-    font-family: var(--font-hnm11);
+    font-family: 'db', sans-serif; /* Use the same font as card headers */
+    font-size: 3rem;
+    font-weight: 200;
+    letter-spacing: 0.22rem;
     margin: 0;
 }
 
 .logout-btn {
-    background-color: #666;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
+    background: var(--button-bg-color);
+    color: var(--button-text-color);
+    font-family: var(--font-main);
+    border: 1px solid var(--nav-border-color);
+    padding: 10px 10px;
+    letter-spacing: 0.05em;
+    line-height: 1.5;
+    border-radius: 0px;
     cursor: pointer;
-    font-size: 0.9rem;
+    width: 128px;
+    transition: background-color var(--transition-speed) ease 0.4s, color var(--transition-speed) ease 0.4s, transform var(--transition-speed) ease 0.4s;
+}
+
+.logout-btn:hover {
+    background: #58e880;
+    color: #ffffff;
+    transform: scale(1.05);
 }
 
 .logout-btn:hover {
@@ -1773,129 +1812,71 @@ button[disabled] {
     background-color: #d63384;
 }
 
-/* Content Section Styles */
+/* Content Section Styles - Maintain Card Styling */
 #mission-statement, #posts-section, #featured-content-section, #hours-section {
     margin-bottom: 2rem;
-    padding: 1.5rem;
-    background-color: rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
-    border-left: 4px solid var(--blew);
+    /* Use card styling instead of overriding it */
+    background-color: var(--card-bg-color);
+    border: 1px solid var(--nav-border-color);
+    box-shadow: -17px 20px 0px var(--nav-border-color);
+    padding: var(--padding-small);
+    border-radius: 0; /* Keep card's sharp corners */
 }
 
-#content-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    margin: 2rem 0;
+/* ==============================
+   Card Color Variations
+============================== */
+
+/* Mission section - Blue background */
+#mission-statement.card {
+  background-color: var(--blew);
+  color: #fff;
 }
 
-.post {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding-bottom: 1rem;
-    margin-bottom: 1rem;
+#mission-statement.card h2 {
+  color: #fff;
+  -webkit-text-stroke: 1px #000000;
+  text-shadow: -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000, 1px 1px 0 #000000;
 }
 
-.post:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
+/* Featured section - Red background */
+#featured-content-section.card {
+  background-color: var(--redd);
+  color: #fff;
 }
 
-.post h3, .post h4 {
-    color: var(--redd);
-    font-family: var(--font-hnm11);
-    margin-top: 0;
-    margin-bottom: 0.5rem;
+#featured-content-section.card h2 {
+  color: #fff;
+  -webkit-text-stroke: 1px #000000;
+  text-shadow: -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000, 1px 1px 0 #000000;
 }
 
-.post-content {
-    color: white;
-    font-family: var(--font-main);
-    line-height: 1.6;
-    margin-bottom: 0.5rem;
+/* Hours section - Green background */
+#hours-section.card {
+  background-color: var(--secondary-bg-color); /* This is the green */
+  color: #000;
 }
 
-.post-date {
-    color: #ccc;
-    font-size: 0.9rem;
-    font-style: italic;
+#hours-section.card h2 {
+  color: #000;
+  -webkit-text-stroke: 1px #ffffff;
+  text-shadow: -1px -1px 0 #ffffff, 1px -1px 0 #ffffff, -1px 1px 0 #ffffff, 1px 1px 0 #ffffff;
 }
 
-.featured-item {
-    margin-bottom: 1.5rem;
+/* Social media section - Purple/dark background */
+#social-section.card {
+  background-color: #8A2BE2;
+  color: #fff;
 }
 
-.featured-item img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 4px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+#social-section.card h2 {
+  color: #fff;
+  -webkit-text-stroke: 1px #000000;
+  text-shadow: -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000, 1px 1px 0 #000000;
 }
 
-.featured-item figcaption {
-    color: #ccc;
-    font-size: 0.9rem;
-    font-style: italic;
-    margin-top: 0.5rem;
-    text-align: center;
-}
+/* Posts section keeps default card styling */
 
-.video-container {
-    position: relative;
-    padding-bottom: 56.25%; /* 16:9 aspect ratio */
-    height: 0;
-    overflow: hidden;
-    border-radius: 4px;
-}
-
-.video-container iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: none;
-}
-
-.featured-html {
-    background-color: rgba(255, 255, 255, 0.05);
-    padding: 1rem;
-    border-radius: 4px;
-    border-left: 3px solid var(--blew);
-}
-
-.social-section {
-    text-align: center;
-    margin: 2rem 0;
-}
-
-.social-section img {
-    border-radius: 8px;
-    border: 2px solid var(--blew);
-    transition: transform 0.3s ease;
-}
-
-.social-section img:hover {
-    transform: scale(1.05);
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    #content-container {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-    
-    .admin-panel {
-        padding: 1rem;
-        margin: 1rem;
-    }
-    
-    .modal-content {
-        padding: 1.5rem;
-        margin: 0 1rem;
-    }
-    
-    .admin-section {
-        padding: 1rem;
-    }
-}
+/* ==============================
+   End Card Color Variations
+============================== */
