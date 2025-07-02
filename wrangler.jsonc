@@ -1,0 +1,50 @@
+{
+  "name": "hdyspa",
+  "main": "src/index.js",
+  "compatibility_date": "2025-07-01",
+  "compatibility_flags": ["nodejs_compat"],
+
+  "site": {
+    "bucket": "./",
+    "include": [
+      "*.html",
+      "*.css",
+      "*.js",
+      "*.png",
+      "*.jpg",
+      "*.jpeg",
+      "*.gif",
+      "*.svg",
+      "*.woff2",
+      "*.woff",
+      "*.ttf"
+    ]
+  },
+  
+  // Note: JWT_SECRET and ADMIN_PASSWORD_HASH secrets must be set via:
+  // wrangler secret put JWT_SECRET
+  // wrangler secret put ADMIN_PASSWORD_HASH
+  
+  "kv_namespaces": [
+    {
+      "binding": "HDYSPA_CONTENT_KV",
+      "id": "736487e1516c4f8d8d7f68cb33c449ed",
+      "preview_id": "736487e1516c4f8d8d7f68cb33c449ed"
+    }
+  ],
+  
+  "r2_buckets": [
+    {
+      "binding": "HDYSPA_MEDIA_BUCKET",
+      "bucket_name": "hdyspa-media"
+    }
+  ],
+  
+  "d1_databases": [
+    {
+      "binding": "HDYSPA_DB",
+      "database_name": "hdyspa-db",
+      "database_id": "c8a6f566-db8a-4d01-99cd-7c9bf4dc09dd"
+    }
+  ]
+}

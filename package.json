@@ -1,0 +1,22 @@
+{
+  "name": "hdyspa",
+  "version": "1.0.0",
+  "description": "Howdy DIY Thrift Single Page Application",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:init": "wrangler d1 execute hdyspa-db --file=./sql/schema.sql",
+    "secret:jwt": "wrangler secret put JWT_SECRET",
+    "secret:password": "wrangler secret put ADMIN_PASSWORD_HASH"
+  },
+  "dependencies": {
+    "hono": "^4.0.0"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  },
+  "keywords": ["cloudflare-workers", "spa", "cms", "thrift"],
+  "author": "Howdy DIY Thrift",
+  "license": "MIT"
+}
