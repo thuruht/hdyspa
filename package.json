@@ -11,12 +11,18 @@
     "secret:password": "wrangler secret put ADMIN_PASSWORD_HASH"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "hono": "^4.0.0"
   },
   "devDependencies": {
     "wrangler": "^3.0.0"
   },
-  "keywords": ["cloudflare-workers", "spa", "cms", "thrift"],
+  "keywords": [
+    "cloudflare-workers",
+    "spa",
+    "cms",
+    "thrift"
+  ],
   "author": "Howdy DIY Thrift",
   "license": "MIT"
 }
