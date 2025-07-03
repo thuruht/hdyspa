@@ -174,7 +174,7 @@ background: var(--header-bg); /* Use the combined background variable */
 ============================== */
 .header-title {
   position: relative; /* Establishes a positioning context for absolutely positioned children */
-  font-family: 'db';
+  font-family: 'mt';
   font-size: clamp(1.8rem, 8vw, 6rem); /* Responsive font size */
   z-index:1;
   margin: 0;
@@ -210,7 +210,7 @@ background: var(--header-bg); /* Use the combined background variable */
 
 .header-title .span2 {
   color: var(--secondary-bg-color);
-  font-family: 'db';
+  font-family: 'mt';
   font-size: clamp(3.5rem, 11.3vw, 18.5em); /* Responsive font size relative to .header-title */
   letter-spacing: 0.002em;
   font-weight: 300;

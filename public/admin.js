@@ -181,35 +181,62 @@ document.addEventListener('DOMContentLoaded', () => {
                 const response = await fetch(apiUrl('/api/content/hours'));
                 if (!response.ok) throw new Error('Failed to fetch hours');
                 const data = await response.json();
+                
+                // Cache the entire content object for offline use
+                localStorage.setItem('hdyspa_hours_data', JSON.stringify(data.content));
                 return data.content;
             } catch (error) {
                 console.error('Error fetching hours:', error);
-                const stored = localStorage.getItem('hdyspa_hours');
-                if (stored) {
-                    return { content: stored };
+                // Try to get full cached data first
+                const storedData = localStorage.getItem('hdyspa_hours_data');
+                if (storedData) {
+                    try {
+                        return JSON.parse(storedData);
+                    } catch (parseError) {
+                        console.error('Error parsing stored hours data:', parseError);
+                    }
                 }
+                
+                // Fall back to legacy format if available
+                const legacyStored = localStorage.getItem('hdyspa_hours');
+                if (legacyStored) {
+                    return { 
+                        content: legacyStored,
+                        title: 'Hours'
+                    };
+                }
+                
+                // Default fallback
                 return {
-                    content: "<ul><li><strong>Monday - Friday:</strong> 10am - 6pm</li><li><strong>Saturday:</strong> 11am - 5pm</li><li><strong>Sunday:</strong> Closed</li></ul>"
+                    content: "<ul><li><strong>Monday - Friday:</strong> 10am - 6pm</li><li><strong>Saturday:</strong> 11am - 5pm</li><li><strong>Sunday:</strong> Closed</li></ul>",
+                    title: "Hours"
                 };
             }
         },
 
-        updateHours: async (content, title) => {
+        updateHours: async (content, title, image_url) => {
             try {
+                const hoursData = { content, title, image_url };
                 const response = await fetch(apiUrl('/api/content/hours'), {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ content, title }),
+                    body: JSON.stringify(hoursData),
                     credentials: 'include'
                 });
                 
                 if (!response.ok) throw new Error('Failed to update hours');
+                
+                // Cache both the full data object and legacy content-only format
+                localStorage.setItem('hdyspa_hours_data', JSON.stringify(hoursData));
                 localStorage.setItem('hdyspa_hours', content);
+                
                 return await response.json();
             } catch (error) {
                 console.error('Update hours error:', error);
+                // Still cache data on error for offline use
+                localStorage.setItem('hdyspa_hours_data', JSON.stringify({ content, title, image_url }));
                 localStorage.setItem('hdyspa_hours', content);
                 return true;
             }
@@ -345,7 +372,26 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h3>Edit Hours</h3>
                     <input type="text" id="hours-title" placeholder="Section Title" class="admin-input" value="${hours.title || 'Hours'}">
                     <div id="hours-editor" class="editor-container"></div>
-                    <button id="save-hours" class="admin-btn">Save Hours</button>
+                    
+                    <div class="hours-image-section" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #333;">
+                        <h4>Hours Image</h4>
+                        ${hours.image_url ? 
+                            `<div class="current-hours-image" style="margin-bottom: 10px;">
+                                <p>Current image:</p>
+                                <img src="${hours.image_url}" alt="Current hours image" style="max-width: 100%; max-height: 200px; border: 1px solid #444;">
+                             </div>` : 
+                            '<p>No custom image set. Using default image.</p>'
+                        }
+                        <div class="hours-image-upload" style="margin-top: 10px;">
+                            <p>Upload a new hours image:</p>
+                            <input type="file" id="hours-image-upload" accept="image/*" class="admin-input">
+                            <div class="button-group" style="display: flex; gap: 10px; margin-top: 10px;">
+                                <button id="upload-hours-image" class="admin-btn">Upload New Image</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button id="save-hours" class="admin-btn" style="margin-top: 15px;">Save Hours Content</button>
                 </div>
                 
                 <div class="admin-section">
@@ -392,8 +438,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
 
-            // Initialize Quill editors and populate them
-            loadAdminContent({ mission, hours });
+            // Initialize Quill editors
+            await loadAdminContent();
             bindAdminEventListeners();
 
         } catch (error) {
@@ -402,16 +448,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const loadAdminContent = (content) => {
+    const loadAdminContent = async () => {
         try {
-            const { mission, hours } = content;
-
             // Initialize editors
             quillInstances.mission = createQuillEditor('#mission-editor', 'Enter mission statement...');
             quillInstances.hours = createQuillEditor('#hours-editor', 'Enter hours information...');
             quillInstances.newPost = createQuillEditor('#new-post-editor', 'Enter post content...');
 
-            // Populate content
+            // Load existing content
+            const mission = await adminApi.getMissionStatement();
+            const hours = await adminApi.getHours();
+
             if (mission && mission.content) {
                 quillInstances.mission.root.innerHTML = mission.content;
             }
@@ -456,56 +503,69 @@ document.addEventListener('DOMContentLoaded', () => {
                 const content = quillInstances.hours.root.innerHTML;
                 const title = document.getElementById('hours-title').value;
                 
-                // Get the current hours image URL from the img src
+                // Get the current hours image URL from the data attribute
                 const currentImageElement = document.querySelector('.current-hours-image img');
-                const imageUrl = currentImageElement ? currentImageElement.getAttribute('src') : null;
+                const image_url = currentImageElement ? currentImageElement.getAttribute('src') : null;
                 
-                await adminApi.updateHours(content, title, imageUrl);
+                await adminApi.updateHours(content, title, image_url);
                 alert('Hours updated!');
                 window.dispatchEvent(new CustomEvent('contentUpdated', { detail: { type: 'hours' } }));
             } catch (error) {
-                console.error('Failed to update hours:', error);
                 alert('Failed to update hours');
             }
         });
         
         // Upload hours image
-        document.getElementById('upload-hours-image')?.addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            
-            const formData = new FormData();
-            formData.append('file', file);
-            
+        document.getElementById('upload-hours-image')?.addEventListener('click', async () => {
             try {
-                // Upload the image
-                const response = await fetch(apiUrl('/api/media/upload'), {
-                    method: 'POST',
-                    body: formData,
-                    credentials: 'include'
-                });
+                const fileInput = document.getElementById('hours-image-upload');
+                const uploadButton = document.getElementById('upload-hours-image');
                 
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-                    throw new Error(`Upload failed (${response.status}): ${errorData.error || response.statusText}`);
+                if (!fileInput.files.length) {
+                    alert('Please select an image file to upload');
+                    return;
                 }
                 
-                const result = await response.json();
-                console.log('Image upload successful, received URL:', result.url);
+                // Show upload progress indicator
+                uploadButton.textContent = 'Uploading...';
+                uploadButton.disabled = true;
                 
-                // Update the image preview
-                const imageContainer = document.querySelector('.current-hours-image');
-                if (imageContainer) {
-                    const img = imageContainer.querySelector('img');
-                    if (img) {
-                        img.src = result.url;
+                try {
+                    // Handle file upload
+                    const uploadResult = await adminApi.uploadMedia(fileInput.files[0]);
+                    
+                    // Update the displayed image
+                    let imageContainer = document.querySelector('.current-hours-image');
+                    if (!imageContainer) {
+                        // Create container if it doesn't exist
+                        const hoursImageSection = document.querySelector('.hours-image-section');
+                        imageContainer = document.createElement('div');
+                        imageContainer.className = 'current-hours-image';
+                        imageContainer.style.marginBottom = '10px';
+                        hoursImageSection.insertBefore(imageContainer, document.querySelector('.hours-image-upload'));
                     }
+                    
+                    imageContainer.innerHTML = `
+                        <p>Current image:</p>
+                        <img src="${uploadResult.url}" alt="Current hours image" style="max-width: 100%; max-height: 200px; border: 1px solid #444;">
+                    `;
+                    
+                    alert('Hours image uploaded successfully! Click "Save Hours Content" to save all changes.');
+                } catch (uploadError) {
+                    console.error('Hours image upload failed:', uploadError);
+                    alert(`Hours image upload failed: ${uploadError.message || 'Unknown error'}`);
                 }
                 
-                alert('Image uploaded successfully!');
+                // Reset UI
+                uploadButton.textContent = 'Upload New Image';
+                uploadButton.disabled = false;
+                fileInput.value = '';
+                
             } catch (error) {
-                console.error('Image upload error:', error);
-                alert(`Failed to upload image: ${error.message || 'Unknown error'}`);
+                console.error('Error uploading hours image:', error);
+                alert('Failed to upload hours image');
+                document.getElementById('upload-hours-image').textContent = 'Upload New Image';
+                document.getElementById('upload-hours-image').disabled = false;
             }
         });
 
