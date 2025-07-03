@@ -233,6 +233,195 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       });
     });
+    
+    // Animate the logos
+    gsap.from("#mission-statement img", {
+      scale: 0.5,
+      opacity: 0,
+      rotation: -5,
+      duration: 1.2,
+      delay: 0.5,
+      ease: "elastic.out(1, 0.3)",
+      scrollTrigger: {
+        trigger: "#mission-statement",
+        start: "top 80%",
+      }
+    });
+    
+    gsap.from(".footer-logo img", {
+      scale: 0.5,
+      opacity: 0,
+      rotation: 5,
+      duration: 1.2,
+      ease: "elastic.out(1, 0.3)",
+      scrollTrigger: {
+        trigger: "footer",
+        start: "top 90%",
+      }
+    });
+    
+    // Enhanced logo animations with idle effects for upper logo and hover for both
+    // Function to create random subtle animations for the mission logo
+    const createMissionLogoIdleAnimation = () => {
+      const missionLogo = document.querySelector("#mission-statement img");
+      if (!missionLogo) return;
+      
+      // Set transform origin for all animations
+      gsap.set(missionLogo, { transformOrigin: "center center" });
+      
+      // Array of possible subtle animations
+      const idleAnimations = [
+        // Subtle vibrate
+        () => {
+          gsap.to(missionLogo, {
+            x: "random(-3, 3)", 
+            y: "random(-2, 2)", 
+            rotation: "random(-1, 1)",
+            duration: 0.3, 
+            ease: "power1.inOut",
+            onComplete: () => {
+              gsap.to(missionLogo, {
+                x: 0, 
+                y: 0, 
+                rotation: 0,
+                duration: 0.5, 
+                ease: "elastic.out(1, 0.3)"
+              });
+            }
+          });
+        },
+        // Subtle inhale/exhale
+        () => {
+          gsap.to(missionLogo, {
+            scale: 1.03, 
+            duration: 1.5, 
+            ease: "sine.inOut",
+            onComplete: () => {
+              gsap.to(missionLogo, {
+                scale: 1, 
+                duration: 1.5, 
+                ease: "sine.inOut"
+              });
+            }
+          });
+        },
+        // Subtle bounce
+        () => {
+          gsap.to(missionLogo, {
+            y: -5, 
+            duration: 0.4, 
+            ease: "power2.out",
+            onComplete: () => {
+              gsap.to(missionLogo, {
+                y: 0, 
+                duration: 0.6, 
+                ease: "bounce.out"
+              });
+            }
+          });
+        },
+        // Subtle tilt
+        () => {
+          gsap.to(missionLogo, {
+            rotation: "random(-3, 3)", 
+            duration: 0.8, 
+            ease: "power1.inOut",
+            onComplete: () => {
+              gsap.to(missionLogo, {
+                rotation: 0, 
+                duration: 0.8, 
+                ease: "power1.inOut"
+              });
+            }
+          });
+        }
+      ];
+      
+      // Randomly select an animation to play
+      const playRandomAnimation = () => {
+        // Only animate if user isn't hovering over the logo
+        if (!missionLogo.isHovered) {
+          const randomAnimation = idleAnimations[Math.floor(Math.random() * idleAnimations.length)];
+          randomAnimation();
+        }
+        
+        // Set next animation after a random delay
+        gsap.delayedCall(gsap.utils.random(5, 15), playRandomAnimation);
+      };
+      
+      // Start the idle animation cycle
+      playRandomAnimation();
+    };
+    
+    // Enhanced hover effect for mission logo
+    const enhancedMissionLogoHover = () => {
+      const logo = document.querySelector("#mission-statement img");
+      if (!logo) return;
+      
+      logo.isHovered = false;
+      
+      logo.addEventListener("mouseenter", () => {
+        logo.isHovered = true;
+        
+        // Stop any current animations
+        gsap.killTweensOf(logo);
+        
+        // Create a more engaging hover animation
+        gsap.to(logo, {
+          scale: 1.15, 
+          rotation: gsap.utils.random(-3, 3),
+          filter: "brightness(1.1) saturate(1.1)",
+          boxShadow: "0 0 15px rgba(255,255,255,0.3)",
+          duration: 0.4, 
+          ease: "back.out(1.7)"
+        });
+      });
+      
+      logo.addEventListener("mouseleave", () => {
+        logo.isHovered = false;
+        
+        // Return to normal state with a slight bounce
+        gsap.to(logo, {
+          scale: 1, 
+          rotation: 0,
+          filter: "brightness(1) saturate(1)",
+          boxShadow: "none",
+          duration: 0.5, 
+          ease: "elastic.out(1, 0.3)"
+        });
+      });
+    };
+    
+    // Simple hover effect for footer logo
+    const footerLogoHover = () => {
+      const logo = document.querySelector(".footer-logo img");
+      if (!logo) return;
+      
+      gsap.set(logo, { transformOrigin: "center center" });
+      
+      logo.addEventListener("mouseenter", () => {
+        gsap.to(logo, { 
+          scale: 1.1, 
+          rotation: 2,
+          duration: 0.3, 
+          ease: "power2.out" 
+        });
+      });
+      
+      logo.addEventListener("mouseleave", () => {
+        gsap.to(logo, { 
+          scale: 1, 
+          rotation: 0,
+          duration: 0.3, 
+          ease: "power2.out" 
+        });
+      });
+    };
+    
+    // Initialize all logo animations
+    enhancedMissionLogoHover();
+    footerLogoHover();
+    createMissionLogoIdleAnimation();
   }
 
   const uploadButton = document.querySelector('.admin-upload-link button');
