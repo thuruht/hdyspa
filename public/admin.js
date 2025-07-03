@@ -392,8 +392,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
 
-            // Initialize Quill editors
-            await loadAdminContent();
+            // Initialize Quill editors and populate them
+            loadAdminContent({ mission, hours });
             bindAdminEventListeners();
 
         } catch (error) {
@@ -402,23 +402,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const loadAdminContent = async () => {
+    const loadAdminContent = (content) => {
         try {
+            const { mission, hours } = content;
+
             // Initialize editors
             quillInstances.mission = createQuillEditor('#mission-editor', 'Enter mission statement...');
             quillInstances.hours = createQuillEditor('#hours-editor', 'Enter hours information...');
             quillInstances.newPost = createQuillEditor('#new-post-editor', 'Enter post content...');
 
-            // Load existing content
-            const mission = await adminApi.getMissionStatement();
-            const hours = await adminApi.getHours();
-
+            // Populate content
             if (mission && mission.content) {
                 quillInstances.mission.root.innerHTML = mission.content;
             }
 
             if (hours && hours.content) {
                 quillInstances.hours.root.innerHTML = hours.content;
+            }
+            
+            // Update hours image display if it exists
+            if (hours && hours.image_url) {
+                const imageContainer = document.querySelector('.current-hours-image');
+                if (imageContainer) {
+                    const img = imageContainer.querySelector('img');
+                    if (img) {
+                        img.src = hours.image_url;
+                    }
+                }
             }
 
         } catch (error) {
@@ -445,11 +455,57 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const content = quillInstances.hours.root.innerHTML;
                 const title = document.getElementById('hours-title').value;
-                await adminApi.updateHours(content, title);
+                
+                // Get the current hours image URL from the img src
+                const currentImageElement = document.querySelector('.current-hours-image img');
+                const imageUrl = currentImageElement ? currentImageElement.getAttribute('src') : null;
+                
+                await adminApi.updateHours(content, title, imageUrl);
                 alert('Hours updated!');
                 window.dispatchEvent(new CustomEvent('contentUpdated', { detail: { type: 'hours' } }));
             } catch (error) {
+                console.error('Failed to update hours:', error);
                 alert('Failed to update hours');
+            }
+        });
+        
+        // Upload hours image
+        document.getElementById('upload-hours-image')?.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            try {
+                // Upload the image
+                const response = await fetch(apiUrl('/api/media/upload'), {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+                    throw new Error(`Upload failed (${response.status}): ${errorData.error || response.statusText}`);
+                }
+                
+                const result = await response.json();
+                console.log('Image upload successful, received URL:', result.url);
+                
+                // Update the image preview
+                const imageContainer = document.querySelector('.current-hours-image');
+                if (imageContainer) {
+                    const img = imageContainer.querySelector('img');
+                    if (img) {
+                        img.src = result.url;
+                    }
+                }
+                
+                alert('Image uploaded successfully!');
+            } catch (error) {
+                console.error('Image upload error:', error);
+                alert(`Failed to upload image: ${error.message || 'Unknown error'}`);
             }
         });
 

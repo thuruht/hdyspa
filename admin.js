@@ -181,35 +181,62 @@ document.addEventListener('DOMContentLoaded', () => {
                 const response = await fetch(apiUrl('/api/content/hours'));
                 if (!response.ok) throw new Error('Failed to fetch hours');
                 const data = await response.json();
+                
+                // Cache the entire content object for offline use
+                localStorage.setItem('hdyspa_hours_data', JSON.stringify(data.content));
                 return data.content;
             } catch (error) {
                 console.error('Error fetching hours:', error);
-                const stored = localStorage.getItem('hdyspa_hours');
-                if (stored) {
-                    return { content: stored };
+                // Try to get full cached data first
+                const storedData = localStorage.getItem('hdyspa_hours_data');
+                if (storedData) {
+                    try {
+                        return JSON.parse(storedData);
+                    } catch (parseError) {
+                        console.error('Error parsing stored hours data:', parseError);
+                    }
                 }
+                
+                // Fall back to legacy format if available
+                const legacyStored = localStorage.getItem('hdyspa_hours');
+                if (legacyStored) {
+                    return { 
+                        content: legacyStored,
+                        title: 'Hours'
+                    };
+                }
+                
+                // Default fallback
                 return {
-                    content: "<ul><li><strong>Monday - Friday:</strong> 10am - 6pm</li><li><strong>Saturday:</strong> 11am - 5pm</li><li><strong>Sunday:</strong> Closed</li></ul>"
+                    content: "<ul><li><strong>Monday - Friday:</strong> 10am - 6pm</li><li><strong>Saturday:</strong> 11am - 5pm</li><li><strong>Sunday:</strong> Closed</li></ul>",
+                    title: "Hours"
                 };
             }
         },
 
         updateHours: async (content, title, image_url) => {
             try {
+                const hoursData = { content, title, image_url };
                 const response = await fetch(apiUrl('/api/content/hours'), {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ content, title, image_url }),
+                    body: JSON.stringify(hoursData),
                     credentials: 'include'
                 });
                 
                 if (!response.ok) throw new Error('Failed to update hours');
+                
+                // Cache both the full data object and legacy content-only format
+                localStorage.setItem('hdyspa_hours_data', JSON.stringify(hoursData));
                 localStorage.setItem('hdyspa_hours', content);
+                
                 return await response.json();
             } catch (error) {
                 console.error('Update hours error:', error);
+                // Still cache data on error for offline use
+                localStorage.setItem('hdyspa_hours_data', JSON.stringify({ content, title, image_url }));
                 localStorage.setItem('hdyspa_hours', content);
                 return true;
             }

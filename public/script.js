@@ -450,30 +450,6 @@ document.addEventListener('DOMContentLoaded', () => {
     createMissionLogoIdleAnimation();
   }
 
-  // DOM elements for buttons/controls with null checks
-  const uploadButton = document.querySelector('.admin-upload-link button');
-  // Note: Archive button reference removed as it's not currently used in the Thrift app
-  // const archiveButton = document.querySelector('.view-archives-button');
-
-  // Sorting UI (drop-down)
-  const sortSelect = document.getElementById('sort-select');
-
-  // Add event listeners only if elements exist
-  if (uploadButton) {
-    uploadButton.addEventListener('click', () => {
-      console.log('Upload button clicked');
-      // Any upload functionality would go here
-    });
-  }
-
-  if (sortSelect) {
-    sortSelect.addEventListener('change', (e) => {
-      const selectedValue = e.target.value;
-      console.log('Sort changed to:', selectedValue);
-      // Sort functionality would go here
-    });
-  }
-
   // Constants / Config
   // Determine the correct API base URL based on current domain
   const getCurrentDomain = () => window.location.hostname;
