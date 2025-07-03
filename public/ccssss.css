@@ -9,7 +9,7 @@
     --primary-bg-color: #b0ee00;
     --secondary-bg-color: #D990FF;
     --accent-color: #ff2b13;
-    --text-color: #010101;
+    --text-color: #204c4c;
     --header-text-shadow: rgba(0, 0, 0, 0.5);
     --nav-bg-color: #ffffff;
     --nav-border-color: #000000;
@@ -118,11 +118,12 @@ body {
   margin: 0 auto;
   margin-bottom:24px;
   font-family: var(--font-main); /* hnb2 for main content */
-  background-color: #f0ffff;
+  background-color: #c9ffff;
   color: var(--text-color);
   padding: var(--padding-medium);
   text-align: center;
   gap:var(--padding-medium);
+  font-family: 'kb';
 }
 
 /* ==============================
