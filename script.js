@@ -380,10 +380,22 @@ document.addEventListener('DOMContentLoaded', () => {
           if (featured && featured.length > 0) {
             featuredContainer.innerHTML = featured.map(item => {
               if (item.type === 'image') {
+                // Handle both relative and absolute URLs
+                let imageUrl = item.content;
+                if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('./')) {
+                  // If it's a relative URL without ./ prefix, ensure it's properly formatted
+                  if (imageUrl.startsWith('/')) {
+                    imageUrl = `https://howdythrift.farewellcafe.com${imageUrl}`;
+                  } else {
+                    imageUrl = `https://howdythrift.farewellcafe.com/${imageUrl}`;
+                  }
+                }
+                console.log('Rendering image with source:', imageUrl);
+                
                 return `
                   <figure class="featured-item">
-                    <img src="${item.content}" alt="${item.caption || 'Featured image'}" loading="lazy" 
-                         onerror="this.onerror=null; this.src='./favicon.png'; this.style.opacity=0.5; this.alt='Image failed to load';">
+                    <img src="${imageUrl}" alt="${item.caption || 'Featured image'}" loading="lazy" 
+                         onerror="console.error('Image failed to load:', this.src); this.onerror=null; this.src='./favicon.png'; this.style.opacity=0.5; this.style.border='1px dashed red'; this.alt='Image failed to load';">
                     <figcaption>${item.caption || ''}</figcaption>
                   </figure>
                 `;

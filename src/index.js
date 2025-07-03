@@ -432,7 +432,9 @@ app.post('/api/media/upload', requireAuth, async (c) => {
       },
     });
 
+    // Make sure to return a fully qualified URL that will work from any domain
     const url = `https://howdythrift.farewellcafe.com/media/${filename}`;
+    console.log('Media uploaded, URL:', url);
     
     return c.json({ url, filename }, 201);
   } catch (error) {

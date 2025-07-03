@@ -513,6 +513,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         const uploadResult = await adminApi.uploadMedia(fileInput.files[0]);
                         content = uploadResult.url;
                         console.log('Media uploaded successfully:', uploadResult);
+                        
+                        // Verify the URL is complete and accessible
+                        if (!content.startsWith('http')) {
+                            console.warn('Warning: Upload URL does not start with http, received:', content);
+                            if (content.startsWith('/')) {
+                                // Make it a full URL
+                                content = window.location.origin + content;
+                                console.log('Modified to full URL:', content);
+                            }
+                        }
                     } catch (uploadError) {
                         console.error('Media upload failed:', uploadError);
                         alert(`Media upload failed: ${uploadError.message || 'Unknown error'}`);
