@@ -1463,13 +1463,6 @@ button[disabled] {
     font-size: clamp(1.5rem, 3vw, 2.5rem);
 }
 
-#content-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--padding-medium);
-    margin-bottom: var(--padding-medium);
-}
-
 .post {
     border-bottom: 1px solid #eee;
     padding-bottom: 1rem;
@@ -1982,12 +1975,44 @@ button[disabled] {
     grid-template-columns: 1fr 1fr;
     gap: 2rem;
     align-items: start;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  #posts-section,
+  #featured-content-section,
+  #hours-section,
+  #mission-statement {
+    width: 100%;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 
-.html-content img {
-  max-width: 100%;
-  height: auto;
-  margin: 0 auto;
-  display: block;
+/* Mobile Layout - Stack posts and featured content in a column */
+@media (max-width: 768px) {
+  #content-container {
+    display: flex !important; /* Override any grid display */
+    flex-direction: column !important;
+    gap: 1.5rem;
+    width: 100%;
+  }
+  
+  #posts-section,
+  #featured-content-section {
+    width: 100%;
+    margin-bottom: 1.5rem;
+    max-width: 100%;
+  }
+
+  /* Ensure the featured-html content has good contrast with text */
+  .featured-html {
+    background-color: white;
+    color: #333; /* Dark text color for better contrast */
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
 }
