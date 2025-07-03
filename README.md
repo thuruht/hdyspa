@@ -11,6 +11,7 @@ A production-ready single page application built with Cloudflare Workers, design
 - 🎨 **Rich Text Editing**: Quill.js integration for beautiful content creation
 - 📁 **Media Management**: R2 storage for images and files
 - 🗄️ **Database**: D1 for structured data, KV for caching
+- 🔄 **Editable Card Titles**: Section headings can be customized via admin panel
 
 ## Tech Stack
 

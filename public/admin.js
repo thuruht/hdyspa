@@ -2,6 +2,12 @@
  * HDYSPA Admin Panel - Production JavaScript
  */
 
+// Base URL for API calls
+const API_BASE = 'https://howdythrift.farewellcafe.com';
+
+// Helper function to build full API URLs
+const apiUrl = (path) => `${API_BASE}${path}`;
+
 document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements
     const adminLoginButton = document.getElementById('admin-login-button');
@@ -19,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const adminApi = {
         login: async (password) => {
             try {
-                const response = await fetch('/api/auth/login', {
+                const response = await fetch(apiUrl('/api/auth/login'), {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -43,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         logout: async () => {
             try {
-                await fetch('/api/auth/logout', {
+                await fetch(apiUrl('/api/auth/logout'), {
                     method: 'POST',
                     credentials: 'include'
                 });
@@ -58,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         getMissionStatement: async () => {
             try {
-                const response = await fetch('/api/content/mission');
+                const response = await fetch(apiUrl('/api/content/mission'));
                 if (!response.ok) throw new Error('Failed to fetch mission');
                 const data = await response.json();
                 return data.content;
@@ -70,14 +76,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         },
 
-        updateMissionStatement: async (content) => {
+        updateMissionStatement: async (content, title) => {
             try {
-                const response = await fetch('/api/content/mission', {
+                const response = await fetch(apiUrl('/api/content/mission'), {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ content }),
+                    body: JSON.stringify({ content, title }),
                     credentials: 'include'
                 });
                 
@@ -93,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         getPosts: async () => {
             try {
-                const response = await fetch('/api/posts', {
+                const response = await fetch(apiUrl('/api/posts'), {
                     credentials: 'include'
                 });
                 
@@ -111,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         addPost: async (post) => {
             try {
-                const response = await fetch('/api/posts', {
+                const response = await fetch(apiUrl('/api/posts'), {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -138,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updatePost: async (id, post) => {
             try {
-                const response = await fetch(`/api/posts/${id}`, {
+                const response = await fetch(apiUrl(`/api/posts/${id}`), {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -157,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         deletePost: async (id) => {
             try {
-                const response = await fetch(`/api/posts/${id}`, {
+                const response = await fetch(apiUrl(`/api/posts/${id}`), {
                     method: 'DELETE',
                     credentials: 'include'
                 });
@@ -172,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         getHours: async () => {
             try {
-                const response = await fetch('/api/content/hours');
+                const response = await fetch(apiUrl('/api/content/hours'));
                 if (!response.ok) throw new Error('Failed to fetch hours');
                 const data = await response.json();
                 return data.content;
@@ -188,14 +194,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         },
 
-        updateHours: async (content) => {
+        updateHours: async (content, title) => {
             try {
-                const response = await fetch('/api/content/hours', {
+                const response = await fetch(apiUrl('/api/content/hours'), {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ content }),
+                    body: JSON.stringify({ content, title }),
                     credentials: 'include'
                 });
                 
@@ -211,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         getFeaturedContent: async () => {
             try {
-                const response = await fetch('/api/featured', {
+                const response = await fetch(apiUrl('/api/featured'), {
                     credentials: 'include'
                 });
                 
@@ -227,7 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         addFeaturedContent: async (content) => {
             try {
-                const response = await fetch('/api/featured', {
+                const response = await fetch(apiUrl('/api/featured'), {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -246,7 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         deleteFeaturedContent: async (id) => {
             try {
-                const response = await fetch(`/api/featured/${id}`, {
+                const response = await fetch(apiUrl(`/api/featured/${id}`), {
                     method: 'DELETE',
                     credentials: 'include'
                 });
@@ -264,7 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const formData = new FormData();
                 formData.append('file', file);
                 
-                const response = await fetch('/api/media/upload', {
+                const response = await fetch(apiUrl('/api/media/upload'), {
                     method: 'POST',
                     body: formData,
                     credentials: 'include'
@@ -316,16 +322,20 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const posts = await adminApi.getPosts();
             const featured = await adminApi.getFeaturedContent();
+            const mission = await adminApi.getMissionStatement();
+            const hours = await adminApi.getHours();
             
             adminContent.innerHTML = `
                 <div class="admin-section">
                     <h3>Edit Mission Statement</h3>
+                    <input type="text" id="mission-title" placeholder="Section Title" class="admin-input" value="${mission.title || 'Our Mission'}">
                     <div id="mission-editor" class="editor-container"></div>
                     <button id="save-mission" class="admin-btn">Save Mission</button>
                 </div>
                 
                 <div class="admin-section">
                     <h3>Edit Hours</h3>
+                    <input type="text" id="hours-title" placeholder="Section Title" class="admin-input" value="${hours.title || 'Hours'}">
                     <div id="hours-editor" class="editor-container"></div>
                     <button id="save-hours" class="admin-btn">Save Hours</button>
                 </div>
@@ -413,7 +423,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('save-mission')?.addEventListener('click', async () => {
             try {
                 const content = quillInstances.mission.root.innerHTML;
-                await adminApi.updateMissionStatement(content);
+                const title = document.getElementById('mission-title').value;
+                await adminApi.updateMissionStatement(content, title);
                 alert('Mission statement updated!');
                 window.dispatchEvent(new CustomEvent('contentUpdated', { detail: { type: 'mission' } }));
             } catch (error) {
@@ -425,7 +436,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('save-hours')?.addEventListener('click', async () => {
             try {
                 const content = quillInstances.hours.root.innerHTML;
-                await adminApi.updateHours(content);
+                const title = document.getElementById('hours-title').value;
+                await adminApi.updateHours(content, title);
                 alert('Hours updated!');
                 window.dispatchEvent(new CustomEvent('contentUpdated', { detail: { type: 'hours' } }));
             } catch (error) {
@@ -479,17 +491,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 const contentInput = document.getElementById('featured-content').value;
                 const caption = document.getElementById('featured-caption').value;
                 const fileInput = document.getElementById('media-upload');
+                const addButton = document.getElementById('add-featured');
                 
                 let content = contentInput;
                 
-                // Handle file upload
-                if (fileInput.files.length > 0) {
-                    const uploadResult = await adminApi.uploadMedia(fileInput.files[0]);
-                    content = uploadResult.url;
-                }
-                
-                if (!content) {
-                    alert('Please provide content or upload a file');
+                // For HTML type, just use the content input
+                if (type === 'html') {
+                    if (!content) {
+                        alert('Please enter HTML content');
+                        return;
+                    }
+                } 
+                // For image/video types, handle file upload
+                else if (fileInput.files.length > 0) {
+                    // Show upload progress indicator
+                    addButton.textContent = 'Uploading...';
+                    addButton.disabled = true;
+                    
+                    try {
+                        // Handle file upload
+                        const uploadResult = await adminApi.uploadMedia(fileInput.files[0]);
+                        content = uploadResult.url;
+                        console.log('Media uploaded successfully:', uploadResult);
+                    } catch (uploadError) {
+                        console.error('Media upload failed:', uploadError);
+                        alert(`Media upload failed: ${uploadError.message || 'Unknown error'}`);
+                        addButton.textContent = 'Add Featured Content';
+                        addButton.disabled = false;
+                        return;
+                    }
+                } else if (!content && type !== 'html') {
+                    alert('Please provide content URL or upload a file');
+                    addButton.textContent = 'Add Featured Content';
+                    addButton.disabled = false;
                     return;
                 }
 
@@ -498,10 +532,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('featured-content').value = '';
                 document.getElementById('featured-caption').value = '';
                 fileInput.value = '';
+                addButton.textContent = 'Add Featured Content';
+                addButton.disabled = false;
                 renderAdminContent();
                 window.dispatchEvent(new CustomEvent('contentUpdated', { detail: { type: 'featured' } }));
             } catch (error) {
-                alert('Failed to add featured content');
+                alert('Failed to add featured content: ' + error.message);
+                addButton.textContent = 'Add Featured Content';
+                addButton.disabled = false;
             }
         });
 
@@ -520,6 +558,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             });
+        });
+
+        // Show/hide file upload based on featured content type
+        document.getElementById('featured-type')?.addEventListener('change', function() {
+            const uploadField = document.getElementById('media-upload');
+            const contentField = document.getElementById('featured-content');
+            
+            if (this.value === 'html') {
+                uploadField.style.display = 'none';
+                contentField.placeholder = 'Enter HTML content here';
+            } else {
+                uploadField.style.display = 'block';
+                contentField.placeholder = 'URL or upload a file';
+            }
         });
     };
 
@@ -594,6 +646,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 closeModal(loginModal);
                 document.getElementById('password').value = '';
                 showAdminPanel();
+                // Scroll to top of the page to show the admin panel
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
                 alert('Incorrect password');
             }

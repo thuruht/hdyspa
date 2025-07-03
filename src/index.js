@@ -62,7 +62,9 @@ async function initializeDatabase(env) {
     CREATE TABLE IF NOT EXISTS content_blocks (
       id TEXT PRIMARY KEY,
       type TEXT NOT NULL,
+      title TEXT,
       content TEXT NOT NULL,
+      active BOOLEAN DEFAULT TRUE,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 
@@ -100,8 +102,8 @@ async function initializeDefaultContent(env) {
 
   if (!mission) {
     await env.HDYSPA_DB.prepare(
-      'INSERT INTO content_blocks (id, type, content) VALUES (?, ?, ?)'
-    ).bind('mission', 'mission', '<p>Welcome to Howdy DIY Thrift - your community space for creative reuse and sustainable living!</p>').run();
+      'INSERT INTO content_blocks (id, type, title, content) VALUES (?, ?, ?, ?)'
+    ).bind('mission', 'mission', 'Our Mission', '<p>Curated, pop-up thrift store for punks and queers</p>').run();
   }
 
   // Check if hours exist
@@ -111,8 +113,8 @@ async function initializeDefaultContent(env) {
 
   if (!hours) {
     await env.HDYSPA_DB.prepare(
-      'INSERT INTO content_blocks (id, type, content) VALUES (?, ?, ?)'
-    ).bind('hours', 'hours', '<ul><li>Monday - Friday: 10am - 6pm</li><li>Saturday: 11am - 5pm</li><li>Sunday: Closed</li></ul>').run();
+      'INSERT INTO content_blocks (id, type, title, content) VALUES (?, ?, ?, ?)'
+    ).bind('hours', 'hours', 'Hours', '<ul><li>Monday - Friday: 10am - 6pm</li><li>Saturday: 11am - 5pm</li><li>Sunday: Closed</li></ul>').run();
   }
 }
 
@@ -314,7 +316,7 @@ app.get('/api/content/:type', async (c) => {
 app.put('/api/content/:type', requireAuth, async (c) => {
   try {
     const type = c.req.param('type');
-    const { content } = await c.req.json();
+    const { content, title } = await c.req.json();
     
     if (!content) {
       return c.json({ error: 'Content required' }, 400);
@@ -323,8 +325,8 @@ app.put('/api/content/:type', requireAuth, async (c) => {
     const sanitizedContent = sanitizeContent(content);
     
     const result = await c.env.HDYSPA_DB.prepare(
-      'INSERT OR REPLACE INTO content_blocks (id, type, content, updated_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP) RETURNING *'
-    ).bind(type, type, sanitizedContent).first();
+      'INSERT OR REPLACE INTO content_blocks (id, type, title, content, updated_at) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP) RETURNING *'
+    ).bind(type, type, title || null, sanitizedContent).first();
     
     return c.json({ content: result });
   } catch (error) {

@@ -15,7 +15,9 @@ CREATE TABLE IF NOT EXISTS posts (
 CREATE TABLE IF NOT EXISTS content_blocks (
     id TEXT PRIMARY KEY,
     type TEXT NOT NULL,
+    title TEXT,
     content TEXT NOT NULL,
+    active BOOLEAN DEFAULT TRUE,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -38,9 +40,9 @@ CREATE TABLE IF NOT EXISTS admin_sessions (
 );
 
 -- Insert default content
-INSERT OR IGNORE INTO content_blocks (id, type, content) VALUES 
-    ('mission', 'mission', '<h3>Our Mission</h3><p>To provide a space for creative reuse and community building through DIY projects and affordable second-hand goods. We believe in giving new life to pre-loved items while fostering creativity and sustainability in our community.</p>'),
-    ('hours', 'hours', '<ul><li><strong>Monday - Friday:</strong> 10am - 6pm</li><li><strong>Saturday:</strong> 11am - 5pm</li><li><strong>Sunday:</strong> Closed</li></ul><p><em>Holiday hours may vary. Check our Instagram for updates!</em></p>');
+INSERT OR IGNORE INTO content_blocks (id, type, title, content) VALUES 
+    ('mission', 'mission', 'Our Mission', '<p>Curated, pop-up thrift store for punks and queers</p>'),
+    ('hours', 'hours', 'Hours', '<ul><li><strong>Monday - Friday:</strong> 10am - 6pm</li><li><strong>Saturday:</strong> 11am - 5pm</li><li><strong>Sunday:</strong> Closed</li></ul><p><em>Holiday hours may vary. Check our Instagram for updates!</em></p>');
 
 -- Insert a welcome post
 INSERT OR IGNORE INTO posts (id, title, content, created_at) VALUES 

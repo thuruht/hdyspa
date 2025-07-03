@@ -17,15 +17,226 @@ document.addEventListener('DOMContentLoaded', () => {
   const mailingListForm = document.getElementById('mailing-list-form');
   const nameField = mailingListForm?.querySelector('[name="name"]');
   const messageField = mailingListForm?.querySelector('[name="message"]');
+  
+  // --------------------------
+  // GSAP Animations
+  // --------------------------
+  function initAnimations() {
+    console.log('Initializing GSAP animations');
+    
+    // Register CustomEase
+    gsap.registerPlugin(ScrollTrigger, CustomEase);
+    
+    // Custom eases
+    CustomEase.create("bounce", "M0,0 C0.14,0 0.27,0.67 0.3,0.75 0.33,0.83 0.38,0.95 0.42,1 0.46,1.05 0.52,1.09 0.56,1.03 0.59,0.97 0.66,0.84 0.7,0.75 0.74,0.67 0.77,0.6 0.8,0.5 0.83,0.4 0.86,0.3 0.9,0.25 0.94,0.2 0.98,0.15 1,0");
+    CustomEase.create("slowBounce", "M0,0 C0.14,0 0.22,0.45 0.25,0.55 0.28,0.65 0.31,0.75 0.35,0.8 0.38,0.85 0.43,0.9 0.5,0.9 0.57,0.9 0.62,0.85 0.65,0.8 0.69,0.75 0.72,0.65 0.75,0.55 0.78,0.45 0.82,0.35 0.85,0.27 0.88,0.19 0.92,0.12 0.96,0.06 1,0");
+    
+    // Initial page load sequence
+    const tl = gsap.timeline();
+    
+    // Header animation with sequential parts
+    tl.from("header .header-container", {
+      y: -50,
+      opacity: 0,
+      duration: 1,
+      ease: "power3.out"
+    });
+    
+    // Animate the HOWDY title with a custom bounce
+    tl.from(".span2.flip", {
+      scale: 1.2,
+      opacity: 0.5,
+      duration: 0.8,
+      ease: "bounce",
+      onComplete: () => {
+        // Create a subtle continuous animation
+        gsap.to(".span2.flip", {
+          scale: 1.02,
+          duration: 2.5,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut"
+        });
+      }
+    }, "-=0.5");
+    
+    // Letters flip animation
+    gsap.to(".flip", {
+      rotateY: 5,
+      duration: 2,
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut"
+    });
+    
+    // Staggered entrance for cards
+    gsap.from(".card", {
+      y: 30,
+      opacity: 0,
+      duration: 0.8,
+      stagger: 0.15,
+      ease: "back.out(1.2)"
+    });
+    
+    // Add hover effects for all cards
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        gsap.to(card, {
+          boxShadow: "0 8px 20px rgba(0, 0, 0, 0.3)",
+          y: -5,
+          scale: 1.01,
+          duration: 0.3,
+          ease: "power2.out"
+        });
+      });
+      
+      card.addEventListener('mouseleave', () => {
+        gsap.to(card, {
+          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
+          y: 0,
+          scale: 1,
+          duration: 0.3,
+          ease: "power2.in"
+        });
+      });
+    });
+    
+    // Animate the footer mascot with a slight bounce
+    const footerImg = document.querySelector('.squi-rmbreth');
+    if (footerImg) {
+      gsap.to(footerImg, {
+        y: -10,
+        duration: 1.5,
+        repeat: -1,
+        yoyo: true,
+        ease: "slowBounce"
+      });
+    }
+    
+    // Hover animations for admin button with improved effect
+    const adminBtn = document.getElementById('admin-login-button');
+    if (adminBtn) {
+      adminBtn.addEventListener('mouseenter', () => {
+        gsap.to(adminBtn, {
+          scale: 1.05,
+          backgroundColor: '#ff4500',
+          duration: 0.2,
+          ease: "power1.out"
+        });
+      });
+      
+      adminBtn.addEventListener('mouseleave', () => {
+        gsap.to(adminBtn, {
+          scale: 1,
+          backgroundColor: '',
+          duration: 0.2,
+          ease: "power1.in"
+        });
+      });
+    }
+    
+    // Scroll trigger animations with improved visual effect
+    ScrollTrigger.batch(".card", {
+      onEnter: batch => gsap.to(batch, {
+        opacity: 1,
+        y: 0,
+        stagger: 0.15,
+        overwrite: true
+      }),
+      once: true
+    });
+    
+    // Animate posts when they load with more engaging animations
+    window.addEventListener('contentUpdated', (event) => {
+      if (event.detail.type === 'posts') {
+        gsap.from("#posts-container .post", {
+          y: 20,
+          opacity: 0,
+          scale: 0.95,
+          duration: 0.5,
+          stagger: 0.1,
+          ease: "back.out(1.7)"
+        });
+      }
+    });
+    
+    // Stagger in the cards
+    gsap.from('.card', {
+      y: 50,
+      opacity: 0,
+      duration: 0.8,
+      stagger: 0.15,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: 'main',
+        start: 'top 80%',
+      }
+    });
+    
+    // Animate header elements
+    gsap.from('.header-container', {
+      scale: 0.9,
+      opacity: 0,
+      duration: 1,
+      ease: 'elastic.out(1, 0.5)'
+    });
+    
+    // Animate the mission content
+    gsap.from('#mission-content', {
+      y: -20,
+      opacity: 0,
+      duration: 0.7,
+      delay: 0.3,
+      ease: 'back.out(1.7)',
+    });
+    
+    // Animate the hours image with a custom bounce effect
+    gsap.from('.hours-image-container img', {
+      scale: 0.8,
+      opacity: 0,
+      duration: 1,
+      delay: 0.5,
+      ease: 'elastic.out(1, 0.3)',
+      scrollTrigger: {
+        trigger: '#hours-section',
+        start: 'top 80%',
+      }
+    });
+    
+    // Animate the footer mascot
+    gsap.from('.squi-rmbreth', {
+      rotation: -5,
+      y: 30,
+      opacity: 0,
+      duration: 1.2,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: 'footer',
+        start: 'top 90%',
+      }
+    });
+    
+    // Add hover animations to buttons
+    gsap.utils.toArray('.admin-btn, #logout-button, form button').forEach(button => {
+      button.addEventListener('mouseenter', () => {
+        gsap.to(button, {
+          scale: 1.05,
+          duration: 0.3,
+          ease: 'power1.out'
+        });
+      });
+      button.addEventListener('mouseleave', () => {
+        gsap.to(button, {
+          scale: 1,
+          duration: 0.3,
+          ease: 'power1.in'
+        });
+      });
+    });
+  }
 
   const uploadButton = document.querySelector('.admin-upload-link button');
   const archiveButton = document.querySelector('.view-archives-button'); // If i add back the "View Archives" button
-
-  // It's a single slideshow container:
-  const slideImage   = document.getElementById('slide-image');
-  const slideCaption = document.getElementById('slide-caption');
-  const prevButton   = document.getElementById('prev-button');
-  const nextButton   = document.getElementById('next-button');
 
   // Sorting UI (drop-down)
   const sortSelect = document.getElementById('sort-select');
@@ -35,14 +246,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const getCurrentDomain = () => window.location.hostname;
   const getApiBaseUrl = () => {
     const domain = getCurrentDomain();
-    // Use the new unified admin backend for API calls
-    if (domain === 'dev.farewellcafe.com') {
-      return 'https://admin.farewellcafe.com';
-    } else if (domain === 'farewellcafe.com') {
-      return 'https://admin.farewellcafe.com';
-    }
-    // For local development, use the admin backend
-    return 'https://admin.farewellcafe.com';
+    // Use the correct Cloudflare Worker URL for all API calls
+    return 'https://howdythrift.farewellcafe.com';
   };
   
   const BASE_URL = getApiBaseUrl();
@@ -57,7 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const contentApi = {
     getMissionStatement: async () => {
       try {
-        const response = await fetch('/api/content/mission');
+        const response = await fetch(`${BASE_URL}/api/content/mission`);
         if (!response.ok) throw new Error('Failed to fetch mission');
         const data = await response.json();
         return data.content;
@@ -75,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     getPosts: async () => {
       try {
-        const response = await fetch('/api/posts');
+        const response = await fetch(`${BASE_URL}/api/posts`);
         if (!response.ok) throw new Error('Failed to fetch posts');
         const data = await response.json();
         return data.posts || [];
@@ -99,7 +304,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     getFeaturedContent: async () => {
       try {
-        const response = await fetch('/api/featured');
+        const response = await fetch(`${BASE_URL}/api/featured`);
         if (!response.ok) throw new Error('Failed to fetch featured content');
         const data = await response.json();
         return data.featured || [];
@@ -122,7 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     getHours: async () => {
       try {
-        const response = await fetch('/api/content/hours');
+        const response = await fetch(`${BASE_URL}/api/content/hours`);
         if (!response.ok) throw new Error('Failed to fetch hours');
         const data = await response.json();
         return data.content;
@@ -146,6 +351,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (missionContainer) {
         const mission = await contentApi.getMissionStatement();
         missionContainer.innerHTML = mission.content || mission;
+        // Update the mission section title if available
+        const missionTitle = document.querySelector('#mission-statement h2');
+        if (missionTitle && mission.title) {
+          missionTitle.textContent = mission.title;
+        }
       }
 
       // Load Posts
@@ -162,33 +372,62 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Load Featured Content
       if (featuredContainer) {
-        const featured = await contentApi.getFeaturedContent();
-        featuredContainer.innerHTML = featured.map(item => {
-          if (item.type === 'image') {
-            return `
-              <figure class="featured-item">
-                <img src="${item.content}" alt="${item.caption}" loading="lazy">
-                <figcaption>${item.caption}</figcaption>
-              </figure>
-            `;
-          } else if (item.type === 'video') {
-            return `
-              <figure class="featured-item">
-                <div class="video-container">
-                  <iframe src="${item.content}" frameborder="0" allowfullscreen loading="lazy"></iframe>
-                </div>
-                <figcaption>${item.caption}</figcaption>
-              </figure>
-            `;
+        console.log('Loading featured content...');
+        try {
+          const featured = await contentApi.getFeaturedContent();
+          console.log('Featured content received:', featured);
+          
+          if (featured && featured.length > 0) {
+            featuredContainer.innerHTML = featured.map(item => {
+              if (item.type === 'image') {
+                return `
+                  <figure class="featured-item">
+                    <img src="${item.content}" alt="${item.caption || 'Featured image'}" loading="lazy" 
+                         onerror="this.onerror=null; this.src='./favicon.png'; this.style.opacity=0.5; this.alt='Image failed to load';">
+                    <figcaption>${item.caption || ''}</figcaption>
+                  </figure>
+                `;
+              } else if (item.type === 'video') {
+                return `
+                  <figure class="featured-item">
+                    <div class="video-container">
+                      <iframe src="${item.content}" frameborder="0" allowfullscreen loading="lazy"></iframe>
+                    </div>
+                    <figcaption>${item.caption}</figcaption>
+                  </figure>
+                `;
+              } else if (item.type === 'html') {
+                return `
+                  <div class="featured-item featured-html">
+                    <div class="html-content" style="color: #333; background-color: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">${item.content}</div>
+                    ${item.caption ? `<figcaption style="color: white;">${item.caption}</figcaption>` : ''}
+                  </div>
+                `;
+              }
+              return '';
+            }).join('');
+            
+            // Make the container visible in case it was hidden
+            featuredContainer.style.display = 'flex';
+            const featuredSection = document.getElementById('featured-section');
+            if (featuredSection) featuredSection.style.display = 'block';
+          } else {
+            console.log('No featured content available');
           }
-          return '';
-        }).join('');
+        } catch (err) {
+          console.error('Error displaying featured content:', err);
+        }
       }
 
       // Load Hours
       if (hoursContainer) {
         const hours = await contentApi.getHours();
         hoursContainer.innerHTML = hours.content || hours;
+        // Update the hours section title if available
+        const hoursTitle = document.querySelector('#hours-section h2');
+        if (hoursTitle && hours.title) {
+          hoursTitle.textContent = hours.title;
+        }
       }
 
     } catch (error) {
@@ -205,15 +444,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initial content load
   loadContent();
+  
+  // Initialize GSAP animations after DOM content loaded
+  initAnimations();
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  /* 
+   * NOTE: Removed duplicate content API and loadContent function (Issues 1.1-1.4)
+   * The first implementation at the beginning of the file is used instead.
+   */
 
   // --------------------------
-  // Slideshow-Related Variables
+  // NOTE: Slideshow-related variables and functions were removed
+  // as they are not needed for the Thrift app (Issue 3.1)
   // --------------------------
-  let allFlyers = [];         // Full dataset (either upcoming or past) from the Worker
-  let displayedFlyers = [];    // Currently displayed flyers (post-sort/filter)
-  let currentSlideIndex = 0;
-  let autoplayInterval;
-  const SLIDE_INTERVAL = 5000; // Interval for autoplay (5 seconds)
 
   // --------------------------
   // Helper Functions
@@ -302,8 +547,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /**
    * Fetch upcoming or past flyers from the unified events Worker.
-   * @param {string} state - 'howdy' or 'farewell'
-   * @param {boolean} showPast - whether to fetch archives or upcoming
+   * This function has been kept for compatibility but is no longer used for slideshow.
+   * (Issue 3.1: Removed slideshow functionality as it's not needed for Thrift app)
    */
   async function fetchFlyers(state, showPast = false) {
     try {
@@ -405,89 +650,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /**
-   * Displays the current slide (image + caption) based on `currentSlideIndex`.
+   * NOTE: Slideshow-related functions removed (Issue 3.1)
+   * The following functions were removed as they're not needed for the Thrift app:
+   * - displaySlide()
+   * - initSlideshow()
+   * - startAutoplay()
+   * - stopAutoplay()
    */
-  function displaySlide(index) {
-    if (!displayedFlyers.length) {
-      if (slideImage) {
-        slideImage.src = '';
-      }
-      if (slideCaption) {
-        slideCaption.textContent = 'No events found.';
-      }
-      return;
-    }
-
-    // Wrap index for a continuous loop, or clamp if you don't want looping.
-    if (index < 0) {
-      currentSlideIndex = displayedFlyers.length - 1;
-    } else if (index >= displayedFlyers.length) {
-      currentSlideIndex = 0;
-    }
-
-    const flyer = displayedFlyers[currentSlideIndex];
-    if (!flyer) return;
-
-    if (slideImage) {
-      slideImage.src = flyer.imageUrl || '';
-      slideImage.alt = flyer.title || 'Flyer';
-      slideImage.style.cursor = 'pointer';
-      slideImage.onclick = () => createEventPopup(flyer);
-    }
-  }
 
   /**
-   * Initializes (or re-initializes) the slideshow for the current state & sort selection.
-   * Uses the new slideshow API endpoint for better ordering control.
-   */
-  async function initSlideshow() {
-    const currentState = body?.dataset.state; // 'farewell' or 'howdy'
-    const sortValue = sortSelect ? sortSelect.value : 'soonest'; // default to soonest if undefined
-
-    const showPast = (sortValue === 'past'); // Decide if we fetch archives or upcoming
-    
-    if (!showPast) {
-      // For upcoming events, try the new slideshow endpoint first for better ordering
-      try {
-        const slideshowUrl = `${BASE_URL}/api/events/slideshow?venue=${currentState}`;
-        const response = await fetch(slideshowUrl);
-        if (response.ok) {
-          const data = await response.json();
-          console.log('Using slideshow API endpoint:', data);
-          // Convert slideshow format to flyer format
-          allFlyers = (data.slideshow || []).map(slide => ({
-            id: slide.id,
-            title: slide.title,
-            imageUrl: slide.thumbnail_url || slide.image_url,
-            date: slide.date,
-            venue: slide.venue,
-            // Add slideshow order for potential custom sorting
-            order: slide.order || 0
-          }));
-        } else {
-          throw new Error('Slideshow endpoint not available');
-        }
-      } catch (error) {
-        console.log('Slideshow API not available, falling back to events list:', error);
-        // Fallback to regular events list
-        allFlyers = await fetchFlyers(currentState, showPast);
-      }
-    } else {
-      // For past events, use the regular fetchFlyers function
-      allFlyers = await fetchFlyers(currentState, showPast);
-    }
-
-    // You could do further sorting here if needed.
-    displayedFlyers = allFlyers;
-    currentSlideIndex = 0;
-    displaySlide(currentSlideIndex);
-
-    // Start autoplay
-    startAutoplay();
-  }
-
-  /**
-   * Toggles the body state between 'howdy' and 'farewell', then re-fetches slideshow data.
+   * Toggles the body state between 'howdy' and 'farewell', then updates UI elements.
    */
   function toggleState() {
     console.log('toggleState called');
@@ -517,6 +689,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (howdySpan) {
       howdySpan.textContent = (newState === 'howdy') ? '& FAREWELL' : '& HOWDY';
+    } else {
+      console.log('howdySpan not found - this is expected for the Thrift app');
     }
     if (address) {
       address.textContent = (newState === 'howdy')
@@ -533,8 +707,9 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleImages(newState);
     updateSocialLinks(newState);
 
-    // Re-init slideshow for the new state
-    initSlideshow();
+    // NOTE: Removed slideshow re-initialization (Issue 3.1)
+    // The following line was removed:
+    // initSlideshow();
   }
 
   /**
@@ -559,28 +734,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Slideshow Prev/Next + Autoplay Control
-  if (prevButton) {
-    prevButton.addEventListener('click', () => {
-      currentSlideIndex--;
-      displaySlide(currentSlideIndex);
-      stopAutoplay();
-    });
-  }
-
-  if (nextButton) {
-    nextButton.addEventListener('click', () => {
-      currentSlideIndex++;
-      displaySlide(currentSlideIndex);
-      stopAutoplay();
-    });
-  }
-
-  // Pause/resume autoplay on hover
-  if (slideImage) {
-    slideImage.addEventListener('mouseenter', stopAutoplay);
-    slideImage.addEventListener('mouseleave', startAutoplay);
-  }
+  // NOTE: Removed slideshow-related event listeners (Issue 3.3)
+  // The following event listeners were removed as they're not needed for the Thrift app:
+  // - prevButton click event
+  // - nextButton click event
+  // - slideImage mouseenter/mouseleave events
 
   // --------------------------
   // Upload & Archives (Modals)
@@ -689,17 +847,23 @@ document.addEventListener('DOMContentLoaded', () => {
   // --------------------------
 
   // Toggle state when user clicks the "sulk" span (HOWDY / FAREWELL)
-  if (howdySpan) {
-    console.log('Adding click listener to howdySpan:', howdySpan);
-    howdySpan.addEventListener('click', (e) => {
-      console.log('State toggle clicked!');
-      e.preventDefault();
-      toggleState();
-    });
-    // Also make it visually clear it's clickable
-    howdySpan.style.cursor = 'pointer';
-  } else {
-    console.error('howdySpan element not found!');
+  // Safely check if howdySpan exists (specific to venue page, not thrift store)
+  // This prevents the ReferenceError in the thrift store page
+  try {
+    if (howdySpan && howdySpan instanceof Element) {
+      console.log('Adding click listener to howdySpan:', howdySpan);
+      howdySpan.addEventListener('click', (e) => {
+        console.log('State toggle clicked!');
+        e.preventDefault();
+        toggleState();
+      });
+      // Also make it visually clear it's clickable
+      howdySpan.style.cursor = 'pointer';
+    } else {
+      console.log('howdySpan element not found - skipping event listener (expected for Thrift app)');
+    }
+  } catch (error) {
+    console.log('Error handling howdySpan: ' + error.message);
   }
 
   // Archives button
@@ -756,12 +920,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Sorting drop-down: re-init the slideshow with chosen sort
-  if (sortSelect) {
-    sortSelect.addEventListener('change', () => {
-      initSlideshow(); 
-    });
-  }
+  // NOTE: Removed sortSelect event listener (Issue 3.3)
+  // The following event listener was removed as it's not needed for the Thrift app:
+  // - sortSelect change event that called initSlideshow()
 
   // --------------------------
   // Events Listing Popup Functions
@@ -959,94 +1120,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-      // Create popup content
-      let popupContent = `
-        <div style="padding: 20px; font-family: var(--font-hnm11); background: var(--card-bg-color);">
-          <h2 style="text-align: center; margin-bottom: 20px; color: var(--text-color);">
-            ${venue.toUpperCase()} UPCOMING SHOWS
-          </h2>
-      `;
-
-      if (upcomingEvents.length === 0) {
-        popupContent += `
-          <p style="text-align: center; color: var(--text-color); font-style: italic;">
-            No upcoming shows found.
-          </p>
-        `;
-      } else {
-        upcomingEvents.forEach(event => {
-          const eventDate = new Date(event.date || event.eventDate);
-          const formattedDate = eventDate.toLocaleDateString('en-US', {
-            weekday: 'short',
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-          });
-
-          popupContent += `
-            <div style="border: 1px solid var(--nav-border-color); margin: 10px 0; padding: 15px; background: rgba(255,255,255,0.9);">
-              <div style="display: flex; gap: 15px; align-items: flex-start;">
-                ${(event.flyerThumbnail || event.imageUrl) ? `
-                  <img src="${event.flyerThumbnail || event.imageUrl}" alt="${event.title}" 
-                       style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; flex-shrink: 0;">
-                ` : ''}
-                <div style="flex: 1;">
-                  <h3 style="margin: 0 0 8px 0; color: var(--text-color); font-size: 1.1em;">
-                    ${event.title}
-                  </h3>
-                  <p style="margin: 4px 0; color: var(--text-color); font-weight: bold;">
-                    📅 ${formattedDate}
-                    ${event.time || event.eventTime ? ` at ${event.time || event.eventTime}` : ''}
-                  </p>
-                  <p style="margin: 4px 0; color: var(--text-color);">
-                    📍 ${(event.venue || venue).toUpperCase()}
-                  </p>
-                  ${event.suggestedPrice ? `
-                    <p style="margin: 4px 0; color: var(--text-color);">
-                      💰 ${event.suggestedPrice}
-                    </p>
-                  ` : ''}
-                  ${event.description ? `
-                    <p style="margin: 8px 0 4px 0; color: var(--text-color); font-size: 0.9em; line-height: 1.4;">
-                      ${event.description.substring(0, 200)}${event.description.length > 200 ? '...' : ''}
-                    </p>
-                  ` : ''}
-                  ${event.ticketLink ? `
-                    <a href="${event.ticketLink}" target="_blank" rel="noopener" 
-                       style="display: inline-block; margin-top: 8px; padding: 6px 12px; 
-                              background: var(--button-bg-color); color: var(--button-text-color); 
-                              text-decoration: none; border-radius: 4px; font-size: 0.9em;">
-                      🎫 Get Tickets
-                    </a>
-                  ` : ''}
-                </div>
-              </div>
-            </div>
-          `;
-        });
-      }
-
-      popupContent += `
-          <div style="text-align: center; margin-top: 20px;">
-            <small style="color: var(--text-color); opacity: 0.7;">
-              Switch between HOWDY and FAREWELL modes to see different venue listings
-            </small>
-          </div>
-        </div>
-      `;
-
-      console.log('Popup content generated successfully');
-      return popupContent;
-    } catch (error) {
-      console.error('Error fetching events for popup:', error);
-      return `
-        <div style="padding: 20px; text-align: center;">
-          <p style="color: #ea4110;">Error loading events: ${error.message}</p>
-          <p style="color: #666; font-size: 0.9em;">Please try again later or check console for details.</p>
-        </div>
-      `;
-    }
-  }
+  /* 
+   * NOTE: The incomplete duplicate displayEventsPopup function has been removed.
+   * This was causing a syntax error that prevented script execution.
+   * The complete implementation of this function is above.
+   */
 
   // --------------------------
   // Popup System Integration

@@ -452,15 +452,34 @@ width: 96%;
    10. Footer Styles
 ============================== */
 footer div {
-  /* Removed card styling - let footer elements hang out naturally */
+  /* Restore card styling for footer container */
+  background: #ffffff;
   color: var(--text-color);
+  border: 1px solid var(--nav-border-color);
+  box-shadow: -12px 18px 0px var(--nav-border-color);
   padding: var(--padding-small);
   width: 100%;
   margin: 20px 0;
   text-align: center;
+  border-radius: 0px;
   letter-spacing: 0.5rem; 
   line-height: 1.3rem; 
   font-size: 1.2rem;
+}
+
+/* Remove card styling from specific footer elements that should "hang out" */
+footer .footer-logo,
+footer #admin-login-button-container {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 1rem 0 !important;
+}
+
+footer .admin-btn {
+  /* Let the admin button hang out naturally */
+  margin: 0 !important;
 }
 
 footer {
@@ -1517,11 +1536,27 @@ button[disabled] {
     height: 100%;
 }
 
+/* Featured HTML Content Styles */
 .featured-html {
-    background-color: rgba(255, 255, 255, 0.05);
-    padding: 1rem;
-    border-radius: 4px;
-    border-left: 3px solid var(--blew);
+  background-color: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  color: black; /* Ensure text is black for better contrast on white background */
+  border: 2px solid #333; /* Add border for better separation from red background */
+}
+
+.html-content {
+  width: 100%;
+  overflow: hidden;
+  color: black; /* Ensure text color is black */
+}
+
+.html-content img {
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+  display: block;
 }
 
 .social-section {
@@ -1827,16 +1862,91 @@ button[disabled] {
    Card Color Variations
 ============================== */
 
-/* Mission section - Blue background */
+/* Mission section - Light background like posts was */
 #mission-statement.card {
+  background-color: var(--card-bg-color); /* Light default background */
+  color: var(--text-color);
+}
+
+#mission-statement.card h2 {
+  color: var(--text-color);
+  font-family: 'kb', sans-serif;
+  /* No text stroke needed for light background */
+}
+
+/* Posts section - Blue background that mission had */
+#posts-section.card {
   background-color: var(--blew);
   color: #fff;
 }
 
-#mission-statement.card h2 {
+#posts-section.card h2 {
   color: #fff;
+  font-family: 'kb', sans-serif;
   -webkit-text-stroke: 1px #000000;
   text-shadow: -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000, 1px 1px 0 #000000;
+}
+
+/* Hours section - Green background */
+#hours-section.card {
+  background-color: var(--primary-bg-color); /* This is the green/lime */
+  color: #000;
+}
+
+#hours-section.card h2 {
+  color: #000;
+  font-family: 'kb', sans-serif;
+  -webkit-text-stroke: 1px #ffffff;
+  text-shadow: -1px -1px 0 #ffffff, 1px -1px 0 #ffffff, -1px 1px 0 #ffffff, 1px 1px 0 #ffffff;
+}
+
+/* Social media section - Purple background using existing var */
+#social-section.card {
+  background-color: var(--secondary-bg-color); /* Purple #D990FF */
+  color: #000;
+  border: 1px solid var(--nav-border-color);
+  box-shadow: -17px 20px 0px var(--nav-border-color);
+}
+
+#social-section.card h2 {
+  color: #000;
+  font-family: 'kb', sans-serif;
+  -webkit-text-stroke: 1px #ffffff;
+  text-shadow: -1px -1px 0 #ffffff, 1px -1px 0 #ffffff, -1px 1px 0 #ffffff, 1px 1px 0 #ffffff;
+}
+
+#social-section.card a {
+  color: #000;
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+/* Posts section keeps default card styling */
+
+/* ==============================
+   End Card Color Variations
+============================== */
+
+/* ==============================
+   Mobile Header Layout Fix
+============================== */
+@media (max-width: 768px) {
+  .diy-thrift-wrapper {
+    /* Keep all elements in a single row on mobile */
+    flex-wrap: nowrap !important;
+    gap: 0.2rem !important;
+  }
+  
+  .diy-thrift-wrapper h2 {
+    /* Reduce size slightly for mobile */
+    font-size: clamp(2rem, 3.5vw, 4rem) !important;
+    scale: 0.6 !important;
+  }
+  
+  .diy-thrift-wrapper h1 .span2 {
+    /* Adjust HOWDY size for mobile */
+    font-size: clamp(4.5rem, 10vw, 12rem) !important;
+  }
 }
 
 /* Featured section - Red background */
@@ -1847,36 +1957,37 @@ button[disabled] {
 
 #featured-content-section.card h2 {
   color: #fff;
+  font-family: 'kb', sans-serif;
   -webkit-text-stroke: 1px #000000;
   text-shadow: -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000, 1px 1px 0 #000000;
 }
-
-/* Hours section - Green background */
-#hours-section.card {
-  background-color: var(--secondary-bg-color); /* This is the green */
-  color: #000;
-}
-
-#hours-section.card h2 {
-  color: #000;
-  -webkit-text-stroke: 1px #ffffff;
-  text-shadow: -1px -1px 0 #ffffff, 1px -1px 0 #ffffff, -1px 1px 0 #ffffff, 1px 1px 0 #ffffff;
-}
-
-/* Social media section - Purple/dark background */
-#social-section.card {
-  background-color: #8A2BE2;
-  color: #fff;
-}
-
-#social-section.card h2 {
-  color: #fff;
-  -webkit-text-stroke: 1px #000000;
-  text-shadow: -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000, 1px 1px 0 #000000;
-}
-
-/* Posts section keeps default card styling */
 
 /* ==============================
-   End Card Color Variations
+   Desktop Layout Improvements
 ============================== */
+@media (min-width: 1024px) {
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+  
+  .card {
+    max-width: none; /* Remove any width restrictions on desktop */
+    width: 100%;
+  }
+  
+  #content-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+}
+
+.html-content img {
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+  display: block;
+}

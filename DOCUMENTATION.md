@@ -133,3 +133,59 @@ All resources use the `hdyspa` prefix for consistency:
    - Finalize the GET handler for content blocks
 
    - Implement search functionality for posts
+
+## Database Schema
+
+### D1 Tables
+
+#### content_blocks
+```sql
+CREATE TABLE IF NOT EXISTS content_blocks (
+  id TEXT PRIMARY KEY,
+  type TEXT NOT NULL,
+  title TEXT,
+  content TEXT NOT NULL,
+  active BOOLEAN DEFAULT TRUE,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+#### posts
+```sql
+CREATE TABLE IF NOT EXISTS posts (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL,
+  content TEXT NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  published BOOLEAN DEFAULT TRUE
+);
+```
+
+#### featured_content
+```sql
+CREATE TABLE IF NOT EXISTS featured_content (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  type TEXT NOT NULL, -- 'image', 'video', 'html'
+  content TEXT NOT NULL, -- URL or HTML content
+  caption TEXT,
+  order_index INTEGER DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  active BOOLEAN DEFAULT TRUE
+);
+```
+
+#### admin_sessions
+```sql
+CREATE TABLE IF NOT EXISTS admin_sessions (
+  id TEXT PRIMARY KEY,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  expires_at DATETIME NOT NULL
+);
+```
+
+### Default Content
+The schema includes default content for mission, hours, a welcome post, and a featured item to ensure the app has content on first load.
+
+### Editable Card Titles
+Content blocks now include a `title` field, allowing customization of section headings via the admin panel. For example, the "Hours" section can be renamed to "Store Hours" or "July Schedule" as needed.
