@@ -599,15 +599,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Handle both relative and absolute URLs
                 let imageUrl = item.content;
                 
-                if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('./')) {
-                  // If it's a relative URL without ./ prefix, ensure it's properly formatted
-                  if (imageUrl.startsWith('/')) {
-                    imageUrl = `${BASE_URL}${imageUrl}`;
-                  } else if (imageUrl.startsWith('media/')) {
-                    imageUrl = `${BASE_URL}/${imageUrl}`;
+                // Improved URL handling for images
+                if (imageUrl) {
+                  // Check if it's already a complete URL
+                  if (!imageUrl.startsWith('http') && !imageUrl.startsWith('data:')) {
+                    // Ensure we have a proper URL by checking different formats
+                    if (imageUrl.startsWith('./')) {
+                      // Local relative path, keep as is
+                    } else if (imageUrl.startsWith('/')) {
+                      // Root-relative path, add domain
+                      imageUrl = `${window.location.origin}${imageUrl}`;
+                    } else if (imageUrl.includes('/media/')) {
+                      // Contains media path but not properly formatted
+                      const mediaPath = imageUrl.substring(imageUrl.indexOf('/media/'));
+                      imageUrl = `${window.location.origin}${mediaPath}`;
+                    } else {
+                      // Assume it's a media filename
+                      imageUrl = `${window.location.origin}/media/${imageUrl}`;
+                    }
+                  }
+                  
+                  // Add cachebusting parameter to prevent browser cache issues
+                  if (imageUrl.includes('?')) {
+                    imageUrl += `&_t=${Date.now()}`;
                   } else {
-                    // Make sure we're using the proper domain and path
-                    imageUrl = `${BASE_URL}/media/${imageUrl}`;
+                    imageUrl += `?_t=${Date.now()}`;
                   }
                 }
                 
@@ -666,16 +682,64 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update hours image if available
         const hoursImageContainer = document.querySelector('.hours-image-container');
         if (hoursImageContainer && hours.image_url) {
+          // Process the image URL to ensure it's properly formatted
+          let imageUrl = hours.image_url;
+          
+          // Improved URL handling for hours image
+          if (!imageUrl.startsWith('http') && !imageUrl.startsWith('data:')) {
+            // Ensure we have a proper URL by checking different formats
+            if (imageUrl.startsWith('./')) {
+              // Local relative path, keep as is
+            } else if (imageUrl.startsWith('/')) {
+              // Root-relative path, add domain
+              imageUrl = `${window.location.origin}${imageUrl}`;
+            } else if (imageUrl.includes('/media/')) {
+              // Contains media path but not properly formatted
+              const mediaPath = imageUrl.substring(imageUrl.indexOf('/media/'));
+              imageUrl = `${window.location.origin}${mediaPath}`;
+            } else {
+              // Assume it's a media filename
+              imageUrl = `${window.location.origin}/media/${imageUrl}`;
+            }
+          }
+          
+          // Add cachebusting parameter to prevent browser cache issues
+          if (imageUrl.includes('?')) {
+            imageUrl += `&_t=${Date.now()}`;
+          } else {
+            imageUrl += `?_t=${Date.now()}`;
+          }
+          
           const currentImg = hoursImageContainer.querySelector('img');
           if (currentImg) {
-            currentImg.src = hours.image_url;
+            currentImg.src = imageUrl;
             currentImg.alt = `${hours.title || 'Howdy DIY Thrift Hours'} - Updated Schedule`;
+            // Add error handling
+            currentImg.onerror = function() {
+              this.onerror = null;
+              console.log('Hours image failed to load, using fallback');
+              this.src = './hyqr.png';
+              this.style.maxWidth = '180px';
+              this.style.margin = '20px auto';
+              this.style.display = 'block';
+              this.alt = 'Image unavailable - please check media path';
+            };
           } else {
             // Create image if it doesn't exist
             const newImg = document.createElement('img');
-            newImg.src = hours.image_url;
+            newImg.src = imageUrl;
             newImg.alt = `${hours.title || 'Howdy DIY Thrift Hours'} - Updated Schedule`;
             newImg.style = "max-width: 100%; height: auto; border: 1px solid var(--nav-border-color);";
+            // Add error handling
+            newImg.onerror = function() {
+              this.onerror = null;
+              console.log('Hours image failed to load, using fallback');
+              this.src = './hyqr.png';
+              this.style.maxWidth = '180px';
+              this.style.margin = '20px auto';
+              this.style.display = 'block';
+              this.alt = 'Image unavailable - please check media path';
+            };
             hoursImageContainer.appendChild(newImg);
           }
         }
@@ -914,23 +978,24 @@ document.addEventListener('DOMContentLoaded', () => {
    */
   function toggleState() {
     console.log('toggleState called');
-    if (!body) {
+    const bodyElement = document.querySelector('body');
+    if (!bodyElement) {
       console.error('Body element not found!');
       return;
     }
     
-    const currentState = body.dataset.state;
+    const currentState = bodyElement.dataset.state;
     const newState = currentState === 'farewell' ? 'howdy' : 'farewell';
     console.log(`Switching from ${currentState} to ${newState}`);
     
-    body.dataset.state = newState;
+    bodyElement.dataset.state = newState;
     
     // Properly manage the howdy-active class for theming
     if (newState === 'howdy') {
-      body.classList.add('howdy-active');
+      bodyElement.classList.add('howdy-active');
       console.log('Added howdy-active class');
     } else {
-      body.classList.remove('howdy-active');
+      bodyElement.classList.remove('howdy-active');
       console.log('Removed howdy-active class');
     }
 
@@ -1107,8 +1172,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const archiveButton = document.querySelector('.view-archives-button');
     if (archiveButton) {
       archiveButton.addEventListener('click', () => {
-        if (!body) return;
-        openArchiveModal(body.dataset.state);
+        // Use document.body instead of undefined 'body' variable
+        openArchiveModal(document.body.dataset.state);
       });
     }
   } catch (error) {
@@ -1374,16 +1439,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initial Setup
   // --------------------------
 
-  // Set an initial state 
-  if (body) {
-    const initialState = body.dataset.state || 'farewell';
-    body.dataset.state = initialState;
+  // Set an initial state - ensure body is properly defined
+  const bodyElement = document.querySelector('body');
+  if (bodyElement) {
+    const initialState = bodyElement.dataset.state || 'farewell';
+    bodyElement.dataset.state = initialState;
     
     // Initialize CSS class based on initial state
     if (initialState === 'howdy') {
-      body.classList.add('howdy-active');
+      bodyElement.classList.add('howdy-active');
     } else {
-      body.classList.remove('howdy-active');
+      bodyElement.classList.remove('howdy-active');
     }
     
     toggleImages(initialState); 

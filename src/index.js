@@ -447,19 +447,24 @@ app.post('/api/media/upload', requireAuth, async (c) => {
 });
 
 // Serve media files from R2
-app.get('/media/*', async (c) => {
+app.get('/media/:filename', async (c) => {
   try {
-    const key = c.req.param('*');
-    console.log('Media request for key:', key);
+    const filename = c.req.param('filename');
+    console.log('Media request for filename:', filename);
     
-    const object = await c.env.HDYSPA_MEDIA_BUCKET.get(key);
+    if (!filename) {
+      console.error('Invalid media filename requested');
+      return c.notFound('Invalid media filename');
+    }
+    
+    const object = await c.env.HDYSPA_MEDIA_BUCKET.get(filename);
     
     if (!object) {
-      console.log('Media file not found in R2:', key);
+      console.log('Media file not found in R2:', filename);
       return c.notFound('Media file not found');
     }
 
-    console.log('Media file found in R2, serving:', key);
+    console.log('Media file found in R2, serving:', filename);
     const headers = new Headers();
     object.writeHttpMetadata(headers);
     headers.set('etag', object.httpEtag);
