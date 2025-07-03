@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // --------------------------
   // DOM Elements
   // --------------------------
-  const howdySpan = document.querySelector('.header-title .sulk'); 
   const farewellSpan = document.querySelector('.header-title .span2'); 
   const body = document.querySelector('body');
   const title = document.querySelector('title');
@@ -29,11 +28,12 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Custom eases - simplified to use standard eases instead of custom paths that might be invalid
     try {
-      // Use simpler, valid CustomEase paths
-      CustomEase.create("bounce", "M0,0,C0.14,0,0.27,0.67,0.3,0.75,0.33,0.83,0.38,0.95,0.42,1,0.46,1.05,0.52,1.09,0.56,1.03,0.59,0.97,0.66,0.84,0.7,0.75,0.74,0.67,0.77,0.6,0.8,0.5,0.83,0.4,0.86,0.3,0.9,0.25,0.94,0.2,0.98,0.15,1,0");
-      CustomEase.create("slowBounce", "M0,0,C0.14,0,0.22,0.45,0.25,0.55,0.28,0.65,0.31,0.75,0.35,0.8,0.38,0.85,0.43,0.9,0.5,0.9,0.57,0.9,0.62,0.85,0.65,0.8,0.69,0.75,0.72,0.65,0.75,0.55,0.78,0.45,0.82,0.35,0.85,0.27,0.88,0.19,0.92,0.12,0.96,0.06,1,0");
+      // Use standard eases instead of CustomEase to avoid syntax errors
+      // We'll set these as variables to reference in animations
+      const bounceEase = "elastic.out(1, 0.3)";
+      const slowBounceEase = "elastic.out(1, 0.2)";
     } catch (error) {
-      console.warn('CustomEase creation failed, falling back to standard eases:', error);
+      console.warn('CustomEase setup failed, falling back to standard eases:', error);
       // If custom eases fail, we'll use standard eases instead in our animations
     }
     
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
       scale: 1.2,
       opacity: 0.5,
       duration: 0.8,
-      ease: "bounce",
+      ease: "elastic.out(1, 0.3)",
       onComplete: () => {
         // Create a subtle continuous animation
         gsap.to(".span2.flip", {
@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
         duration: 1.5,
         repeat: -1,
         yoyo: true,
-        ease: "slowBounce"
+        ease: "elastic.out(1, 0.2)"
       });
     }
     
@@ -321,7 +321,7 @@ document.addEventListener('DOMContentLoaded', () => {
               gsap.to(missionLogo, {
                 y: 0, 
                 duration: 0.6, 
-                ease: "bounce.out"
+                ease: "bounce" // This is a standard GSAP ease, not a CustomEase
               });
             }
           });
@@ -577,20 +577,26 @@ document.addEventListener('DOMContentLoaded', () => {
               if (item.type === 'image') {
                 // Handle both relative and absolute URLs
                 let imageUrl = item.content;
+                
                 if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('./')) {
                   // If it's a relative URL without ./ prefix, ensure it's properly formatted
                   if (imageUrl.startsWith('/')) {
-                    imageUrl = `https://howdythrift.farewellcafe.com${imageUrl}`;
+                    imageUrl = `${BASE_URL}${imageUrl}`;
+                  } else if (imageUrl.startsWith('media/')) {
+                    imageUrl = `${BASE_URL}/${imageUrl}`;
                   } else {
-                    imageUrl = `https://howdythrift.farewellcafe.com/${imageUrl}`;
+                    // Make sure we're using the proper domain and path
+                    imageUrl = `${BASE_URL}/media/${imageUrl}`;
                   }
                 }
+                
+                // Verify image URL
                 console.log('Rendering image with source:', imageUrl);
                 
                 return `
                   <figure class="featured-item">
                     <img src="${imageUrl}" alt="${item.caption || 'Featured image'}" loading="lazy" 
-                         onerror="console.error('Image failed to load:', this.src); this.onerror=null; this.src='./favicon.png'; this.style.opacity=0.5; this.style.border='1px dashed red'; this.alt='Image failed to load';">
+                         onerror="this.onerror=null; console.log('Image failed to load, using fallback'); this.src='./hyqr.png'; this.style.maxWidth='180px'; this.style.margin='20px auto'; this.style.display='block'; this.alt='Image unavailable - please check media path';">
                     <figcaption>${item.caption || ''}</figcaption>
                   </figure>
                 `;
@@ -894,8 +900,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (farewellSpan) {
       farewellSpan.textContent = (newState === 'howdy') ? 'HOWDY' : 'FAREWELL';
     }
-    if (howdySpan) {
-      howdySpan.textContent = (newState === 'howdy') ? '& FAREWELL' : '& HOWDY';
+    // This is for the venue site, not needed for Thrift app
+    const howdyElement = document.querySelector('.header-title .sulk');
+    if (howdyElement) {
+      howdyElement.textContent = (newState === 'howdy') ? '& FAREWELL' : '& HOWDY';
     } else {
       console.log('howdySpan not found - this is expected for the Thrift app');
     }
@@ -1054,31 +1062,36 @@ document.addEventListener('DOMContentLoaded', () => {
   // --------------------------
 
   // Toggle state when user clicks the "sulk" span (HOWDY / FAREWELL)
-  // Safely check if howdySpan exists (specific to venue page, not thrift store)
-  // This prevents the ReferenceError in the thrift store page
+  // This is for the venue site, not needed for Thrift app
   try {
-    if (howdySpan && howdySpan instanceof Element) {
-      console.log('Adding click listener to howdySpan:', howdySpan);
-      howdySpan.addEventListener('click', (e) => {
+    const howdyClickElement = document.querySelector('.header-title .sulk');
+    if (howdyClickElement && howdyClickElement instanceof Element) {
+      console.log('Adding click listener to howdy element:', howdyClickElement);
+      howdyClickElement.addEventListener('click', (e) => {
         console.log('State toggle clicked!');
         e.preventDefault();
         toggleState();
       });
       // Also make it visually clear it's clickable
-      howdySpan.style.cursor = 'pointer';
+      howdyClickElement.style.cursor = 'pointer';
     } else {
-      console.log('howdySpan element not found - skipping event listener (expected for Thrift app)');
+      console.log('howdyClickElement not found - skipping event listener (expected for Thrift app)');
     }
   } catch (error) {
-    console.log('Error handling howdySpan: ' + error.message);
+    console.error('Error handling howdyClickElement:', error);
   }
 
-  // Archives button
-  if (archiveButton) {
-    archiveButton.addEventListener('click', () => {
-      if (!body) return;
-      openArchiveModal(body.dataset.state);
-    });
+  // Archives button - check if it exists before adding event listener
+  try {
+    const archiveButton = document.querySelector('.view-archives-button');
+    if (archiveButton) {
+      archiveButton.addEventListener('click', () => {
+        if (!body) return;
+        openArchiveModal(body.dataset.state);
+      });
+    }
+  } catch (error) {
+    console.error('Error setting up archive button:', error);
   }
 
   // Mailing list form submission
