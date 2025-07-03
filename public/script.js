@@ -12,10 +12,30 @@ document.addEventListener('DOMContentLoaded', () => {
   const postsContainer = document.getElementById('posts-container');
   const featuredContainer = document.getElementById('featured-content-container');
   const hoursContainer = document.getElementById('hours-content');
+  
+  // DOM elements for buttons/controls with null checks
+  const uploadButton = document.querySelector('.admin-upload-link button');
+  // Note: Archive button is removed as it's not currently used
+  // const archiveButton = document.querySelector('.view-archives-button');
+  
+  // Sort select - may not be present in current HTML
+  const sortSelect = document.getElementById('sort-select');
+  
+  // Add event listeners only if elements exist
+  if (uploadButton) {
+    uploadButton.addEventListener('click', () => {
+      console.log('Upload button clicked');
+      // Any upload functionality would go here
+    });
+  }
 
-  const mailingListForm = document.getElementById('mailing-list-form');
-  const nameField = mailingListForm?.querySelector('[name="name"]');
-  const messageField = mailingListForm?.querySelector('[name="message"]');
+  if (sortSelect) {
+    sortSelect.addEventListener('change', (e) => {
+      const selectedValue = e.target.value;
+      console.log('Sort changed to:', selectedValue);
+      // Sort functionality would go here
+    });
+  }
   
   // --------------------------
   // GSAP Animations
@@ -430,11 +450,29 @@ document.addEventListener('DOMContentLoaded', () => {
     createMissionLogoIdleAnimation();
   }
 
+  // DOM elements for buttons/controls with null checks
   const uploadButton = document.querySelector('.admin-upload-link button');
-  const archiveButton = document.querySelector('.view-archives-button'); // If i add back the "View Archives" button
+  // Note: Archive button reference removed as it's not currently used in the Thrift app
+  // const archiveButton = document.querySelector('.view-archives-button');
 
   // Sorting UI (drop-down)
   const sortSelect = document.getElementById('sort-select');
+
+  // Add event listeners only if elements exist
+  if (uploadButton) {
+    uploadButton.addEventListener('click', () => {
+      console.log('Upload button clicked');
+      // Any upload functionality would go here
+    });
+  }
+
+  if (sortSelect) {
+    sortSelect.addEventListener('change', (e) => {
+      const selectedValue = e.target.value;
+      console.log('Sort changed to:', selectedValue);
+      // Sort functionality would go here
+    });
+  }
 
   // Constants / Config
   // Determine the correct API base URL based on current domain
@@ -531,10 +569,17 @@ document.addEventListener('DOMContentLoaded', () => {
         // Fallback to localStorage for offline capability
         const stored = localStorage.getItem('hdyspa_hours');
         if (stored) {
-          return { content: stored };
+          // Try to parse as JSON first in case it's a full object with image_url
+          try {
+            return JSON.parse(stored);
+          } catch (parseError) {
+            // If not JSON, assume it's just the content string
+            return { content: stored, image_url: './mxdiyjuly.png' };
+          }
         }
         return {
-          content: "<ul><li><strong>Monday - Friday:</strong> 10am - 6pm</li><li><strong>Saturday:</strong> 11am - 5pm</li><li><strong>Sunday:</strong> Closed</li></ul><p><em>Holiday hours may vary. Check our Instagram for updates!</em></p>"
+          content: "<ul><li><strong>Monday - Friday:</strong> 10am - 6pm</li><li><strong>Saturday:</strong> 11am - 5pm</li><li><strong>Sunday:</strong> Closed</li></ul><p><em>Holiday hours may vary. Check our Instagram for updates!</em></p>",
+          image_url: './mxdiyjuly.png'
         };
       }
     }
@@ -622,7 +667,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Make the container visible in case it was hidden
             featuredContainer.style.display = 'flex';
-            const featuredSection = document.getElementById('featured-section');
+            const featuredSection = document.getElementById('featured-content-section');
             if (featuredSection) featuredSection.style.display = 'block';
           } else {
             console.log('No featured content available');
@@ -640,6 +685,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const hoursTitle = document.querySelector('#hours-section h2');
         if (hoursTitle && hours.title) {
           hoursTitle.textContent = hours.title;
+        }
+        
+        // Update hours image if available
+        const hoursImageContainer = document.querySelector('.hours-image-container');
+        if (hoursImageContainer && hours.image_url) {
+          const currentImg = hoursImageContainer.querySelector('img');
+          if (currentImg) {
+            currentImg.src = hours.image_url;
+            currentImg.alt = `${hours.title || 'Howdy DIY Thrift Hours'} - Updated Schedule`;
+          } else {
+            // Create image if it doesn't exist
+            const newImg = document.createElement('img');
+            newImg.src = hours.image_url;
+            newImg.alt = `${hours.title || 'Howdy DIY Thrift Hours'} - Updated Schedule`;
+            newImg.style = "max-width: 100%; height: auto; border: 1px solid var(--nav-border-color);";
+            hoursImageContainer.appendChild(newImg);
+          }
         }
       }
 
@@ -1037,25 +1099,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Mailing List + Hidden Fields
   // --------------------------
 
-  /**
-   * Updates hidden fields in the mailing list form based on the current state.
-   */
-  function updateHiddenFields() {
-    const newState = document.body?.dataset.state;
-    if (nameField) {
-      nameField.value = "Add to mailing list"; // Example default
-    }
-
-    if (messageField) {
-      if (newState === 'howdy') {
-        messageField.value = 'HOWDY';
-      } else if (newState === 'farewell') {
-        messageField.value = 'FAREWELL';
-      } else {
-        messageField.value = 'UNKNOWN'; 
-      }
-    }
-  }
+  // NOTE: Removed updateHiddenFields function (not needed for Thrift app)
+  // This was leftover code from the shared codebase related to the mailing list form
 
   // --------------------------
   // Event Listeners
@@ -1094,51 +1139,8 @@ document.addEventListener('DOMContentLoaded', () => {
     console.error('Error setting up archive button:', error);
   }
 
-  // Mailing list form submission
-  if (mailingListForm) {
-    mailingListForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const formData = new FormData(e.target);
-      const data = Object.fromEntries(formData.entries());
-
-      if (!data.name || !data.message) {
-        console.error('Hidden field(s) missing or empty.');
-        return;
-      }
-
-      try {
-        // Send the POST request
-        await fetch('https://fwhy.kcmo.xyz/mailing-list', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
-        });
-
-        // Subscribe to Kit newsletter
-        const email = encodeURIComponent(data.email);
-        try {
-          await fetch('https://app.kit.com/forms/8151329/subscriptions', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              email_address: data.email
-            })
-          });
-          console.log('Successfully subscribed to newsletter');
-        } catch (error) {
-          console.error('Newsletter subscription failed:', error);
-        }
-
-        // Reset the form
-        e.target.reset();
-        updateHiddenFields();
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    });
-  }
+  // NOTE: Removed mailing list form submission code (not needed for Thrift app)
+  // This was leftover code from the shared codebase
 
   // NOTE: Removed sortSelect event listener (Issue 3.3)
   // The following event listener was removed as it's not needed for the Thrift app:
@@ -1412,22 +1414,10 @@ document.addEventListener('DOMContentLoaded', () => {
     updateSocialLinks(initialState); 
   }
 
-  // Initialize the slideshow (default to soonest events)
-  initSlideshow();
+  // NOTE: Removed initSlideshow call (Issue 3.1)
+  // Slideshow-related code has been removed as it's not needed for the Thrift app
 
-  // Initialize hidden fields on page load
-  updateHiddenFields();
-
-  // Watch for body data-state changes and update hidden fields accordingly
-  if (body) {
-    const observer = new MutationObserver((mutations) => {
-      for (const mutation of mutations) {
-        if (mutation.type === "attributes" && mutation.attributeName === "data-state") {
-          updateHiddenFields();
-        }
-      }
-    });
-    observer.observe(document.body, { attributes: true });
-  }
+  // NOTE: Removed hidden fields updates and observer (not needed for Thrift app)
+  // This was leftover code from the shared codebase related to the mailing list form
 });
 

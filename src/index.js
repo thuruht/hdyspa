@@ -450,23 +450,33 @@ app.post('/api/media/upload', requireAuth, async (c) => {
 app.get('/media/*', async (c) => {
   try {
     const key = c.req.param('*');
+    console.log('Media request for key:', key);
+    
     const object = await c.env.HDYSPA_MEDIA_BUCKET.get(key);
     
     if (!object) {
-      return c.notFound();
+      console.log('Media file not found in R2:', key);
+      return c.notFound('Media file not found');
     }
 
+    console.log('Media file found in R2, serving:', key);
     const headers = new Headers();
     object.writeHttpMetadata(headers);
     headers.set('etag', object.httpEtag);
     headers.set('cache-control', 'public, max-age=31536000');
+    
+    // Add CORS headers
+    headers.set('access-control-allow-origin', '*');
+    headers.set('access-control-allow-methods', 'GET, HEAD, OPTIONS');
+    headers.set('access-control-max-age', '86400');
+    headers.set('access-control-expose-headers', 'Content-Length, Content-Type, ETag');
 
     return new Response(object.body, {
       headers,
     });
   } catch (error) {
-    console.error('Media serve error:', error);
-    return c.notFound();
+    console.error('Media serve error:', error.message, 'For key:', c.req.param('*'));
+    return c.text(`Media serve error: ${error.message}`, 404);
   }
 });
 

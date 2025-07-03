@@ -194,14 +194,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         },
 
-        updateHours: async (content, title) => {
+        updateHours: async (content, title, image_url) => {
             try {
                 const response = await fetch(apiUrl('/api/content/hours'), {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ content, title }),
+                    body: JSON.stringify({ content, title, image_url }),
                     credentials: 'include'
                 });
                 
@@ -345,7 +345,26 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h3>Edit Hours</h3>
                     <input type="text" id="hours-title" placeholder="Section Title" class="admin-input" value="${hours.title || 'Hours'}">
                     <div id="hours-editor" class="editor-container"></div>
-                    <button id="save-hours" class="admin-btn">Save Hours</button>
+                    
+                    <div class="hours-image-section" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #333;">
+                        <h4>Hours Image</h4>
+                        ${hours.image_url ? 
+                            `<div class="current-hours-image" style="margin-bottom: 10px;">
+                                <p>Current image:</p>
+                                <img src="${hours.image_url}" alt="Current hours image" style="max-width: 100%; max-height: 200px; border: 1px solid #444;">
+                             </div>` : 
+                            '<p>No custom image set. Using default image.</p>'
+                        }
+                        <div class="hours-image-upload" style="margin-top: 10px;">
+                            <p>Upload a new hours image:</p>
+                            <input type="file" id="hours-image-upload" accept="image/*" class="admin-input">
+                            <div class="button-group" style="display: flex; gap: 10px; margin-top: 10px;">
+                                <button id="upload-hours-image" class="admin-btn">Upload New Image</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button id="save-hours" class="admin-btn" style="margin-top: 15px;">Save Hours Content</button>
                 </div>
                 
                 <div class="admin-section">
@@ -420,6 +439,17 @@ document.addEventListener('DOMContentLoaded', () => {
             if (hours && hours.content) {
                 quillInstances.hours.root.innerHTML = hours.content;
             }
+            
+            // Update hours image display if it exists
+            if (hours && hours.image_url) {
+                const imageContainer = document.querySelector('.current-hours-image');
+                if (imageContainer) {
+                    const img = imageContainer.querySelector('img');
+                    if (img) {
+                        img.src = hours.image_url;
+                    }
+                }
+            }
 
         } catch (error) {
             console.error('Error loading admin content:', error);
@@ -445,11 +475,70 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const content = quillInstances.hours.root.innerHTML;
                 const title = document.getElementById('hours-title').value;
-                await adminApi.updateHours(content, title);
+                
+                // Get the current hours image URL from the data attribute
+                const currentImageElement = document.querySelector('.current-hours-image img');
+                const image_url = currentImageElement ? currentImageElement.getAttribute('src') : null;
+                
+                await adminApi.updateHours(content, title, image_url);
                 alert('Hours updated!');
                 window.dispatchEvent(new CustomEvent('contentUpdated', { detail: { type: 'hours' } }));
             } catch (error) {
                 alert('Failed to update hours');
+            }
+        });
+        
+        // Upload hours image
+        document.getElementById('upload-hours-image')?.addEventListener('click', async () => {
+            try {
+                const fileInput = document.getElementById('hours-image-upload');
+                const uploadButton = document.getElementById('upload-hours-image');
+                
+                if (!fileInput.files.length) {
+                    alert('Please select an image file to upload');
+                    return;
+                }
+                
+                // Show upload progress indicator
+                uploadButton.textContent = 'Uploading...';
+                uploadButton.disabled = true;
+                
+                try {
+                    // Handle file upload
+                    const uploadResult = await adminApi.uploadMedia(fileInput.files[0]);
+                    
+                    // Update the displayed image
+                    let imageContainer = document.querySelector('.current-hours-image');
+                    if (!imageContainer) {
+                        // Create container if it doesn't exist
+                        const hoursImageSection = document.querySelector('.hours-image-section');
+                        imageContainer = document.createElement('div');
+                        imageContainer.className = 'current-hours-image';
+                        imageContainer.style.marginBottom = '10px';
+                        hoursImageSection.insertBefore(imageContainer, document.querySelector('.hours-image-upload'));
+                    }
+                    
+                    imageContainer.innerHTML = `
+                        <p>Current image:</p>
+                        <img src="${uploadResult.url}" alt="Current hours image" style="max-width: 100%; max-height: 200px; border: 1px solid #444;">
+                    `;
+                    
+                    alert('Hours image uploaded successfully! Click "Save Hours Content" to save all changes.');
+                } catch (uploadError) {
+                    console.error('Hours image upload failed:', uploadError);
+                    alert(`Hours image upload failed: ${uploadError.message || 'Unknown error'}`);
+                }
+                
+                // Reset UI
+                uploadButton.textContent = 'Upload New Image';
+                uploadButton.disabled = false;
+                fileInput.value = '';
+                
+            } catch (error) {
+                console.error('Error uploading hours image:', error);
+                alert('Failed to upload hours image');
+                document.getElementById('upload-hours-image').textContent = 'Upload New Image';
+                document.getElementById('upload-hours-image').disabled = false;
             }
         });
 

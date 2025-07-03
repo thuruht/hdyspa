@@ -596,8 +596,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 return `
                   <figure class="featured-item">
                     <img src="${imageUrl}" alt="${item.caption || 'Featured image'}" loading="lazy" 
-                         onerror="this.onerror=null; console.log('Image failed to load, using fallback'); this.src='./hyqr.png'; this.style.maxWidth='180px'; this.style.margin='20px auto'; this.style.display='block'; this.alt='Image unavailable - please check media path';">
+                         onerror="this.onerror=null; console.log('Image failed to load, using fallback for:', this.src); this.src='./hyqr.png'; this.style.maxWidth='180px'; this.style.margin='20px auto'; this.style.display='block'; this.alt='Image unavailable - please check media path';">
                     <figcaption>${item.caption || ''}</figcaption>
+                    <div class="image-controls" style="text-align: center; margin-top: 5px; font-size: 0.8rem; color: #777;">
+                      <span>${imageUrl.split('/').pop()}</span>
+                    </div>
                   </figure>
                 `;
               } else if (item.type === 'video') {
@@ -1040,22 +1043,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /**
    * Updates hidden fields in the mailing list form based on the current state.
    */
-  function updateHiddenFields() {
-    const newState = document.body?.dataset.state;
-    if (nameField) {
-      nameField.value = "Add to mailing list"; // Example default
-    }
-
-    if (messageField) {
-      if (newState === 'howdy') {
-        messageField.value = 'HOWDY';
-      } else if (newState === 'farewell') {
-        messageField.value = 'FAREWELL';
-      } else {
-        messageField.value = 'UNKNOWN'; 
-      }
-    }
-  }
+  // Removed legacy updateHiddenFields function that was used by the mailing list form
 
   // --------------------------
   // Event Listeners
@@ -1094,51 +1082,8 @@ document.addEventListener('DOMContentLoaded', () => {
     console.error('Error setting up archive button:', error);
   }
 
-  // Mailing list form submission
-  if (mailingListForm) {
-    mailingListForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const formData = new FormData(e.target);
-      const data = Object.fromEntries(formData.entries());
+  // Removed legacy mailing list form code that's not needed for the Thrift app
 
-      if (!data.name || !data.message) {
-        console.error('Hidden field(s) missing or empty.');
-        return;
-      }
-
-      try {
-        // Send the POST request
-        await fetch('https://fwhy.kcmo.xyz/mailing-list', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
-        });
-
-        // Subscribe to Kit newsletter
-        const email = encodeURIComponent(data.email);
-        try {
-          await fetch('https://app.kit.com/forms/8151329/subscriptions', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              email_address: data.email
-            })
-          });
-          console.log('Successfully subscribed to newsletter');
-        } catch (error) {
-          console.error('Newsletter subscription failed:', error);
-        }
-
-        // Reset the form
-        e.target.reset();
-        updateHiddenFields();
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    });
-  }
 
   // NOTE: Removed sortSelect event listener (Issue 3.3)
   // The following event listener was removed as it's not needed for the Thrift app:
@@ -1412,18 +1357,16 @@ document.addEventListener('DOMContentLoaded', () => {
     updateSocialLinks(initialState); 
   }
 
-  // Initialize the slideshow (default to soonest events)
-  initSlideshow();
+  // Removed legacy slideshow initialization that's not needed for Thrift app
 
-  // Initialize hidden fields on page load
-  updateHiddenFields();
+  // Removed legacy code for initializing hidden fields (mailing list)
 
-  // Watch for body data-state changes and update hidden fields accordingly
+  // Watch for body data-state changes
   if (body) {
     const observer = new MutationObserver((mutations) => {
       for (const mutation of mutations) {
         if (mutation.type === "attributes" && mutation.attributeName === "data-state") {
-          updateHiddenFields();
+          // Removed updateHiddenFields call (mailing list)
         }
       }
     });
