@@ -61,44 +61,44 @@ document.addEventListener('DOMContentLoaded', () => {
     const tl = gsap.timeline();
     
     // Header animation with sequential parts
-    tl.from("header .header-container", {
-      y: -50,
-      opacity: 0,
-      duration: 1,
-      ease: "power3.out"
-    });
+     //   tl.from("header .header-container", {
+       //   y: -50,
+        //  vopacity: 0.69,
+        //  duration: 1,
+        //  ease: "power3.out"
+  //  });
     
     // Animate the HOWDY title with a custom bounce
-    tl.from(".span2.flip", {
-      scale: 1.2,
-      opacity: 0.5,
-      duration: 0.8,
-      ease: "elastic.out(1, 0.3)",
-      onComplete: () => {
+    //    tl.from(".span2.flip", {
+        //  scale: 1.2,
+         // opacity: 0.87,
+    //      duration: 0.8,
+      //    ease: "elastic.out(1, 0.3)",
+        //  onComplete: () => {
         // Create a subtle continuous animation
-        gsap.to(".span2.flip", {
-          scale: 1.02,
-          duration: 2.5,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut"
-        });
-      }
-    }, "-=0.5");
+         //   gsap.to(".span2.flip", {
+            //  scale: 1.02,
+            //  duration: 2.5,
+            //  repeat: -1,
+            //  yoyo: true,
+            //  ease: "sine.inOut"
+          //  });
+        //  }
+      //  }, "-=0.5");
     
     // Letters flip animation
-    gsap.to(".flip", {
-      rotateY: 5,
-      duration: 2,
-      repeat: -1,
-      yoyo: true,
-      ease: "sine.inOut"
-    });
+  //  gsap.to(".flip", {
+    //  rotateY: 5,
+    //  duration: 2,
+     // repeat: -1,
+     // yoyo: true,
+    //  ease: "sine.inOut"
+   // });
     
     // Staggered entrance for cards
     gsap.from(".card", {
       y: 30,
-      opacity: 0,
+     // opacity: 0,
       duration: 0.8,
       stagger: 0.15,
       ease: "back.out(1.2)"
@@ -108,7 +108,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.card').forEach(card => {
       card.addEventListener('mouseenter', () => {
         gsap.to(card, {
-          boxShadow: "0 8px 20px rgba(0, 0, 0, 0.3)",
           y: -5,
           scale: 1.01,
           duration: 0.3,
@@ -118,7 +117,6 @@ document.addEventListener('DOMContentLoaded', () => {
       
       card.addEventListener('mouseleave', () => {
         gsap.to(card, {
-          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
           y: 0,
           scale: 1,
           duration: 0.3,
@@ -189,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Stagger in the cards
     gsap.from('.card', {
       y: 50,
-      opacity: 0,
+    //  opacity: 0,
       duration: 0.8,
       stagger: 0.15,
       ease: 'power2.out',
@@ -199,13 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
     
-    // Animate header elements
-    gsap.from('.header-container', {
-      scale: 0.9,
-      opacity: 0,
-      duration: 1,
-      ease: 'elastic.out(1, 0.5)'
-    });
+
     
     // Animate the mission content
     gsap.from('#mission-content', {
