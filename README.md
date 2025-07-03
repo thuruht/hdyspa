@@ -12,6 +12,7 @@ A production-ready single page application built with Cloudflare Workers, design
 - 📁 **Media Management**: R2 storage for images and files
 - 🗄️ **Database**: D1 for structured data, KV for caching
 - 🔄 **Editable Card Titles**: Section headings can be customized via admin panel
+- 🕒 **Updatable Hours Image**: Replace the weekly hours image directly from admin panel
 
 ## Tech Stack
 
@@ -90,6 +91,7 @@ Access the admin panel by clicking "Admin Login" and entering your password.
 
 1. **Mission Statement**: Edit the main community mission
 2. **Hours**: Update operating hours and special notices
+   - Upload a new hours image for updated weekly schedules
 3. **Posts**: Create, edit, and delete blog posts
 4. **Featured Content**: Add images, videos, or HTML content
 

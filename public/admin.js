@@ -270,14 +270,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 const formData = new FormData();
                 formData.append('file', file);
                 
+                console.log('Uploading media file:', file.name, 'size:', file.size, 'type:', file.type);
+                
                 const response = await fetch(apiUrl('/api/media/upload'), {
                     method: 'POST',
                     body: formData,
                     credentials: 'include'
                 });
                 
-                if (!response.ok) throw new Error('Failed to upload media');
-                return await response.json();
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+                    throw new Error(`Upload failed (${response.status}): ${errorData.error || response.statusText}`);
+                }
+                
+                const result = await response.json();
+                console.log('Upload successful, received URL:', result.url);
+                return result;
             } catch (error) {
                 console.error('Upload media error:', error);
                 throw error;
@@ -492,11 +500,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const caption = document.getElementById('featured-caption').value;
                 const fileInput = document.getElementById('media-upload');
                 const addButton = document.getElementById('add-featured');
+                const featuredType = document.getElementById('featured-type').value;
                 
                 let content = contentInput;
                 
                 // For HTML type, just use the content input
-                if (type === 'html') {
+                if (featuredType === 'html') {
                     if (!content) {
                         alert('Please enter HTML content');
                         return;
@@ -530,7 +539,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         addButton.disabled = false;
                         return;
                     }
-                } else if (!content && type !== 'html') {
+                } else if (!content && featuredType !== 'html') {
                     alert('Please provide content URL or upload a file');
                     addButton.textContent = 'Add Featured Content';
                     addButton.disabled = false;
@@ -547,9 +556,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderAdminContent();
                 window.dispatchEvent(new CustomEvent('contentUpdated', { detail: { type: 'featured' } }));
             } catch (error) {
-                alert('Failed to add featured content: ' + error.message);
-                addButton.textContent = 'Add Featured Content';
-                addButton.disabled = false;
+                console.error('Failed to add featured content:', error);
+                alert(`Failed to add featured content: ${error.message || 'Unknown error'}`);
+                document.getElementById('add-featured').textContent = 'Add Featured Content';
+                document.getElementById('add-featured').disabled = false;
             }
         });
 

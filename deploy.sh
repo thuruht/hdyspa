@@ -75,6 +75,17 @@ if [ "$INIT_DB" = true ]; then
     fi
 fi
 
+# Apply hours image migration
+echo "🗄️ Applying hours image migration (adds image_url column to content_blocks)..."
+echo "⚠️ Continue? (y/n)"
+read -r confirmation
+if [[ "$confirmation" =~ ^[Yy]$ ]]; then
+    npx wrangler d1 execute hdyspa-db --file=./sql/migration_hours_image.sql --remote
+    echo "✅ Hours image migration complete"
+else
+    echo "❌ Hours image migration skipped"
+fi
+
 # Set up secrets if they don't exist
 echo "🔐 Setting up secrets..."
 

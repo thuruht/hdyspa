@@ -113,8 +113,8 @@ async function initializeDefaultContent(env) {
 
   if (!hours) {
     await env.HDYSPA_DB.prepare(
-      'INSERT INTO content_blocks (id, type, title, content) VALUES (?, ?, ?, ?)'
-    ).bind('hours', 'hours', 'Hours', '<ul><li>Monday - Friday: 10am - 6pm</li><li>Saturday: 11am - 5pm</li><li>Sunday: Closed</li></ul>').run();
+      'INSERT INTO content_blocks (id, type, title, content, image_url) VALUES (?, ?, ?, ?, ?)'
+    ).bind('hours', 'hours', 'Hours', '<ul><li>Monday - Friday: 10am - 6pm</li><li>Saturday: 11am - 5pm</li><li>Sunday: Closed</li></ul>', './mxdiyjuly.png').run();
   }
 }
 
@@ -305,7 +305,10 @@ app.get('/api/content/:type', async (c) => {
       return c.json({ error: 'Content not found' }, 404);
     }
     
-    return c.json({ content });
+    // Include image_url in the response if available
+    const imageUrl = content.image_url ? `https://howdythrift.farewellcafe.com/media/${content.image_url}` : null;
+    
+    return c.json({ content: { ...content, image_url: imageUrl } });
   } catch (error) {
     console.error('Get content error:', error);
     return c.json({ error: 'Failed to fetch content' }, 500);
@@ -316,7 +319,7 @@ app.get('/api/content/:type', async (c) => {
 app.put('/api/content/:type', requireAuth, async (c) => {
   try {
     const type = c.req.param('type');
-    const { content, title } = await c.req.json();
+    const { content, title, image_url } = await c.req.json();
     
     if (!content) {
       return c.json({ error: 'Content required' }, 400);
@@ -325,8 +328,8 @@ app.put('/api/content/:type', requireAuth, async (c) => {
     const sanitizedContent = sanitizeContent(content);
     
     const result = await c.env.HDYSPA_DB.prepare(
-      'INSERT OR REPLACE INTO content_blocks (id, type, title, content, updated_at) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP) RETURNING *'
-    ).bind(type, type, title || null, sanitizedContent).first();
+      'INSERT OR REPLACE INTO content_blocks (id, type, title, content, image_url, updated_at) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP) RETURNING *'
+    ).bind(type, type, title || null, sanitizedContent, image_url || null).first();
     
     return c.json({ content: result });
   } catch (error) {
