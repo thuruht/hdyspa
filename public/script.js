@@ -672,8 +672,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         // Update hours image if available
-        const hoursImageContainer = document.querySelector('.hours-image-container');
-        if (hoursImageContainer && hours.image_url) {
+        if (hours.image_url) {
           // Process the image URL to ensure it's properly formatted
           let imageUrl = hours.image_url;
           
@@ -700,6 +699,16 @@ document.addEventListener('DOMContentLoaded', () => {
             imageUrl += `&_t=${Date.now()}`;
           } else {
             imageUrl += `?_t=${Date.now()}`;
+          }
+          
+          // Check if hours image container already exists
+          let hoursImageContainer = document.querySelector('.hours-image-container');
+          if (!hoursImageContainer) {
+            // Create hours image container if it doesn't exist
+            hoursImageContainer = document.createElement('div');
+            hoursImageContainer.className = 'hours-image-container';
+            hoursImageContainer.style.cssText = 'text-align: center; margin-top: 1rem;';
+            hoursContainer.appendChild(hoursImageContainer);
           }
           
           const currentImg = hoursImageContainer.querySelector('img');
@@ -733,6 +742,12 @@ document.addEventListener('DOMContentLoaded', () => {
               this.alt = 'Image unavailable - please check media path';
             };
             hoursImageContainer.appendChild(newImg);
+          }
+        } else {
+          // Remove hours image container if no image URL
+          const existingContainer = document.querySelector('.hours-image-container');
+          if (existingContainer) {
+            existingContainer.remove();
           }
         }
       }
