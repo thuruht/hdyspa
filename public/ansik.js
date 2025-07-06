@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
       end: 1200,    // Extend the distance to make the color shift extra subtle
       scrub: 1
     },
-    backgroundColor: "#ffffff",
+    backgroundColor: "#00ffcc",
     ease: "none"
   });
 ;

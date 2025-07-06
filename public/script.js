@@ -625,7 +625,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return `
                   <figure class="featured-item">
                     <img src="${imageUrl}" alt="${item.caption || 'Featured image'}" loading="lazy" 
-                         onerror="this.onerror=null; console.log('Image failed to load, using fallback'); this.src='./hyqr.png'; this.style.maxWidth='180px'; this.style.margin='20px auto'; this.style.display='block'; this.alt='Image unavailable - please check media path';">
+                         onerror="this.onerror=null; console.log('Image failed to load, using fallback'); this.src='./hyph.png'; this.style.maxWidth='180px'; this.style.margin='20px auto'; this.style.display='block'; this.alt='Image unavailable - please check media path';">
                     <figcaption>${item.caption || ''}</figcaption>
                   </figure>
                 `;
@@ -641,8 +641,8 @@ document.addEventListener('DOMContentLoaded', () => {
               } else if (item.type === 'html') {
                 return `
                   <div class="featured-item featured-html">
-                    <div class="html-content" style="color: #333; background-color: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">${item.content}</div>
-                    ${item.caption ? `<figcaption style="color: white;">${item.caption}</figcaption>` : ''}
+                    <div class="html-content" style="color: #333; background-color: transparent; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); text-shadow:1px 1px 2px #ffffff;">${item.content}</div>
+                    ${item.caption ? `<figcaption style="color: #c9c9c9;">${item.caption}</figcaption>` : ''}
                   </div>
                 `;
               }
