@@ -663,7 +663,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Load Hours
       if (hoursContainer) {
+        console.log('Loading hours content...');
         const hours = await contentApi.getHours();
+        console.log('Hours data received:', hours);
+        console.log('Hours image URL:', hours.image_url);
+        
         hoursContainer.innerHTML = hours.content || hours;
         // Update the hours section title if available
         const hoursTitle = document.querySelector('#hours-section h2');
@@ -673,6 +677,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Update hours image if available
         if (hours.image_url) {
+          console.log('Processing hours image URL:', hours.image_url);
           // Process the image URL to ensure it's properly formatted
           let imageUrl = hours.image_url;
           
@@ -734,13 +739,15 @@ document.addEventListener('DOMContentLoaded', () => {
             // Add error handling
             newImg.onerror = function() {
               this.onerror = null;
-              console.log('Hours image failed to load, using fallback');
-              this.src = './hyqr.png';
+              console.log('Hours image failed to load:', imageUrl);
+              console.log('Using fallback image');
+              this.src = './hyph.png';
               this.style.maxWidth = '180px';
               this.style.margin = '20px auto';
               this.style.display = 'block';
               this.alt = 'Image unavailable - please check media path';
             };
+            console.log('Created new hours image element with src:', imageUrl);
             hoursImageContainer.appendChild(newImg);
           }
         } else {

@@ -297,18 +297,26 @@ app.delete('/api/posts/:id', requireAuth, async (c) => {
 app.get('/api/content/:type', async (c) => {
   try {
     const type = c.req.param('type');
+    console.log('Getting content for type:', type);
+    
     const content = await c.env.HDYSPA_DB.prepare(
       'SELECT * FROM content_blocks WHERE id = ?'
     ).bind(type).first();
     
     if (!content) {
+      console.log('Content not found for type:', type);
       return c.json({ error: 'Content not found' }, 404);
     }
+    
+    console.log('Raw content from DB:', content);
     
     // Include image_url in the response if available
     const imageUrl = content.image_url ? `https://howdythrift.farewellcafe.com/media/${content.image_url}` : null;
     
-    return c.json({ content: { ...content, image_url: imageUrl } });
+    const response = { content: { ...content, image_url: imageUrl } };
+    console.log('Sending response:', response);
+    
+    return c.json(response);
   } catch (error) {
     console.error('Get content error:', error);
     return c.json({ error: 'Failed to fetch content' }, 500);
