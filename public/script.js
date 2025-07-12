@@ -43,8 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function initAnimations() {
     console.log('Initializing GSAP animations');
     
-    // First, ensure the header is visible regardless of animations
-    gsap.set(".header-title, .span2.flip", { opacity: 1 });
+    // First, ensure the header container is visible but letters will be animated
+    gsap.set(".header-title", { opacity: 1 });
     
     // Register CustomEase
     gsap.registerPlugin(ScrollTrigger, MotionPathPlugin, CustomEase);
@@ -71,14 +71,33 @@ document.addEventListener('DOMContentLoaded', () => {
       ease: "power3.out"
     });
     
-    // Animate the HOWDY title with a custom bounce - ensure it ends at full opacity
-    tl.from(".span2.flip", {
-      scale: 1.2,
-      opacity: 0.5, // Start with lower opacity
-      duration: 0.8,
+    // Split the HOWDY text into individual letters for more control
+    const howdyText = document.querySelector(".span2.flip");
+    const howdyLetters = document.querySelectorAll(".span2.flip .flip, .span2.flip .flipp");
+    
+    // Set initial state for HOWDY letters - each with different starting positions and rotations
+    howdyLetters.forEach((letter, index) => {
+      gsap.set(letter, { 
+        opacity: 0, 
+        y: -100 - (Math.random() * 50), // Random starting heights
+        x: (Math.random() * 40) - 20,   // Random horizontal offset
+        rotationX: (Math.random() * 90) - 45, // Random X rotation
+        rotationY: (Math.random() * 90) - 45  // Random Y rotation
+      });
+    });
+    
+    // Create a staggered drop-in animation for each letter of HOWDY
+    tl.to(".span2.flip .flip, .span2.flip .flipp", {
+      opacity: 1,
+      y: 0,
+      x: 0,
+      rotationX: 0,
+      rotationY: 0,
+      duration: 1.2,
+      stagger: 0.15, // Stagger each letter by 0.15 seconds
       ease: "elastic.out(1, 0.3)",
       onComplete: () => {
-        // Create a subtle continuous animation
+        // Create a subtle continuous animation after all letters have dropped in
         gsap.to(".span2.flip", {
           scale: 1.02,
           duration: 2.5,
@@ -86,8 +105,29 @@ document.addEventListener('DOMContentLoaded', () => {
           yoyo: true,
           ease: "sine.inOut"
         });
+        
+        // Add hover effects with GSAP for each letter
+        howdyLetters.forEach(letter => {
+          letter.addEventListener("mouseenter", () => {
+            gsap.to(letter, {
+              scale: 1.2,
+              color: "#ff6347",
+              duration: 0.3,
+              ease: "back.out(1.7)"
+            });
+          });
+          
+          letter.addEventListener("mouseleave", () => {
+            gsap.to(letter, {
+              scale: 1,
+              color: "var(--blew)",
+              duration: 0.3,
+              ease: "back.out(1.7)"
+            });
+          });
+        });
       }
-    }, "-=0.5");
+    }, "-=0.3");
     
     // Letters flip animation
     gsap.to(".flip", {
