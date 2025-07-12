@@ -363,14 +363,14 @@ document.addEventListener('DOMContentLoaded', () => {
             adminContent.innerHTML = `
                 <div class="admin-section">
                     <h3>Edit Mission Statement</h3>
-                    <input type="text" id="mission-title" placeholder="Section Title" class="admin-input" value="${mission.title || 'Our Mission'}">
+                    <input type="text" id="mission-title" placeholder="Section Title" class="admin-input" value="${mission.title || document.querySelector('#mission-statement h2')?.textContent || 'Our Mission'}">
                     <div id="mission-editor" class="editor-container"></div>
                     <button id="save-mission" class="admin-btn">Save Mission</button>
                 </div>
                 
                 <div class="admin-section">
                     <h3>Edit Hours</h3>
-                    <input type="text" id="hours-title" placeholder="Section Title" class="admin-input" value="${hours.title || 'Hours'}">
+                    <input type="text" id="hours-title" placeholder="Section Title" class="admin-input" value="${hours.title || document.querySelector('#hours-section h2')?.textContent || 'Hours'}">
                     <div id="hours-editor" class="editor-container"></div>
                     
                     <div class="hours-image-section" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #333;">
@@ -396,6 +396,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 <div class="admin-section">
                     <h3>Manage Posts</h3>
+                    <input type="text" id="posts-section-title" placeholder="Section Title" class="admin-input" value="${document.querySelector('#posts-section h2')?.textContent || 'Posts'}">
+                    <button id="save-posts-title" class="admin-btn" style="margin-bottom: 15px;">Save Section Title</button>
+                    
                     <div id="posts-admin">
                         ${posts.map(post => `
                             <div class="admin-post-item" data-id="${post.id}">
@@ -415,6 +418,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 <div class="admin-section">
                     <h3>Manage Featured Content</h3>
+                    <input type="text" id="featured-section-title" placeholder="Section Title" class="admin-input" value="${document.querySelector('#featured-content-section h2')?.textContent || 'Featured'}">
+                    <button id="save-featured-title" class="admin-btn" style="margin-bottom: 15px;">Save Section Title</button>
+                    
                     <div id="featured-admin">
                         ${featured.map(item => `
                             <div class="admin-featured-item" data-id="${item.id}">
@@ -435,6 +441,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     <input type="text" id="featured-caption" placeholder="Caption (optional)" class="admin-input">
                     <input type="file" id="media-upload" accept="image/*,video/*" class="admin-input">
                     <button id="add-featured" class="admin-btn">Add Featured Content</button>
+                </div>
+                
+                <div class="admin-section">
+                    <h3>Social Media Section</h3>
+                    <input type="text" id="social-section-title" placeholder="Section Title" class="admin-input" value="${document.querySelector('#social-section h2')?.textContent || 'Follow Us'}">
+                    <button id="save-social-title" class="admin-btn">Save Section Title</button>
                 </div>
             `;
 
@@ -494,6 +506,42 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.dispatchEvent(new CustomEvent('contentUpdated', { detail: { type: 'mission' } }));
             } catch (error) {
                 alert('Failed to update mission statement');
+            }
+        });
+
+        // Save posts section title
+        document.getElementById('save-posts-title')?.addEventListener('click', async () => {
+            try {
+                const title = document.getElementById('posts-section-title').value;
+                localStorage.setItem('hdyspa_posts_title', title);
+                alert('Posts section title updated!');
+                window.dispatchEvent(new CustomEvent('contentUpdated', { detail: { type: 'posts_title' } }));
+            } catch (error) {
+                alert('Failed to update posts section title');
+            }
+        });
+
+        // Save featured section title
+        document.getElementById('save-featured-title')?.addEventListener('click', async () => {
+            try {
+                const title = document.getElementById('featured-section-title').value;
+                localStorage.setItem('hdyspa_featured_title', title);
+                alert('Featured section title updated!');
+                window.dispatchEvent(new CustomEvent('contentUpdated', { detail: { type: 'featured_title' } }));
+            } catch (error) {
+                alert('Failed to update featured section title');
+            }
+        });
+
+        // Save social section title
+        document.getElementById('save-social-title')?.addEventListener('click', async () => {
+            try {
+                const title = document.getElementById('social-section-title').value;
+                localStorage.setItem('hdyspa_social_title', title);
+                alert('Social section title updated!');
+                window.dispatchEvent(new CustomEvent('contentUpdated', { detail: { type: 'social_title' } }));
+            } catch (error) {
+                alert('Failed to update social section title');
             }
         });
 

@@ -548,9 +548,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (missionContainer) {
         const mission = await contentApi.getMissionStatement();
         missionContainer.innerHTML = mission.content || mission;
-        // Update the mission section title if available
+        // Update the mission section title only if explicitly set in admin panel
         const missionTitle = document.querySelector('#mission-statement h2');
-        if (missionTitle && mission.title) {
+        // Only update title if it's explicitly set and not the default "Our Mission"
+        if (missionTitle && mission.title && mission.title !== 'Our Mission') {
           missionTitle.textContent = mission.title;
         }
       }
@@ -565,6 +566,13 @@ document.addEventListener('DOMContentLoaded', () => {
             <small class="post-date">${new Date(post.created_at || post.date).toLocaleDateString()}</small>
           </article>
         `).join('');
+        
+        // Update the posts section title if set in localStorage
+        const postsTitle = document.querySelector('#posts-section h2');
+        const savedPostsTitle = localStorage.getItem('hdyspa_posts_title');
+        if (postsTitle && savedPostsTitle) {
+          postsTitle.textContent = savedPostsTitle;
+        }
       }
 
       // Load Featured Content
@@ -642,6 +650,13 @@ document.addEventListener('DOMContentLoaded', () => {
             featuredContainer.style.display = 'flex';
             const featuredSection = document.getElementById('featured-content-section');
             if (featuredSection) featuredSection.style.display = 'block';
+            
+            // Update the featured section title if set in localStorage
+            const featuredTitle = document.querySelector('#featured-content-section h2');
+            const savedFeaturedTitle = localStorage.getItem('hdyspa_featured_title');
+            if (featuredTitle && savedFeaturedTitle) {
+              featuredTitle.textContent = savedFeaturedTitle;
+            }
           } else {
             console.log('No featured content available');
           }
@@ -658,9 +673,10 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Hours image URL:', hours.image_url);
         
         hoursContainer.innerHTML = hours.content || hours;
-        // Update the hours section title if available
+        // Update the hours section title only if explicitly set in admin panel
         const hoursTitle = document.querySelector('#hours-section h2');
-        if (hoursTitle && hours.title) {
+        // Only update title if it's explicitly set and not the default "Hours"
+        if (hoursTitle && hours.title && hours.title !== 'Hours') {
           hoursTitle.textContent = hours.title;
         }
         
@@ -768,6 +784,13 @@ document.addEventListener('DOMContentLoaded', () => {
             existingContainer.remove();
           }
         }
+      }
+
+      // Update the social section title if set in localStorage
+      const socialTitle = document.querySelector('#social-section h2');
+      const savedSocialTitle = localStorage.getItem('hdyspa_social_title');
+      if (socialTitle && savedSocialTitle) {
+        socialTitle.textContent = savedSocialTitle;
       }
 
     } catch (error) {
@@ -967,7 +990,7 @@ document.addEventListener('DOMContentLoaded', () => {
         id: event.id,
         title: event.title,
         // New API provides thumbnail_url, fallback to legacy fields
-        imageUrl: event.thumbnail_url || event.flyerThumbnail || event.flyer_url || event.flyerUrl || event.imageUrl,
+        imageUrl: event.thumbnail_url || event.flyerThumbnail || event.flyer_url || event.imageUrl,
         date: event.date || event.eventDate,
         time: event.default_time || event.time || event.eventTime,
         venue: event.venue_display || event.venue || event.type || state,
