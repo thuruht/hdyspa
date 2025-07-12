@@ -43,6 +43,9 @@ document.addEventListener('DOMContentLoaded', () => {
   function initAnimations() {
     console.log('Initializing GSAP animations');
     
+    // First, ensure the header is visible regardless of animations
+    gsap.set(".header-title, .span2.flip", { opacity: 1 });
+    
     // Register CustomEase
     gsap.registerPlugin(ScrollTrigger, MotionPathPlugin, CustomEase);
     
@@ -68,10 +71,10 @@ document.addEventListener('DOMContentLoaded', () => {
       ease: "power3.out"
     });
     
-    // Animate the HOWDY title with a custom bounce
+    // Animate the HOWDY title with a custom bounce - ensure it ends at full opacity
     tl.from(".span2.flip", {
       scale: 1.2,
-      opacity: 0.87,
+      opacity: 0.5, // Start with lower opacity
       duration: 0.8,
       ease: "elastic.out(1, 0.3)",
       onComplete: () => {

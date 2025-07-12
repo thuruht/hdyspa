@@ -762,9 +762,14 @@ font-family:'hnbi4',sans-serif;
 
 
 
-.drop-crawl, .drop-wiggle {
+.drop-crawl {
   opacity: 0;
+  position: relative; 
+  cursor: crosshair; 
+  }
 
+.drop-wiggle {
+  opacity: 1; /* Changed from 0 to make header visible */
   position: relative; 
   cursor: crosshair; 
   }
