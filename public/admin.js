@@ -505,7 +505,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Get the current hours image URL from the data attribute
                 const currentImageElement = document.querySelector('.current-hours-image img');
-                const image_url = currentImageElement ? currentImageElement.getAttribute('src') : null;
+                let image_url = currentImageElement ? currentImageElement.getAttribute('src') : null;
+                
+                // Extract just the filename if it's a full URL
+                if (image_url && image_url.includes('/media/')) {
+                    const parts = image_url.split('/media/');
+                    image_url = parts[parts.length - 1]; // Get the filename part
+                }
                 
                 await adminApi.updateHours(content, title, image_url);
                 alert('Hours updated!');

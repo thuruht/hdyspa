@@ -208,18 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ease: 'back.out(1.7)',
     });
     
-    // Animate the hours image with a custom bounce effect
-    gsap.from('.hours-image-container img', {
-      scale: 0.8,
-      opacity: 0,
-      duration: 1,
-      delay: 0.5,
-      ease: 'elastic.out(1, 0.3)',
-      scrollTrigger: {
-        trigger: '#hours-section',
-        start: 'top 80%',
-      }
-    });
+    // Hours image animation will be triggered dynamically when the image is created
     
     // Animate the footer mascot
     gsap.from('.squi-rmbreth', {
@@ -730,6 +719,14 @@ document.addEventListener('DOMContentLoaded', () => {
               this.style.display = 'block';
               this.alt = 'Image unavailable - please check media path';
             };
+            
+            // Animate the updated image
+            gsap.from(currentImg, {
+              scale: 0.9,
+              opacity: 0.5,
+              duration: 0.6,
+              ease: 'power2.out'
+            });
           } else {
             // Create image if it doesn't exist
             const newImg = document.createElement('img');
@@ -749,6 +746,20 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             console.log('Created new hours image element with src:', imageUrl);
             hoursImageContainer.appendChild(newImg);
+            
+            // Animate the newly created hours image
+            gsap.from(newImg, {
+              scale: 0.8,
+              opacity: 0,
+              duration: 1,
+              delay: 0.2,
+              ease: 'elastic.out(1, 0.3)',
+              scrollTrigger: {
+                trigger: '#hours-section',
+                start: 'top 80%',
+                toggleActions: 'play none none reverse'
+              }
+            });
           }
         } else {
           // Remove hours image container if no image URL

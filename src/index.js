@@ -310,8 +310,20 @@ app.get('/api/content/:type', async (c) => {
     
     console.log('Raw content from DB:', content);
     
-    // Include image_url in the response if available
-    const imageUrl = content.image_url ? `https://howdythrift.farewellcafe.com/media/${content.image_url}` : null;
+    // Handle image_url properly - don't double-prepend domain
+    let imageUrl = content.image_url;
+    if (imageUrl) {
+      if (imageUrl.startsWith('http')) {
+        // Already a full URL, use as-is
+        imageUrl = imageUrl;
+      } else if (imageUrl.startsWith('./')) {
+        // Local relative path, use as-is
+        imageUrl = imageUrl;
+      } else {
+        // Assume it's just a filename, prepend domain
+        imageUrl = `https://howdythrift.farewellcafe.com/media/${imageUrl}`;
+      }
+    }
     
     const response = { content: { ...content, image_url: imageUrl } };
     console.log('Sending response:', response);

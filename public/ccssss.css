@@ -17,7 +17,7 @@
     --button-bg-color: #b0ee00;
     --button-text-color: #000000;
     --header-bg: var(--primary-bg-color) url('./bg4.png') center/cover no-repeat; /* Combined background */
-	--howder-bg: var(--secondary-bg-color) url('./bg7.png') center/cover no-repeat;
+  --howder-bg: var(--secondary-bg-color) url('./bg7.png') center/cover no-repeat;
     /* Fonts */
     --font-howder: 'ds', sans-serif;
     --font-main: 'hnb2', sans-serif;
@@ -1924,21 +1924,18 @@ button[disabled] {
 /* ==============================
    Mobile Header Layout Fix
 ============================== */
-@media (max-width: 768px) {
+@media (max-width: 1000px) {
   .diy-thrift-wrapper {
-    /* Keep all elements in a single row on mobile */
+    flex-direction: column !important;
     flex-wrap: nowrap !important;
+    align-items: center !important;
     gap: 0.2rem !important;
   }
-  
   .diy-thrift-wrapper h2 {
-    /* Reduce size slightly for mobile */
     font-size: clamp(2rem, 3.5vw, 4rem) !important;
     scale: 0.6 !important;
   }
-  
   .diy-thrift-wrapper h1 .span2 {
-    /* Adjust HOWDY size for mobile */
     font-size: clamp(4.5rem, 10vw, 12rem) !important;
   }
 }
