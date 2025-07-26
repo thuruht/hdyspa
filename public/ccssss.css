@@ -736,13 +736,22 @@ footer p{
     -o-transform: rotate(-352deg);
     transform: rotate(-352deg);
     display: inline-block;
+    transition: transform 0.3s ease, color 0.3s ease;
+    cursor: pointer;
+    z-index: 10; /* Ensure clickable */
+    position: relative; /* Helps with z-index */
 }
+
 .flipp {
     -webkit-transform: rotate(345deg);
     -moz-transform: rotate(345deg);
     -o-transform: rotate(345deg);
     transform: rotate(345deg);
     display: inline-block;
+    transition: transform 0.3s ease, color 0.3s ease;
+    cursor: pointer;
+    z-index: 10; /* Ensure clickable */
+    position: relative; /* Helps with z-index */
 }
 .sme
 {
@@ -2044,12 +2053,43 @@ button[disabled] {
   display: inline-block;
   transform-origin: center center;
   transition: transform 0.3s ease, color 0.3s ease;
+  cursor: pointer !important;
+  -webkit-backface-visibility: visible; /* Ensure transforms work properly in all browsers */
+  backface-visibility: visible;
+  will-change: transform, color; /* Optimize for animations */
+  position: relative;
+  z-index: 20;
 }
 
+/* Fallback CSS hover effect in case JS doesn't work */
 .span2.flip .flip:hover, .span2.flip .flipp:hover {
-  transform: scale(1.1) rotate(5deg);
-  color: #ff6347;
+  transform: scale(1.1) rotate(5deg) !important;
+  color: #ff6347 !important;
+  z-index: 30;
 }
+
+/* Individual HOWDY letter styles for direct targeting */
+.howdy-letter {
+  display: inline-block;
+  transform-origin: center center;
+  transition: transform 0.3s ease, color 0.3s ease;
+  cursor: pointer !important;
+  position: relative;
+  z-index: 20;
+}
+
+/* Target specific letters by ID for better control */
+#howdy-h:hover, #howdy-o:hover, #howdy-w:hover, #howdy-d:hover, #howdy-y:hover {
+  transform: scale(1.2) rotate(5deg) !important;
+  color: #ff6347 !important;
+  z-index: 30;
+}
+
+/* Specific hover styles for problematic letters */
+#howdy-d, #howdy-y {
+  pointer-events: auto !important;
+}
+
 .footer-logo img[style*="transition"] {
   transition: none !important;
 }

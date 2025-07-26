@@ -2,6 +2,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   gsap.registerPlugin(MotionPathPlugin, CustomEase, ScrollTrigger);
   
+  // Utility for random number generation
+  const randomBetween = (min, max) => Math.random() * (max - min) + min;
+  
   // Header background animation
   gsap.to('.feader', {
     backgroundPosition: "100% 100%", //scrollimg
@@ -12,9 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
     yoyo: true,
     ease: "none" // Seamless motion without easing bumps
   });
-
-  // Utility for random number generation
-  const randomBetween = (min, max) => Math.random() * (max - min) + min;
 
   // Natural drop/bounce easing
   CustomEase.create("customBounce", "M0,0 C0.25,0.1 0.25,1 1,1");

@@ -73,7 +73,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Split the HOWDY text into individual letters for more control
     const howdyText = document.querySelector(".span2.flip");
-    const howdyLetters = document.querySelectorAll(".span2.flip .flip, .span2.flip .flipp");
+    const howdyLetters = document.querySelectorAll(".howdy-letter");
+    
+    // Debug - log all letters to ensure we're capturing them
+    console.log("HOWDY Letters found:", howdyLetters.length);
+    console.log("Letters:", Array.from(howdyLetters).map(el => el.textContent));
     
     // Set initial state for HOWDY letters - each with different starting positions and rotations
     howdyLetters.forEach((letter, index) => {
@@ -87,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     // Create a staggered drop-in animation for each letter of HOWDY
-    tl.to(".span2.flip .flip, .span2.flip .flipp", {
+    tl.to(".howdy-letter", {
       opacity: 1,
       y: 0,
       x: 0,
@@ -106,25 +110,49 @@ document.addEventListener('DOMContentLoaded', () => {
           ease: "sine.inOut"
         });
         
-        // Add hover effects with GSAP for each letter
-        howdyLetters.forEach(letter => {
-          letter.addEventListener("mouseenter", () => {
-            gsap.to(letter, {
+        // Add hover effects with GSAP for each letter - using IDs for better targeting
+        const letterIds = ['howdy-h', 'howdy-o', 'howdy-w', 'howdy-d', 'howdy-y'];
+        
+        letterIds.forEach((id, index) => {
+          const letter = document.getElementById(id);
+          if (!letter) {
+            console.error(`Letter with ID ${id} not found`);
+            return;
+          }
+          
+          console.log(`Setting up hover for letter ${index}: ${letter.textContent} (ID: ${id})`);
+          
+          // Store original rotation based on class
+          const originalRotation = letter.classList.contains("flip") ? -352 : 345;
+          
+          // Direct DOM event handlers for maximum browser compatibility
+          letter.onmouseenter = function() {
+            console.log(`Letter ${letter.textContent} (${id}) mouse enter`);
+            gsap.to(`#${id}`, {
               scale: 1.2,
               color: "#ff6347",
+              rotation: originalRotation + ((Math.random() * 10) - 5),
               duration: 0.3,
-              ease: "back.out(1.7)"
+              ease: "back.out(1.7)",
+              overwrite: "auto"
             });
-          });
+          };
           
-          letter.addEventListener("mouseleave", () => {
-            gsap.to(letter, {
+          letter.onmouseleave = function() {
+            console.log(`Letter ${letter.textContent} (${id}) mouse leave`);
+            gsap.to(`#${id}`, {
               scale: 1,
               color: "var(--blew)",
+              rotation: originalRotation,
               duration: 0.3,
-              ease: "back.out(1.7)"
+              ease: "back.out(1.7)",
+              overwrite: "auto"
             });
-          });
+          };
+          
+          // Add a data attribute to visually confirm event binding
+          letter.setAttribute('data-has-hover', 'true');
+          letter.style.pointerEvents = 'auto';
         });
       }
     }, "-=0.3");
