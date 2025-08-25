@@ -1467,7 +1467,7 @@ select, option {
 }
 
 .modal.show {
-    display: flex;
+  display: flex !important;
     opacity: 1;
 }
 
