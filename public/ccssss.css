@@ -16,9 +16,9 @@
   --card-bg-color: #fffdf9; /* near-white with subtle warmth (less beige) */
   /* much lighter overlay so the underlying gradient shows vibrant colors */
   /* Per-card overlay alpha (default subtle). JS can randomize --card-overlay-alpha per-card */
-  --card-overlay-alpha: 0.04; /* slightly stronger to keep texture while letting gradients read */
+  --card-overlay-alpha: 0.06; /* slightly stronger to keep texture while letting gradients read */
   /* make gradient overlays a bit more visible so the vivid palette reads stronger */
-  --card-overlay-alpha-visible: 0.08;
+  --card-overlay-alpha-visible: 0.12;
   --card-bg-gradient-overlay: linear-gradient(180deg, rgba(255,255,255,var(--card-overlay-alpha)), rgba(0,0,0,0.00));
     --button-bg-color: #b0ee00;
     --button-text-color: #000000;
@@ -46,16 +46,18 @@
   --card-border: 1px solid rgba(0,0,0,0.06);
   --card-shadow: 0 8px 28px rgba(0,0,0,0.12);
   --card-hover-shadow: 0 18px 40px rgba(0,0,0,0.14);
-  --page-bg-contrast: #FFF8F3FF; /* subtle warm ivory/pink page background (used as top color) */
+  --page-bg-contrast: rgba(255,248,243,0.03); /* subtle, very light wash so bg image shows through */
   --paper-grain-opacity: 0.18; /* controls paper grain visibility */
+  /* Site width token: used to align header/footer inner content and grid container */
+  --site-max-width: 1200px;
   /* Sunrise gradient tokens using team palette variables (fallbacks provided) */
   /* More vivid sunrise ramps using team colors (pink/orange/purple emphasis) */
-  --sun-grad-1: linear-gradient(135deg, var(--team-pink-2, #ED207B) 0%, var(--team-magenta-2, #FD2979) 40%, var(--team-marigold-2, #F5C44B) 100%);
-  --sun-grad-2: linear-gradient(135deg, var(--team-orange-2, #FE7D39) 0%, var(--team-pink-1, #FB5C98) 40%, var(--team-gold-2, #F4C543) 100%);
-  --sun-grad-3: linear-gradient(135deg, var(--team-magenta-2, #FD2979) 0%, var(--team-pink-2, #ED207B) 40%, var(--team-orange-2, #FE7D39) 100%);
-  --sun-grad-4: linear-gradient(135deg, var(--team-lavender, #DFBAE3) 0%, var(--team-pink-1, #FB5C98) 40%, var(--team-magenta-1, #BB67AA) 100%);
-  --sun-grad-5: linear-gradient(135deg, var(--team-pink-1, #FB5C98) 0%, var(--team-orange-1, #F25A2B) 45%, var(--team-magenta-2, #FD2979) 100%);
-  --sun-grad-6: linear-gradient(135deg, var(--team-orange-1, #F25A2B) 0%, var(--team-pink-2, #ED207B) 40%, var(--team-gold-2, #F4C543) 100%);
+  --sun-grad-1: linear-gradient(140deg, var(--team-pink-2, #ED207B) 0%, var(--team-magenta-2, #FD2979) 28%, var(--team-pink-1, #FB5C98) 56%, var(--team-marigold-2, #F5C44B) 100%);
+  --sun-grad-2: linear-gradient(120deg, var(--team-orange-2, #FE7D39) 0%, var(--team-gold-2, #F4C543) 30%, var(--team-pink-1, #FB5C98) 65%, rgba(0,0,0,0.02) 100%);
+  --sun-grad-3: linear-gradient(160deg, var(--team-magenta-2, #FD2979) 0%, var(--team-pink-2, #ED207B) 32%, var(--team-orange-2, #FE7D39) 68%, var(--team-marigold-2, #F5C44B) 100%);
+  --sun-grad-4: linear-gradient(110deg, var(--team-lavender, #DFBAE3) 0%, var(--team-pink-1, #FB5C98) 35%, var(--team-magenta-1, #BB67AA) 65%, rgba(255,255,255,0.02) 100%);
+  --sun-grad-5: linear-gradient(150deg, var(--team-pink-1, #FB5C98) 0%, var(--team-orange-1, #F25A2B) 45%, var(--team-magenta-2, #FD2979) 78%, var(--team-gold-1, #E4BA65) 100%);
+  --sun-grad-6: linear-gradient(130deg, var(--team-orange-1, #F25A2B) 0%, var(--team-pink-2, #ED207B) 30%, var(--team-gold-2, #F4C543) 65%, var(--team-lavender, #DFBAE3) 100%);
 }
 /* ==============================
    2. Font Faces
@@ -310,6 +312,25 @@
 .header-title.drop-wiggle { transform:scale(.87); display:inline-block; font-family:'mt'; white-space:nowrap; }
 .howdy-letter { display:inline-block; }
 
+/* Constrain header/footer inner content to the site width without forcing min-widths
+   (we want the header content to align with the cards container but not stretch images) */
+.header-container, footer > div {
+  max-width: var(--site-max-width);
+  margin: 0 auto;
+  padding: 0 2rem;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* Let header children size naturally inside the constrained container */
+.header-container .main-logo,
+.header-container .brand-subtext,
+.header-container .header-title,
+.header-container .diy-thrift-wrapper {
+  max-width: 100%;
+  width: auto;
+}
+
 /* Utilities */
 .hidden { display:none !important; }
 .text-center { text-align:center; }
@@ -492,7 +513,7 @@ body {
   /* Layer a CSS-variable-driven gradient OVER the bg image so we can animate color
      without replacing or removing the background image. The JS tween will update
      --page-bg-start / --page-bg-end to animate the wash while the image stays fixed. */
-  background-image: linear-gradient(180deg, var(--page-bg-start, rgba(255,248,243,0.0)), var(--page-bg-end, rgba(0,255,204,0.12))), url('./bg.png');
+  background-image: linear-gradient(180deg, var(--page-bg-start, rgba(255,248,243,0.0)), var(--page-bg-end, rgba(0,255,204,0.12))), url('./bg.webp');
   background-size: contain; /* changed to allow background-image/gradient to show */
   background-position: center;
   background-repeat: no-repeat;
@@ -513,13 +534,24 @@ body {
   align-items: center;
   justify-content: flex-start; /* Aligns the contain div to the start (left) */
   width: 100%; 
-background: var(--header-bg); /* Use the combined background variable */
+  /* Use the theme-driven header background at all sizes so it doesn't disappear when
+     crossing responsive breakpoints. Mobile browsers often ignore background-attachment:fixed,
+     so we keep the image but allow JS/CSS to override attachment per-breakpoint below. */
+  background: var(--header-bg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   color: var(--text-color);
   padding: 0;
-  border: 1px solid var(--nav-border-color);
+  border: none;
  
 }
-.howder { background:var(--howder-bg); border:1px solid var(--nav-border-color);  align-items:center; justify-content:center;}
+.howder {
+  background: var(--header-bg);
+  border: 1px solid var(--nav-border-color);
+  align-items: center;
+  justify-content: center;
+}
 .contain {
   display: flex;
   width: 100%;
@@ -851,19 +883,19 @@ width: 96%;
    10. Footer Styles
 ============================== */
 footer div {
-  /* Restore card styling for footer container */
-  background: #f2e7d1;
+  /* Style footer inner container like other cards (no full-width beige band) */
+  background: transparent; /* remove full-width color */
   color: var(--text-color);
-  border: 1px solid var(--nav-border-color);
-  box-shadow: -12px 18px 0px var(--nav-border-color);
+  border: var(--card-border); /* 1px solid subtle */
+  box-shadow: var(--card-shadow);
   padding: var(--padding-small);
   width: 100%;
   margin: 20px 0;
   text-align: center;
-  border-radius: 0px;
-  letter-spacing: 0.5rem; 
-  line-height: 1.3rem; 
-  font-size: 1.2rem;
+  border-radius: var(--card-radius);
+  letter-spacing: 0.12rem; /* reduced spacing to match cards */
+  line-height: 1.3rem;
+  font-size: 1rem;
 }
 
 /* Remove card styling from specific footer elements that should "hang out" */
@@ -964,7 +996,25 @@ p {
   font-family: 'db';
   font-size: 3rem; /* Responsive font size relative to .header-title */
 /*  font-weight: 700;
-  margin-left: 10px; /* Spacing between text and span2 */
+  header.feader { min-height: 88px; background-attachment: scroll; }
+  /* Reduce the inner container padding on very small screens so the header aligns
+     visually with the cards container and doesn't create side gaps or overflow */
+  .header-container, footer > div { padding: 0 8px; }
+
+  /* Further clamp HOWDY on very small phones (iPhone SE, etc.) to avoid overflow */
+  @media (max-width: 375px) {
+    .header-title .span2 { font-size: clamp(2.2rem, 20vw, 5.2rem); }
+  }
+
+  /* Allow long email addresses/links inside footer to wrap naturally on small screens */
+  footer #email, footer #email a, footer p, footer a {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    display: inline-block;
+    max-width: 100%;
+    font-size: clamp(0.85rem, 3.5vw, 1rem);
+  }
   /* 1px Black Outline*/
 /*  -webkit-text-stroke: 1px black; /* For WebKit browsers */
 /*  text-shadow:
@@ -2421,14 +2471,32 @@ button[disabled] {
   background: rgba(255,255,255,0.06);
   border: 1px solid rgba(0,0,0,0.06);
   border-radius: 8px;
-  color: inherit;
+  color: var(--marigold);
   text-decoration: none;
-  font-weight: 700;
+  font-weight: 800;
+}
+
+/* High-contrast stroked links utility. Use for bright/yellow links to improve legibility */
+.stroked-link {
+  -webkit-text-stroke: 1px rgba(0,0,0,0.75); /* primary outline for WebKit */
+  text-stroke: 1px rgba(0,0,0,0.75); /* non-standard but safe to include */
+  text-shadow: 0 0 0 rgba(0,0,0,0.0), /* keep existing layout */
+               -1px -1px 0 rgba(0,0,0,0.75),
+               1px -1px 0 rgba(0,0,0,0.75),
+               -1px 1px 0 rgba(0,0,0,0.75),
+               1px 1px 0 rgba(0,0,0,0.75);
 }
 
 #social-section.card .social-links a:hover, #social-section.card .social-content a:hover {
   background: rgba(255,255,255,0.12);
   transform: translateY(-2px);
+}
+
+/* Apply stroked-link to social marigold links for better contrast */
+#social-section.card .social-links a, #social-section.card .social-content a {
+  -webkit-text-stroke: 1px rgba(0,0,0,0.6);
+  text-stroke: 1px rgba(0,0,0,0.6);
+  text-shadow: -1px -1px 0 rgba(0,0,0,0.6), 1px -1px 0 rgba(0,0,0,0.6), -1px 1px 0 rgba(0,0,0,0.6), 1px 1px 0 rgba(0,0,0,0.6);
 }
 
 /* Make any inline buttons/links in social feel like buttons */
@@ -2525,6 +2593,27 @@ button[disabled] {
     margin: 0 auto;
     padding: 0 2rem;
   }
+
+  /* Constrain header/footer inner content to match the grid container and keep header background full-bleed */
+
+  /* Restore full-bleed header background and keep inner content constrained to the grid width */
+  header.feader {
+    background: var(--header-bg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .header-container,
+  footer > div {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    box-sizing: border-box;
+    width: 100%;
+    background: transparent;
+    border-radius: 0;
+  }
   
   .card {
     max-width: none; /* Remove any width restrictions on desktop */
@@ -2535,12 +2624,12 @@ button[disabled] {
   #content-container {
     display: grid;
     grid-template-columns: 1fr 340px; /* main column + sidebar */
-    grid-template-rows: auto;
+    grid-template-rows: auto auto auto auto;
     grid-template-areas:
       "mission mission"
-      "posts insta"
-      "featured hours"
-      "posts social";
+      "posts featured"
+      "insta social"
+      "hours hours";
     gap: 2.5rem; /* increased gap so cards don't touch */
     align-items: start;
     width: 100%;
@@ -2612,7 +2701,7 @@ button[disabled] {
 /* Small tablet / large phone */
 @media (max-width: 768px) {
   body { padding: 18px; gap: 18px; }
-  header.feader { padding-top: 8px; padding-bottom: 8px; }
+  header.feader { padding-top: 8px; padding-bottom: 8px; background-attachment: scroll; }
 
   /* Stack header elements vertically and center */
   .diy-thrift-wrapper { flex-direction: column; align-items: center; gap: 6px; }
@@ -2641,7 +2730,7 @@ button[disabled] {
   .header-title .span2 { font-size: clamp(3rem, 18vw, 7.5rem); line-height: 0.9; }
 
   /* Keep header compact */
-  header.feader { min-height: 88px; }
+  header.feader { min-height: 88px; background-attachment: scroll; }
   .diy-thrift-wrapper { gap: 4px; }
 
   /* Cards: tighter, single-column flow */
@@ -2670,7 +2759,7 @@ button[disabled] {
    ============================== */
 
   body {
-      background-image: url('./bg.png');
+  background-image: url('./bg.webp');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
