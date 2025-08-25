@@ -513,7 +513,7 @@ body {
   /* Layer a CSS-variable-driven gradient OVER the bg image so we can animate color
      without replacing or removing the background image. The JS tween will update
      --page-bg-start / --page-bg-end to animate the wash while the image stays fixed. */
-  background-image: linear-gradient(180deg, var(--page-bg-start, #FFF8F300), var(--page-bg-end, #00FFCC1E)), url('./bg.webp');
+  background-image: linear-gradient(180deg, var(--page-bg-start, #FFF8F300), var(--page-bg-end, #00FFCC1E)), url('./bgbg.png');
   background-size: contain; /* changed to allow background-image/gradient to show */
   background-position: center;
   background-repeat: no-repeat;
