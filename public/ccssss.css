@@ -287,29 +287,29 @@ header {
     padding: var(--padding-small);
 }
 
-.brand-subtext, 
+.brand-subtext,
 .header-title {
-    margin: 0;
-    padding: 0;
-    font-weight: normal;
-    line-height: 1;
-    color: #FFFFFFFF;
+  margin: 0;
+  padding: 0;
+  font-weight: normal; /* restore original look */
+  line-height: 1;
+  color: #FFFFFFFF;
+  -webkit-text-stroke: 0.6px rgba(0,0,0,0.35); /* subtle stroke for contrast */
+  text-shadow: 1px 1px 1px var(--header-text-shadow); /* restore original subtle shadow */
 }
 
 .brand-subtext {
-    font-family: var(--font-howder);
-    font-size: clamp(1.5rem, 6vw, 2.8rem);
-    margin-top: -10px;
-    display: block;
-    letter-spacing: 0.5px;
-    text-shadow: 1px 1px 1px var(--header-text-shadow);
+  font-family: var(--font-howder);
+  font-size: clamp(1.5rem, 6vw, 2.8rem);
+  margin-top: -10px;
+  display: block;
+  letter-spacing: 0.5px;
 }
 
 .header-title {
-    font-family: var(--font-howder);
-    font-size: clamp(3.4rem, 11vw, 5rem); 
-    margin-bottom: 0;
-    text-shadow: 1px 1px 1px var(--header-text-shadow);
+  font-family: var(--font-howder);
+  font-size: clamp(3.4rem, 11vw, 5rem);
+  margin-bottom: 0;
 }
 
 .span2 {
@@ -349,7 +349,10 @@ main {
 
 .card h2 {
   margin-top: 0;
-  color: var(--pupil);
+  /* stronger contrast for headings over vivid gradients */
+  color: var(--card-heading-color, #FFFFFFFF) !important;
+  -webkit-text-stroke: 0.9px rgba(0,0,0,0.45);
+  text-shadow: 0 2px 8px rgba(0,0,0,0.45);
 }
 
 /* Button styles */
