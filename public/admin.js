@@ -9,6 +9,7 @@ const API_BASE = 'https://howdythrift.farewellcafe.com';
 const apiUrl = (path) => `${API_BASE}${path}`;
 
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('Admin.js DOMContentLoaded fired');
     // DOM Elements
     const adminLoginButton = document.getElementById('admin-login-button');
     const loginModal = document.getElementById('login-modal');
@@ -17,6 +18,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const adminPanel = document.getElementById('admin-panel');
     const adminContent = document.getElementById('admin-content');
     const logoutButton = document.getElementById('logout-button');
+
+    console.log('DOM Elements found:', {
+        adminLoginButton: !!adminLoginButton,
+        loginModal: !!loginModal,
+        closeButton: !!closeButton,
+        loginForm: !!loginForm,
+        adminPanel: !!adminPanel
+    });
 
     let adminLoggedIn = false;
     let quillInstances = {};
@@ -766,14 +775,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Modal utility functions
     function openModal(modal) {
+        console.log('Opening modal:', modal);
         if (modal) {
+            console.log('Modal classes before:', modal.className);
             modal.classList.remove('hidden');
             modal.classList.add('show');
+            console.log('Modal classes after:', modal.className);
             // Focus management
             const firstInput = modal.querySelector('input, button, textarea, select');
             if (firstInput) firstInput.focus();
             // Prevent body scroll
             document.body.classList.add('no-scroll');
+        } else {
+            console.error('Modal is null or undefined');
         }
     }
 
@@ -793,8 +807,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Event Listeners
     if (adminLoginButton) {
-        adminLoginButton.addEventListener('click', () => {
-            openModal(loginModal);
+        adminLoginButton.addEventListener('click', (e) => {
+            console.log('Admin button clicked, loginModal:', loginModal);
+            try {
+                e.preventDefault();
+                openModal(loginModal);
+            } catch (error) {
+                console.error('Error opening modal:', error);
+            }
         });
     }
 
