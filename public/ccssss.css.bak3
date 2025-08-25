@@ -171,7 +171,7 @@
   }
   padding: 20px;
     /* Use the same card styling as content sections */
-    background-color: #00000000;
+    background-color: transparent;
     background-image: var(--card-bg-gradient-overlay);
     background-blend-mode: overlay;
     border: 1px solid var(--nav-border-color);
@@ -269,7 +269,7 @@
   font-size: 0.95em;
   font-weight: 700;
   transition: all 0.15s ease;
-  border: 2px solid #00000000;
+  border: 2px solid transparent;
 }
 .ticket-link:hover { transform: translateY(-2px); }
 .popup-footer { text-align: center; margin-top: 20px; }
@@ -288,7 +288,7 @@
 .popup-close:hover { color: #FF4500FF; }
 
 .popup-content { display:flex; gap:2rem; }
-.popup-thumbnail { width:200px; height:auto; object-fit:cover; border:1px solid #222222FF; }
+.popup-thumbnail { width:200px; height:auto; object-fit:cover; border:1px solid #222; }
 .popup-details { flex:1; }
 .popup-details h2 { font-family: var(--font-hnm11); font-size:2rem; margin-top:0; color:#FFFFFFFF; line-height:1.2; }
 .popup-details p { font-family: var(--font-main); font-size:1rem; color:#CCCCCCFF; margin:0.5rem 0; }
@@ -377,7 +377,7 @@
 
 /* Ensure HOWDY letters inherit a theme color via CSS variable so JS doesn't set color inline */
 .howdy-letter { color: var(--pupil); -webkit-text-fill-color: currentColor; }
-.insta-view { color: #3897F0FF; font-family: Arial, sans-serif; font-size: 14px; font-weight: 550; line-height: 18px; }
+.insta-view { color: #3897f0; font-family: Arial, sans-serif; font-size: 14px; font-weight: 550; line-height: 18px; }
 
 /* Instagram placeholder utilities */
 .insta-placeholder-col { display:flex; flex-direction:column; flex-grow:1; justify-content:center; }
@@ -419,8 +419,8 @@
 .footer-logo { text-align: center; margin-bottom: 1.5rem; }
 .footer-logo img { height: 128px; width: auto; opacity: 0.9; }
 
-.insta-caption { color:#C9C8CDFF; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; #FFFFFFFF-space:nowrap; }
-.insta-caption a { color: #C9C8CDFF; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; }
+.insta-caption { color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; #FFFFFFFF-space:nowrap; }
+.insta-caption a { color: #c9c8cd; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; }
 
 .insta-link { background:#FFFFFFFF; line-height:0; padding:0; text-align:center; text-decoration:none; width:100%; display:block; }
 .insta-embed { background:#FFFFFFFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 #0000007F,0 1px 10px 0 #00000026; margin:1px; max-width:540px; min-width:326px; padding:0; width:calc(100% - 2px); }
@@ -431,8 +431,8 @@
 .placeholder-rect { background-color:#F4F4F4FF; border-radius:4px; height:14px; }
 .spinner-box { display:block; height:50px; margin:0 auto 12px; width:50px; }
 
-.html-content { color: #333333FF; background-color: #00000000; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px #00000033; text-shadow:1px 1px 2px #FFFFFFFF; }
-.figcaption { color: #C9C9C9FF; }
+.html-content { color: #333333FF; background-color: transparent; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px #00000033; text-shadow:1px 1px 2px #FFFFFFFF; }
+.figcaption { color: #c9c9c9; }
 
 /* Consolidated :root overrides and UI mappings (moved from index.html) */
 /* NOTE: These intentionally follow the primary :root block and will override where necessary */
@@ -473,7 +473,7 @@
 
   --nav-bg-color:   #FFFFFFFF;
   --nav-border-color: var(--sienna);
-  --card-bg-color:  #00000000; /* prefer per-card gradients from authoritative overrides */
+  --card-bg-color:  transparent; /* prefer per-card gradients from authoritative overrides */
   --button-bg-color: var(--redd);
   --button-text-color: #FFFFFFFF;
 
@@ -499,7 +499,7 @@ body.howdy-active {
 .nav ul li:hover { background-color: #FF586E14; }
 a:hover { color: var(--lavender); }
 .popup-ticket-link, .popup-price, .admin-btn { background-color: var(--button-bg-color); color: var(--button-text-color); border-color: var(--sienna); }
-.card { box-shadow: 0 10px 0px #7F442817; border: 1px solid var(--nav-border-color); background-color: #00000000; background-image: var(--card-bg-gradient-overlay); background-blend-mode: overlay; }
+.card { box-shadow: 0 10px 0px #7F442817; border: 1px solid var(--nav-border-color); background-color: transparent; background-image: var(--card-bg-gradient-overlay); background-blend-mode: overlay; }
   .header-title .span2 { color: var(--pupil); text-shadow: 0 3px 0 #00000014; }
 
 body {
@@ -514,7 +514,7 @@ body {
      without replacing or removing the background image. The JS tween will update
      --page-bg-start / --page-bg-end to animate the wash while the image stays fixed. */
   background-image: linear-gradient(180deg, var(--page-bg-start, #FFF8F300), var(--page-bg-end, #00FFCC1E)), url('./bgbg.png');
-  background-size: cover; /* changed to ensure background image fills viewport */
+  background-size: contain; /* changed to allow background-image/gradient to show */
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
@@ -652,7 +652,7 @@ body {
   );
   -webkit-background-clip: text;
   background-clip: text;
-  color: #00000000; /* show gradient through text */
+  color: transparent; /* show gradient through text */
   -webkit-text-stroke: 0.5px #000000D9;
   text-shadow: none;
 }
@@ -845,7 +845,7 @@ width: 96%;
   height: auto;
   margin: 0 auto;
   display: block;
-  border: 0px solid #00000000; /* Moved from inline to CSS */
+  border: 0px solid transparent; /* Moved from inline to CSS */
   border-radius: 0px; /* Optional: Rounded corners */
   opacity:0.8;
 }
@@ -855,7 +855,7 @@ width: 96%;
   height: auto;
   margin: 0 auto;
   display: block;
-  border: 0px solid #00000000; /* Moved from inline to CSS */
+  border: 0px solid transparent; /* Moved from inline to CSS */
   border-radius: 0px; /* Optional: Rounded corners */
   opacity:0.8;
 }
@@ -884,7 +884,7 @@ width: 96%;
 ============================== */
 footer div {
   /* Style footer inner container like other cards (no full-width beige band) */
-  background: #00000000; /* remove full-width color */
+  background: transparent; /* remove full-width color */
   color: var(--text-color);
   border: var(--card-border); /* 1px solid subtle */
   box-shadow: var(--card-shadow);
@@ -1042,7 +1042,7 @@ header {text-align:center; align-content:center; align-items:center; margin-bott
 ============================== */
 .card {
   /* Facelift: rounded, softer shadow, consistent border */
-  background-color: #00000000;
+  background-color: transparent;
   background-image: var(--card-bg-gradient-overlay);
   background-blend-mode: overlay;
   padding: var(--padding-small);
@@ -1111,7 +1111,7 @@ button {
 }
 
 button:hover {
-  background: #58E880FF;
+  background: #58e880;
   color: #FFFFFFFF;
   transform: scale(1.05);
 }
@@ -1124,9 +1124,9 @@ button:active {
    18. Additional Styles
 ============================== */
 .card#contact h3 {color: #FFFFFFFF; font-family: 'ds'; font-weight: 200; font-size: 1.75rem; -webkit-text-stroke: 1px #000000FF; /* White outline */
-     text-shadow: -1px -1px 0 #A0E600FF, 1px -1px 0 #000000FF, -1px 1px 0 #000000FF, 1px 1px 0 #E60000FF; /*White text shadow*/}
+     text-shadow: -1px -1px 0 #a0e600, 1px -1px 0 #000000FF, -1px 1px 0 #000000FF, 1px 1px 0 #e60000; /*White text shadow*/}
 .card#newsletter h3 {color: #000000FF; font-family: 'ds'; font-weight: 200; font-size: 1.75rem; -webkit-text-stroke: 1px #FFFFFFFF; /* White outline */
-     text-shadow: -1px -1px 0 #E60000FF, 1px -1px 0 #FFFFFFFF, -1px 1px 0 #FFFFFFFF, 1px 1px 0 #A0E600FF; /*White text shadow*/}
+     text-shadow: -1px -1px 0 #e60000, 1px -1px 0 #FFFFFFFF, -1px 1px 0 #FFFFFFFF, 1px 1px 0 #a0e600; /*White text shadow*/}
 
 
 /* Links within cards or other components */
@@ -1137,7 +1137,7 @@ a {
 }
 
 a:hover {
-  color: #E60000FF; /* Darkened accent color */
+  color: #e60000; /* Darkened accent color */
 }
 .card h2 {font-size: 3rem; color: var(--pupil); letter-spacing:0.22rem; font-weight:200;
     -webkit-text-stroke: 1px #000000FF; /* #000000FF outline */
@@ -1155,9 +1155,9 @@ body.howdy-active a:hover { /* Only the hover color changes */
 body.howdy-active {
   --text-color: #000000FF;
     /* --newsletter-bg-color: #ff2b13; // Removed */
-    --header-bg-color: #00E2FFFF;
-    --button-bg-color: #00E2FFFF;
-    --link-hover-color: #D990FFFF;
+    --header-bg-color: #00e2ff;
+    --button-bg-color: #00e2ff;
+    --link-hover-color: #d990ff;
     --header-bg: var(--header-bg-color) url('./bg3.png') center/cover no-repeat; /* Howdy background */
 }
 
@@ -1176,7 +1176,7 @@ body.howdy-active .header-title .span2 {
     font-family: 'mt' !important; /* Ensure howdy state uses mt font */
     font-weight: 200;
     letter-spacing: 0.00209em;
-    color: #FF2B13FF;
+    color: #ff2b13;
  /*  scale: 1.16 0.8; */
     font-size: clamp(4.5rem, 13.5vw, 21em); 
     margin:0 auto;
@@ -1191,11 +1191,11 @@ body.howdy-active .header-title .span2 {
     -14px 18px 0px var(--nav-border-color);
 }
 
-body.howdy-active #event {background-color: #B0EE00FF;
+body.howdy-active #event {background-color: #b0ee00;
 }
 
 body.howdy-active #contact {
-    background-color: #00E2FFFF;
+    background-color: #00e2ff;
 }
 
 /* Newsletter styles removed from howdy-active state */
@@ -1277,15 +1277,15 @@ font-family:'hnbi4',sans-serif;
 }
 
 .sopc { background-color: #00000004;  border: 1px dotted #fc00ff33; }
-.social-icons, .sopc { font-family:'hnbi4'; font-weight: 200; list-style: none; align-items: center; text-align: center; color: #3F3F3FFF; text-transform: lowercase; font-size:1rem; padding: 0;
+.social-icons, .sopc { font-family:'hnbi4'; font-weight: 200; list-style: none; align-items: center; text-align: center; color: #3f3f3f; text-transform: lowercase; font-size:1rem; padding: 0;
   margin: 0;
   gap: 10px;  border-radius: 100%; -webkit-text-stroke: 1px #FFFFFFFF; /* White outline */
      text-shadow: -1px -1px 0 #FFFFFFFF, 1px -1px 0 #FFFFFFFF, -1px 1px 0 #FFFFFFFF, 1px 1px 0 #FFFFFFFF;}
 
-.pp  {color: #454545FF; font-family: 'kb'; font-weight: 100; font-size: 1.87rem; margin-bottom:var(--padding-large); -webkit-text-stroke: 1px #000000FF; /* White outline */ letter-spacing: 0.11rem; text-align: left; width: 100%;
-     text-shadow: -1px -1px 0 #A0E600FF, 1px -1px 0 #FFFFFFFF, -1px 1px 0 #FFFFFFFF, 1px 1px 0 #E60000FF; /*White text shadow*/}
+.pp  {color: #454545; font-family: 'kb'; font-weight: 100; font-size: 1.87rem; margin-bottom:var(--padding-large); -webkit-text-stroke: 1px #000000FF; /* White outline */ letter-spacing: 0.11rem; text-align: left; width: 100%;
+     text-shadow: -1px -1px 0 #a0e600, 1px -1px 0 #FFFFFFFF, -1px 1px 0 #FFFFFFFF, 1px 1px 0 #e60000; /*White text shadow*/}
       
-.nrml {color: #030403FF; font-family: 'kb'; font-weight: 200; font-size: 1.87rem;  margin-bottom:var(--padding-large); letter-spacing:0.1rem; text-align: left; 
+.nrml {color: #030403; font-family: 'kb'; font-weight: 200; font-size: 1.87rem;  margin-bottom:var(--padding-large); letter-spacing:0.1rem; text-align: left; 
      text-shadow: 1px 1px 0px #faeffb33; line-height:1.33;}
      
 /* styles.css */
@@ -1323,7 +1323,7 @@ font-family:'hnbi4',sans-serif;
     position: absolute;
     top: 50%;
     
-    background-color: #00000000;
+    background-color: transparent;
   color: #FFFFFFFF;
     border: none;
     padding: 12px;
@@ -1332,9 +1332,9 @@ font-family:'hnbi4',sans-serif;
     font-size: 18px;
     transition: background-color 0.3s;
     -webkit-text-stroke: 1px #FFFFFFFF; /* White outline */
-     text-shadow: -1px -1px 0 #FFFFFFFF, 1px -1px 1 #FFFFFFFF, -1px 1px 0 #FFFFFFFF, 1px 1px 1 #00FFCCFF;
+     text-shadow: -1px -1px 0 #FFFFFFFF, 1px -1px 1 #FFFFFFFF, -1px 1px 0 #FFFFFFFF, 1px 1px 1 #00ffcc;
      -webkit-text-stroke: 1px #000000FF; /* #000000FF outline */
-     text-shadow: -1px -1px 1 #00FFCCFF, 1px -1px 0 #000000FF, -1px 1px 1 #000000FF, 1px 1px 0 #000000FF;
+     text-shadow: -1px -1px 1 #00ffcc, 1px -1px 0 #000000FF, -1px 1px 1 #000000FF, 1px 1px 0 #000000FF;
 }
 
 .nav-button:hover {
@@ -1364,17 +1364,17 @@ font-family:'hnbi4',sans-serif;
 
 select, option {
   width: 100%;
-  border: 1px solid #333F33FF;
+  border: 1px solid #333f33;
   border-radius: 0.25em;
   padding: 0.25em 0.5em;
   font-size: 0.77rem;
   font-weight: 200;
-  color:#A0FCFCFF;
+  color:#a0fcfc;
    font-family: inherit;
   cursor: pointer;
   line-height: 1.11;
-  background-color: #EFCFEFFF;
-  background: #303330FF;
+  background-color: #efcfef;
+  background: #303330;
 }
 
 /* Responsive Adjustments */ 
@@ -1484,7 +1484,7 @@ select, option {
 
 .modal-content {
   /* Use card styling for consistency */
-  background-color: #00000000;
+  background-color: transparent;
   color: #000000FF;
   border: 1px solid var(--nav-border-color);
   box-shadow: var(--card-shadow);
@@ -1603,13 +1603,13 @@ select, option {
     right: 15px;
     font-size: 2rem;
     font-weight: bold;
-    color: #FF0000FF;
+    color: #f00;
     cursor: pointer;
     transition: color 0.3s ease;
 }
 
 .close-button:hover {
-    color: #FF0000FF;
+    color: #f00;
 }
 
 /* Optional: Error Message */
@@ -1790,7 +1790,7 @@ div .card {
 /* ===== Mobile Optimization ===== */
 @media (max-width: 768px) {
   #editor-container, 
-  #FFEEAAFFtured-editr {
+  #featured-editr {
     height: 250px !important;
   }
 
@@ -1973,7 +1973,7 @@ button[disabled] {
 }
 
 .post {
-    border-bottom: 1px solid #EEEEEEFF;
+    border-bottom: 1px solid #eee;
     padding-bottom: 1rem;
     margin-bottom: 1rem;
 }
@@ -2098,7 +2098,7 @@ button[disabled] {
 }
 
 .admin-btn:hover {
-    background-color: #D63384FF;
+    background-color: #d63384;
     transform: translateY(-2px);
 }
 
@@ -2147,19 +2147,19 @@ button[disabled] {
 }
 
 .logout-btn:hover {
-    background: #58E880FF;
+    background: #58e880;
     color: #FFFFFFFF;
     transform: scale(1.05);
 }
 
 .logout-btn:hover {
-    background-color: #888888FF;
+    background-color: #888;
 }
 
 .admin-section {
     margin-bottom: 3rem;
     padding: 1.5rem;
-    background-color: #262626FF;
+    background-color: #262626;
     border-radius: 6px;
     border-left: 4px solid var(--blew);
 }
@@ -2193,7 +2193,7 @@ button[disabled] {
 .admin-input:focus {
     outline: none;
     border-color: var(--blew);
-    background-color: #404040FF;
+    background-color: #404040;
 }
 
 .admin-select {
@@ -2255,7 +2255,7 @@ button[disabled] {
 }
 
 .delete-post-btn, .delete-featured-btn {
-    background-color: #DC3545FF;
+    background-color: #dc3545;
 }
 
 .edit-post-btn:hover, .delete-post-btn:hover, .delete-featured-btn:hover {
@@ -2282,7 +2282,7 @@ button[disabled] {
 }
 
 .modal-content {
-    background-color: #1A1A1AFF;
+    background-color: #1a1a1a;
     padding: 2rem;
     border-radius: 8px;
     border: 2px solid var(--redd);
@@ -2304,13 +2304,13 @@ button[disabled] {
     top: 10px;
     font-size: 2rem;
     font-weight: bold;
-    color: #FF0000FF;
+    color: #f00;
     cursor: pointer;
     transition: color 0.3s ease;
 }
 
 .close-button:hover {
-    color: #FF0000FF;
+    color: #f00;
 }
 
 #login-form {
@@ -2331,7 +2331,7 @@ button[disabled] {
 #login-form input[type="password"]:focus {
     outline: none;
     border-color: var(--blew);
-    background-color: #404040FF;
+    background-color: #404040;
 }
 
 #login-form button {
@@ -2346,14 +2346,14 @@ button[disabled] {
 }
 
 #login-form button:hover {
-    background-color: #D63384FF;
+    background-color: #d63384;
 }
 
 /* Content Section Styles - Maintain Card Styling */
-#mission-statement, #posts-section, #FFEEAAFFtured-content-section, #hours-section {
+#mission-statement, #posts-section, #featured-content-section, #hours-section {
   margin-bottom: 2rem;
   /* Use card styling tokens; don't force a flat background so per-card gradients can show */
-  background-color: #00000000;
+  background-color: transparent;
   border: 1px solid var(--nav-border-color);
   box-shadow: var(--card-shadow);
   padding: var(--padding-small);
@@ -2366,13 +2366,13 @@ button[disabled] {
 
 /* Mission section - Light background like posts was */
 #mission-statement.card {
-  background-color: #00000000 !important;
+  background-color: transparent !important;
   background-image: var(--sun-grad-1), var(--card-bg-gradient-overlay) !important;
   background-size: cover, cover !important;
   background-repeat: no-repeat !important;
   background-position: center center !important;
   background-blend-mode: multiply, overlay !important;
-  color: #111111FF !important;
+  color: #111 !important;
 }
 
 #mission-statement.card h2 {
@@ -2391,7 +2391,7 @@ button[disabled] {
 
 /* Posts section - Blue background that mission had */
 #posts-section.card {
-  background-color: #00000000 !important;
+  background-color: transparent !important;
   background-image: var(--sun-grad-2), var(--card-bg-gradient-overlay) !important;
   background-size: cover, cover !important;
   background-repeat: no-repeat !important;
@@ -2410,13 +2410,13 @@ button[disabled] {
 
 /* Hours section - Muted teal background */
 #hours-section.card {
-  background-color: #00000000 !important;
+  background-color: transparent !important;
   background-image: var(--sun-grad-5), var(--card-bg-gradient-overlay) !important;
   background-size: cover, cover !important;
   background-repeat: no-repeat !important;
   background-position: center center !important;
   background-blend-mode: multiply, overlay !important;
-  color: #081717FF;
+  color: #081717;
   border: 1px solid #0000000F;
 }
 
@@ -2430,13 +2430,13 @@ button[disabled] {
 /* Social media section - Purple background using existing var */
 /* Social section: match the global card facelift and ensure images/QR inherit radius */
 #social-section.card {
-  background-color: #00000000 !important;
+  background-color: transparent !important;
   background-image: var(--sun-grad-6), var(--card-bg-gradient-overlay) !important;
   background-size: cover, cover !important;
   background-repeat: no-repeat !important;
   background-position: center center !important;
   background-blend-mode: multiply, overlay !important;
-  color: #111111FF !important;
+  color: #111 !important;
   border: 1px solid #0000000F;
   box-shadow: 0 6px 20px #0000001A;
   border-radius: var(--card-radius);
@@ -2565,14 +2565,14 @@ button[disabled] {
 }
 
 /* Featured section - Red background */
-#FFEEAAFFtured-content-section.card {
+#featured-content-section.card {
   /* Feature gets a strong sunset gradient (pink -> coral) */
   background: linear-gradient(180deg, var(--pupil), var(--coral-orange));
   color: #FFFFFFFF;
   border: 1px solid #0000000F;
 }
 
-#FFEEAAFFtured-content-section.card h2 {
+#featured-content-section.card h2 {
   color: #FFFFFFFF;
   font-family: 'kb', sans-serif;
   -webkit-text-stroke: 1px #000000FF;
@@ -2606,7 +2606,7 @@ button[disabled] {
     padding: 0 2rem;
     box-sizing: border-box;
     width: 100%;
-    background: #00000000;
+    background: transparent;
     border-radius: 0;
   }
   
@@ -2636,13 +2636,13 @@ button[disabled] {
   /* Map sections to semantic grid areas for predictable layout */
   #mission-statement { grid-area: mission; }
   #posts-section { grid-area: posts; }
-  #FFEEAAFFtured-content-section { grid-area: featured; }
+  #featured-content-section { grid-area: featured; }
   #insta-section { grid-area: insta; }
   #hours-section { grid-area: hours; }
   #social-section { grid-area: social; }
 
   /* Ensure these flow correctly if content is narrower */
-  #posts-section, #FFEEAAFFtured-content-section, #hours-section, #mission-statement {
+  #posts-section, #featured-content-section, #hours-section, #mission-statement {
     width: 100%;
     max-width: none;
     margin: 0;
@@ -2772,63 +2772,63 @@ body {
 /* Per-card sunrise gradients (use !important to override the generic card bg)
    These add variety while keeping the unified tokens for radius and shadow. */
 #mission-statement.card {
-  background-color: #00000000 !important;
+  background-color: transparent !important;
   background-image: var(--sun-grad-1), var(--card-bg-gradient-overlay) !important;
   background-size: cover, cover !important;
   background-repeat: no-repeat !important;
   background-position: center center !important;
   background-blend-mode: multiply, overlay !important;
-  color: #111111FF !important;
+  color: #111 !important;
 }
 
 #posts-section.card {
-  background-color: #00000000 !important;
+  background-color: transparent !important;
   background-image: var(--sun-grad-2), var(--card-bg-gradient-overlay) !important;
   background-size: cover, cover !important;
   background-repeat: no-repeat !important;
   background-position: center center !important;
   background-blend-mode: multiply, overlay !important;
-  color: #111111FF !important;
+  color: #111 !important;
 }
 
 #insta-section.card {
-  background-color: #00000000 !important;
+  background-color: transparent !important;
   background-image: var(--sun-grad-3), var(--card-bg-gradient-overlay) !important;
   background-size: cover, cover !important;
   background-repeat: no-repeat !important;
   background-position: center center !important;
   background-blend-mode: multiply, overlay !important;
-  color: #111111FF !important;
+  color: #111 !important;
 }
 
-#FFEEAAFFtured-content-section.card {
-  background-color: #00000000 !important;
+#featured-content-section.card {
+  background-color: transparent !important;
   background-image: var(--sun-grad-4), var(--card-bg-gradient-overlay) !important;
   background-size: cover, cover !important;
   background-repeat: no-repeat !important;
   background-position: center center !important;
   background-blend-mode: multiply, overlay !important;
-  color: #111111FF !important;
+  color: #111 !important;
 }
 
 #hours-section.card {
-  background-color: #00000000 !important;
+  background-color: transparent !important;
   background-image: var(--sun-grad-5), var(--card-bg-gradient-overlay) !important;
   background-size: cover, cover !important;
   background-repeat: no-repeat !important;
   background-position: center center !important;
   background-blend-mode: multiply, overlay !important;
-  color: #111111FF !important;
+  color: #111 !important;
 }
 
 #social-section.card {
-  background-color: #00000000 !important;
+  background-color: transparent !important;
   background-image: var(--sun-grad-6), var(--card-bg-gradient-overlay) !important;
   background-size: cover, cover !important;
   background-repeat: no-repeat !important;
   background-position: center center !important;
   background-blend-mode: multiply, overlay !important;
-  color: #111111FF !important;
+  color: #111 !important;
 }
 
 .admin-panel,
@@ -2852,7 +2852,7 @@ body {
 }
 
 /* Neutralize older heavy offset shadows used in a few selectors */
-#mission-statement, #posts-section, #FFEEAAFFtured-content-section, #hours-section, .admin-panel, .modal-content {
+#mission-statement, #posts-section, #featured-content-section, #hours-section, .admin-panel, .modal-content {
   box-shadow: var(--card-shadow) !important;
   border: var(--card-border) !important;
 }

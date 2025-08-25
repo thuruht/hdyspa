@@ -767,6 +767,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Modal utility functions
     function openModal(modal) {
         if (modal) {
+            modal.classList.remove('hidden');
             modal.classList.add('show');
             // Focus management
             const firstInput = modal.querySelector('input, button, textarea, select');
@@ -781,6 +782,7 @@ document.addEventListener('DOMContentLoaded', () => {
             modal.classList.remove('show');
             setTimeout(() => {
                 modal.classList.remove('is-visible');
+                modal.classList.add('hidden');
             }, 300);
             // Restore body scroll
             document.body.classList.remove('no-scroll');
