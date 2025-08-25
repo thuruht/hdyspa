@@ -13,7 +13,13 @@
     --header-text-shadow: rgba(0, 0, 0, 0.5);
     --nav-bg-color: #ffffff;
     --nav-border-color: #000000;
-    --card-bg-color: #f2e7d1cc;
+  --card-bg-color: #fff8f2ee; /* keep cards light but let gradient show through */
+  /* much lighter overlay so the underlying gradient shows vibrant colors */
+  /* Per-card overlay alpha (default subtle). JS can randomize --card-overlay-alpha per-card */
+  --card-overlay-alpha: 0.02;
+  /* make gradient overlays a bit more visible so the vivid palette reads stronger */
+  --card-overlay-alpha-visible: 0.08;
+  --card-bg-gradient-overlay: linear-gradient(180deg, rgba(255,255,255,var(--card-overlay-alpha)), rgba(0,0,0,0.00));
     --button-bg-color: #b0ee00;
     --button-text-color: #000000;
     --header-bg: var(--primary-bg-color) url('./bg4.png') center/cover no-repeat; /* Combined background */
@@ -35,6 +41,21 @@
 
     /* Other */
     --transition-speed: 0.3s;
+  /* New theme tokens for card/layout modernization */
+  --card-radius: 12px;
+  --card-border: 1px solid rgba(0,0,0,0.06);
+  --card-shadow: 0 8px 28px rgba(0,0,0,0.12);
+  --card-hover-shadow: 0 18px 40px rgba(0,0,0,0.14);
+  --page-bg-contrast: #FFF8F3FF; /* subtle warm ivory/pink page background (used as top color) */
+  --paper-grain-opacity: 0.18; /* controls paper grain visibility */
+  /* Sunrise gradient tokens using team palette variables (fallbacks provided) */
+  /* More vivid sunrise ramps using team colors (pink/orange/purple emphasis) */
+  --sun-grad-1: linear-gradient(135deg, var(--team-pink-2, #ED207B) 0%, var(--team-magenta-2, #FD2979) 40%, var(--team-marigold-2, #F5C44B) 100%);
+  --sun-grad-2: linear-gradient(135deg, var(--team-orange-2, #FE7D39) 0%, var(--team-pink-1, #FB5C98) 40%, var(--team-gold-2, #F4C543) 100%);
+  --sun-grad-3: linear-gradient(135deg, var(--team-magenta-2, #FD2979) 0%, var(--team-pink-2, #ED207B) 40%, var(--team-orange-2, #FE7D39) 100%);
+  --sun-grad-4: linear-gradient(135deg, var(--team-lavender, #DFBAE3) 0%, var(--team-pink-1, #FB5C98) 40%, var(--team-magenta-1, #BB67AA) 100%);
+  --sun-grad-5: linear-gradient(135deg, var(--team-pink-1, #FB5C98) 0%, var(--team-orange-1, #F25A2B) 45%, var(--team-magenta-2, #FD2979) 100%);
+  --sun-grad-6: linear-gradient(135deg, var(--team-orange-1, #F25A2B) 0%, var(--team-pink-2, #ED207B) 40%, var(--team-gold-2, #F4C543) 100%);
 }
 /* ==============================
    2. Font Faces
@@ -110,6 +131,352 @@
   box-sizing: border-box; /* Ensures consistent sizing across elements */
 }
 
+/* ==============================
+   99. Inline-style consolidation
+   (Moved from <style> blocks in index.html)
+   Utility classes and popup/modal styles
+============================== */
+
+/* Popup / modal (moved from index.html) */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  cursor: pointer;
+}
+
+.event-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #0d0d0d;
+  border: 1px solid #333;
+  padding: 2rem;
+  z-index: 1001;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.event-popup-content {
+  padding: 20px;
+  font-family: var(--font-hnm11);
+  background: var(--card-bg-color);
+  min-height: 100vh;
+}
+.event-popup-title {
+  text-align: center;
+  margin-bottom: 30px;
+  color: var(--text-color);
+  border-bottom: 2px solid var(--nav-border-color);
+  padding-bottom: 10px;
+}
+.event-card {
+  border: 1px solid var(--nav-border-color);
+  margin: 15px 0;
+  padding: 20px;
+  background: rgba(255,255,255,0.95);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: all 0.18s ease;
+}
+.event-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+.event-card-row {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+.event-thumb {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+  border: 2px solid var(--nav-border-color);
+}
+.event-noimage {
+  width: 100px;
+  height: 100px;
+  background: var(--nav-border-color);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 12px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.event-card-body {
+  flex: 1;
+}
+.event-title {
+  margin: 0 0 12px 0;
+  color: var(--text-color);
+  font-size: 1.2em;
+  line-height: 1.3;
+  font-weight: 700;
+}
+.event-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.event-meta {
+  margin: 0;
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.meta-emoji { font-size: 1.1em; }
+.event-desc {
+  margin: 12px 0;
+  color: var(--text-color);
+  font-size: 0.95em;
+  line-height: 1.5;
+  padding: 10px;
+  background: rgba(0,0,0,0.05);
+  border-radius: 4px;
+  border-left: 3px solid var(--nav-border-color);
+}
+.ticket-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px 16px;
+  background: var(--button-bg-color);
+  color: var(--button-text-color);
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 0.95em;
+  font-weight: 700;
+  transition: all 0.15s ease;
+  border: 2px solid transparent;
+}
+.ticket-link:hover { transform: translateY(-2px); }
+.popup-footer { text-align: center; margin-top: 20px; }
+.popup-footer-note { color: var(--text-color); opacity: 0.8; }
+
+.popup-close {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  color: #fff;
+  font-size: 2.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+.popup-close:hover { color: #ff4500; }
+
+.popup-content { display:flex; gap:2rem; }
+.popup-thumbnail { width:200px; height:auto; object-fit:cover; border:1px solid #222; }
+.popup-details { flex:1; }
+.popup-details h2 { font-family: var(--font-hnm11); font-size:2rem; margin-top:0; color:#fff; line-height:1.2; }
+.popup-details p { font-family: var(--font-main); font-size:1rem; color:#ccc; margin:0.5rem 0; }
+.popup-description { margin-top:1rem; font-style:italic; white-space:pre-wrap; }
+.popup-price { font-weight:bold; font-size:1.1rem; color:#ff4500; }
+.popup-ticket-link { display:inline-block; margin-top:1.5rem; padding:10px 20px; background-color:#ff4500; color:#fff; text-decoration:none; font-family:var(--font-hnm11); text-transform:uppercase; border:none; border-radius:2px; transition:background-color 0.3s ease; }
+.popup-ticket-link:hover { background-color:#e03e00; }
+
+@media (max-width:768px) {
+  .event-popup { padding:1.5rem; }
+  .popup-content { flex-direction:column; gap:1.5rem; }
+  .popup-thumbnail { width:100%; max-width:300px; margin:0 auto; }
+  .popup-details h2 { font-size:1.5rem; }
+}
+
+/* Header / brand helper classes (replacing inline styles in index.html) */
+.header-scaled { transform: scale(.87); min-height:128px; max-height:224px; }
+.header-container { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:.5rem; }
+.diy-thrift-wrapper { display:flex; gap:.5rem; align-items:center; order:1; }
+.brand-subtext { color:var(--redd); font-size:clamp(2.5rem, 3.9vw, 6.5rem); transform:scale(.69); display:inline-block; }
+.header-title.drop-wiggle { transform:scale(.87); display:inline-block; font-family:'mt'; white-space:nowrap; }
+.howdy-letter { display:inline-block; }
+
+/* Utilities */
+.hidden { display:none !important; }
+.text-center { text-align:center; }
+.mb-1-5rem { margin-bottom:1.5rem; }
+.main-logo { height:128px; width:auto; opacity:0.95; }
+.main-logo.large { height:156px; }
+.mascot { width:212px; }
+.insta-embed { background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin:1px; max-width:540px; min-width:326px; padding:0; width:calc(100% - 2px); }
+.insta-padding { padding:16px; }
+.insta-grid .social-links { text-align:center; margin-top:.6rem; }
+
+/* Small utilities used by admin templates */
+.mt-1 { margin-top: 1rem; }
+.mt-0-5 { margin-top: 0.5rem; }
+.mb-10 { margin-bottom: 10px; }
+.border-top-subtle { border-top: 1px solid #333; padding-top: 15px; }
+.hours-image-section { display:block; }
+.current-hours-image img, .current-hours-image { margin-bottom: 10px; }
+.hours-image-upload { margin-top: 10px; }
+.button-group { display:flex; gap:10px; margin-top:10px; align-items:center; }
+.button-group .admin-btn { margin: 0; }
+.admin-image { max-width: 100%; max-height: 200px; border: 1px solid #444; display: block; }
+.howdy-debug {
+  pointer-events: auto !important;
+  z-index: 100005 !important;
+  transition: transform 120ms ease !important;
+}
+
+/* HOWDY hover/interactive classes to avoid inline styles */
+.howdy-hovered {
+  transform: scale(1.18) !important;
+  transition: transform 120ms ease !important;
+}
+.howdy-interactive {
+  pointer-events: auto !important;
+  z-index: 3000 !important;
+}
+
+/* fallback image sizing utility */
+.image-fallback { display:block; max-width:180px; margin:20px auto; }
+
+/* gentle HOWDY hover class for non-GSAP fallback */
+.howdy-hovered-fallback { transform: scale(1.12); transition: transform 180ms ease; }
+
+/* Ensure HOWDY letters inherit a theme color via CSS variable so JS doesn't set color inline */
+.howdy-letter { color: var(--pupil); -webkit-text-fill-color: currentColor; }
+.insta-view { color: #3897f0; font-family: Arial, sans-serif; font-size: 14px; font-weight: 550; line-height: 18px; }
+
+/* Instagram placeholder utilities */
+.insta-placeholder-col { display:flex; flex-direction:column; flex-grow:1; justify-content:center; }
+.w-100 { width:100px; margin-bottom:6px; height:14px; }
+.w-60 { width:60px; height:14px; }
+.insta-aspect { padding-top: 19%; }
+.insta-aspect-small { padding-top: 12.5%; }
+.insta-row { display:flex; flex-direction:row; margin-bottom:14px; align-items:center; }
+.placeholder-circle.small-12 { height:12.5px; width:12.5px; border-radius:50%; background:#F4F4F4; transform:translateX(0) translateY(7px); display:inline-block; }
+.placeholder-rect.tiny-12 { width:12.5px; height:12.5px; background:#F4F4F4; display:inline-block; transform:rotate(-45deg) translateX(3px) translateY(1px); margin-right:14px; margin-left:2px; }
+.placeholder-circle.shifted { height:12.5px; width:12.5px; border-radius:50%; background:#F4F4F4; transform:translateX(9px) translateY(-18px); display:inline-block; }
+.insta-row-mid { margin-left:8px; }
+.placeholder-circle.mid-20 { height:20px; width:20px; border-radius:50%; background:#F4F4F4; }
+.triangle-mark { width:0; height:0; border-top:2px solid transparent; border-left:6px solid #f4f4f4; border-bottom:2px solid transparent; transform:translateX(16px) translateY(-4px) rotate(30deg); }
+.insta-row-right { margin-left:auto; display:flex; gap:8px; align-items:center; }
+.pointer-mark { width:0; border-top:8px solid #F4F4F4; border-right:8px solid transparent; transform: translateY(16px); }
+.placeholder-rect.small-16 { height:12px; width:16px; transform:translateY(-4px); background:#F4F4F4; }
+.pointer-mark-2 { width:0; height:0; border-top:8px solid #F4F4F4; border-left:8px solid transparent; transform: translateY(-4px) translateX(8px); }
+
+/* Admin/login defaults */
+#admin-panel, #login-modal { display:none; }
+/* Visibility helper used by JS to show/hide panels without inline styles */
+.is-visible { display: block !important; }
+
+/* Social content helper */
+.social-content { text-align:center; }
+
+/* Reusable UI helpers used to replace inline styles in HTML/JS templates */
+.mission-lead {
+  font-weight: bold;
+  font-size: 1.2rem;
+  text-align: center;
+  margin-bottom: 1rem;
+  font-family: var(--font-main);
+}
+
+.admin-login-button-container { margin-top: 1rem; }
+
+.footer-logo { text-align: center; margin-bottom: 1.5rem; }
+.footer-logo img { height: 128px; width: auto; opacity: 0.9; }
+
+.insta-caption { color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap; }
+.insta-caption a { color: #c9c8cd; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; }
+
+.insta-link { background:#FFFFFF; line-height:0; padding:0; text-align:center; text-decoration:none; width:100%; display:block; }
+.insta-embed { background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin:1px; max-width:540px; min-width:326px; padding:0; width:calc(100% - 2px); }
+.insta-padding { padding:16px; }
+
+.placeholder-row { display:flex; flex-direction:row; align-items:center; }
+.placeholder-circle { background-color:#F4F4F4; border-radius:50%; flex-shrink:0; height:40px; margin-right:14px; width:40px; }
+.placeholder-rect { background-color:#F4F4F4; border-radius:4px; height:14px; }
+.spinner-box { display:block; height:50px; margin:0 auto 12px; width:50px; }
+
+.html-content { color: #333; background-color: transparent; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); text-shadow:1px 1px 2px #ffffff; }
+.figcaption { color: #c9c9c9; }
+
+/* Consolidated :root overrides and UI mappings (moved from index.html) */
+/* NOTE: These intentionally follow the primary :root block and will override where necessary */
+:root {
+  --sunset-pink:   #E23A6BFF;
+  --coral-orange:  #FF6A3CFF;
+  --marigold:      #FFB84DFF;
+  --lavender:      #D8B4F8FF;
+  --teal-accent:   #46BFB6FF;
+  --sienna:        #7F4428FF;
+
+  --team-orange-1: #F25A2B;
+  --team-magenta-1: #BB67AA;
+  --team-peach: #FD9D69;
+  --team-lavender: #DFBAE3;
+  --team-pink-1: #FB5C98;
+  --team-orange-2: #FE7D39;
+  --team-magenta-2: #FD2979;
+  --team-pink-2: #ED207B;
+  --team-gold-1: #E4BA65;
+  --team-marigold-2: #F5C44B;
+  --team-lime-pale: #F5FE91;
+  --team-gold-2: #F4C543;
+  --team-neon-y: #EFFE66;
+
+  --pupil: var(--team-magenta-2);
+  --coral-orange: var(--team-orange-2);
+  --marigold: var(--team-marigold-2);
+  --lavender: var(--team-lavender);
+
+  --pupil:         var(--sunset-pink);
+  --redd:          var(--coral-orange);
+
+  --primary-bg-color:  #FFF6F4FF;
+  --secondary-bg-color:#FFEFE8FF;
+  --accent-color:      var(--marigold);
+  --text-color:        #261717FF;
+
+  --nav-bg-color:   #FFFFFFFF;
+  --nav-border-color: var(--sienna);
+  --card-bg-color:  #FFF0D9FF;
+  --button-bg-color: var(--redd);
+  --button-text-color: #FFFFFFFF;
+
+  --header-bg: linear-gradient(140deg, #FFEFF5CC 0%, #FFF6F4AA 50%, #FFD8B8FF 100%), url('./bg4.png') center/cover no-repeat;
+  --howder-bg: linear-gradient(140deg, #FFF6F4CC 0%, #FFEFE8AA 100%), url('./bg7.png') center/cover no-repeat;
+
+  --page-bg-start: var(--page-bg-contrast);
+  --page-bg-end: #00FFCCFF;
+  --scroll-start-percent: 0.10;
+  --scroll-end-padding: 400px;
+}
+
+body.howdy-active {
+  --pupil: var(--sunset-pink);
+  --redd:  var(--coral-orange);
+  --primary-bg-color: #FFF6F4FF;
+  --secondary-bg-color: #FFEFE8FF;
+  --text-color: #221212FF;
+  --header-bg: linear-gradient(140deg, #FFDCE8FF 0%, #FFE6D6AA 45%, #FF9A6AFF 100%), url('./bg3.png') center/cover no-repeat;
+}
+
+/* small UI mappings previously inlined */
+nav ul li:hover { background-color: rgba(255,88,110,0.08); }
+a:hover { color: var(--lavender); }
+.popup-ticket-link, .popup-price, .admin-btn { background-color: var(--button-bg-color); color: var(--button-text-color); border-color: var(--sienna); }
+.card { box-shadow: 0 10px 0px rgba(127,68,40,0.09); border: 1px solid var(--nav-border-color); background-color: var(--card-bg-color); }
+.header-title .span2 { color: var(--pupil); text-shadow: 0 3px 0 rgba(0,0,0,0.08); }
+
 body {
   display: flex; /* Enables Flexbox for body */
   flex-direction: column; /* Stacks child elements vertically */
@@ -118,7 +485,15 @@ body {
   margin: 0 auto;
   margin-bottom:24px;
   font-family: var(--font-main); /* hnb2 for main content */
-  background-color: #c0ffff;
+  /* Layer a CSS-variable-driven gradient OVER the bg image so we can animate color
+     without replacing or removing the background image. The JS tween will update
+     --page-bg-start / --page-bg-end to animate the wash while the image stays fixed. */
+  background-image: linear-gradient(180deg, var(--page-bg-start, rgba(255,248,243,0.0)), var(--page-bg-end, rgba(0,255,204,0.12))), url('./bg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-blend-mode: overlay;
   color: var(--text-color);
   padding: var(--padding-medium);
   text-align: center;
@@ -210,21 +585,40 @@ background: var(--header-bg); /* Use the combined background variable */
 
 
 .header-title .span2 {
-  color: var(--secondary-bg-color);
+  /* Use the muted primary pupil color and soften outline to avoid bubblegum tone */
+  color: var(--pupil);
   font-family: 'mt';
-  font-size: clamp(3.5rem, 11.3vw, 18.5em); /* Responsive font size relative to .header-title */
+  font-size: clamp(5.9rem, 11.6vw, 17rem); /* Responsive font size relative to .header-title */
   letter-spacing: 0.002em;
   font-weight: 300;
   margin-left: 12px; /* Spacing between text and span2 */
   margin-top:0; margin-bottom:0;
-  /* 1px Black Outline*/
-  -webkit-text-stroke: 1px black; /* For WebKit browsers */
+  /* Slightly softer outline/shadow */
+  -webkit-text-stroke: 0.8px rgba(0,0,0,0.9);
   text-shadow:
-    -1px -1px 0 #000,
-     1px -1px 0 #000,
-    -1px  1px 0 #000,
-     1px  1px 0 #000,
-    -13px 13px 0px var(--nav-border-color);
+    -0.6px -0.6px 0 rgba(0,0,0,0.85),
+     0.6px -0.6px 0 rgba(0,0,0,0.85),
+    -0.6px  0.6px 0 rgba(0,0,0,0.85),
+     0.6px  0.6px 0 rgba(0,0,0,0.85),
+    -10px 10px 0px rgba(127,68,40,0.08);
+}
+
+/* HOWDY gradient style (purple -> pupil pink -> orange) */
+.howdy-gradient {
+  /* richer multi-stop gradient for HOWDY text */
+  background-image: linear-gradient(90deg,
+    #7B46FF 0%,      /* deep purple */
+    #9E6BFF 18%,     /* softer purple */
+    #D090FF 34%,     /* lavender */
+    var(--pupil) 50%, /* team pink */
+    #FF7A2D 72%,     /* vivid orange */
+    #FFB347 92%      /* warm gold */
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent; /* show gradient through text */
+  -webkit-text-stroke: 0.5px rgba(0,0,0,0.85);
+  text-shadow: none;
 }
 
 /* ==============================
@@ -593,14 +987,43 @@ header {text-align:center; align-content:center; align-items:center; margin-bott
    13. Grid Items Styling
 ============================== */
 .card {
+  /* Facelift: rounded, softer shadow, consistent border */
   background-color: var(--card-bg-color);
   padding: var(--padding-small);
-  border: 1px solid var(--nav-border-color);
-  box-shadow: -17px 20px 0px var(--nav-border-color);
+  border: 1px solid rgba(0,0,0,0.06); /* softer border for modern look */
+  border-radius: 12px; /* consistent rounded corners for all cards */
+  box-shadow: 0 6px 20px rgba(0,0,0,0.10); /* gentle elevated shadow */
   margin: 0 auto;
-  transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+  transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease, border-color var(--transition-speed) ease;
   display: block;
-  color:#000;
+  color: #000;
+  overflow: hidden; /* ensures gradients and media are clipped to the rounded corners */
+}
+
+/* Instagram feed grid */
+.insta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+  align-items: start;
+  justify-items: center;
+}
+.insta-grid img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+.insta-grid .insta-item {
+  width: 100%;
+}
+
+/* Tactile hover lift for cards */
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 30px rgba(0,0,0,0.12);
+  border-color: rgba(0,0,0,0.12);
 }
 
 
@@ -991,6 +1414,17 @@ select, option {
     display: flex;
     opacity: 1;
 }
+
+/* Prevent body scrolling when modal open */
+.no-scroll { overflow: hidden !important; }
+
+/* Utility visibility and layout helpers (used by JS) */
+.is-flex { display: flex !important; }
+.is-block { display: block !important; }
+.hours-image-container { text-align: center; margin-top: 1rem; }
+.image-fallback { max-width: 180px !important; margin: 20px auto !important; display: block !important; }
+.featured-img { max-width: 100%; height: auto; border: 1px solid rgba(0,0,0,0.06); }
+.force-visible { opacity: 1 !important; display: block !important; transform: none !important; visibility: visible !important; }
 
 .modal-content {
     /* Use card styling for consistency */
@@ -1452,14 +1886,15 @@ button[disabled] {
 ============================== */
 
 .card {
-    background-color: var(--card-bg-color);
-    border: 1px solid var(--nav-border-color);
-    padding: var(--padding-medium);
-    margin-bottom: var(--padding-medium);
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 100%; /* Full width of grid cell */
-    max-width: none; /* Remove any width restrictions */
+  background-color: var(--card-bg-color);
+  border: 1px solid rgba(0,0,0,0.06);
+  padding: var(--padding-medium);
+  margin-bottom: var(--padding-medium);
+  border-radius: 12px; /* match facelift radius */
+  box-shadow: 0 6px 20px rgba(0,0,0,0.10);
+  width: 100%; /* Full width of grid cell */
+  max-width: none; /* Remove any width restrictions */
+  overflow: hidden; /* make sure child elements respect the radius */
 }
 
 /* Wider cards on larger screens */
@@ -1883,13 +2318,23 @@ button[disabled] {
 #mission-statement.card h2 {
   color: var(--text-color);
   font-family: 'kb', sans-serif;
-  /* No text stroke needed for light background */
+  /* Reduce vertical spacing for a tighter heading */
+  margin-top: 0.25rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.08;
+}
+
+/* Reduce the image bottom spacing inside the mission card so the H2 sits closer */
+#mission-statement .main-logo {
+  margin-bottom: 0.6rem !important;
 }
 
 /* Posts section - Blue background that mission had */
 #posts-section.card {
-  background-color: var(--blew);
+  /* Warmer sunset variant: coral -> marigold */
+  background: linear-gradient(180deg, var(--coral-orange), var(--marigold));
   color: #fff;
+  border: 1px solid rgba(0,0,0,0.06);
 }
 
 #posts-section.card h2 {
@@ -1899,10 +2344,12 @@ button[disabled] {
   text-shadow: -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000, 1px 1px 0 #000000;
 }
 
-/* Hours section - Green background */
+/* Hours section - Muted teal background */
 #hours-section.card {
-  background-color: var(--primary-bg-color); /* This is the green/lime */
-  color: #000;
+  /* Muted teal accent for hours to avoid neon green */
+  background: linear-gradient(180deg, rgba(70,191,182,0.12), rgba(46,209,201,0.06));
+  color: #081717; /* dark text for readability */
+  border: 1px solid rgba(0,0,0,0.06);
 }
 
 #hours-section.card h2 {
@@ -1913,11 +2360,20 @@ button[disabled] {
 }
 
 /* Social media section - Purple background using existing var */
+/* Social section: match the global card facelift and ensure images/QR inherit radius */
 #social-section.card {
-  background-color: var(--secondary-bg-color); /* Purple #D990FF */
-  color: #000;
-  border: 1px solid var(--nav-border-color);
-  box-shadow: -17px 20px 0px var(--nav-border-color);
+  background: linear-gradient(180deg, var(--lavender), var(--secondary-bg-color));
+  color: #111;
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.10);
+  border-radius: 12px; /* same radius as other cards */
+  overflow: hidden; /* clip children (images/gradients) to the radius */
+}
+
+/* Make the social card stand out a bit from the page background */
+#social-section.card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(246,238,240,0.95));
+  border: 1px solid rgba(0,0,0,0.06);
 }
 
 #social-section.card h2 {
@@ -1931,6 +2387,51 @@ button[disabled] {
   color: #000;
   text-decoration: underline;
   font-weight: bold;
+}
+
+/* Make any inline buttons/links in social feel like buttons */
+#social-section.card a.btn-like, #social-section.card .btn-like {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(0,0,0,0.06);
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+#social-section.card a.btn-like:hover, #social-section.card .btn-like:hover {
+  transform: translateY(-3px);
+  background: rgba(255,255,255,0.12);
+}
+
+/* Ensure QR/image inside social uses same rounding */
+#social-section.card img,
+#social-section.card picture,
+#social-section.card svg {
+  border-radius: 10px; /* slightly inset from container radius */
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  display: inline-block;
+}
+
+/* Full-bleed image container: stretches edge-to-edge but keeps the card’s outer radius */
+.card-bleed {
+  width: 100%;
+  display: block;
+  overflow: hidden; /* ensures bleed content respects outer radius */
+  border-top-left-radius: 0; /* child image will sit flush */
+  border-top-right-radius: 0;
+  margin-top: 0; /* flush to card edge */
+  padding-top: 0; /* override any card padding so the image sits edge-to-edge */
+}
+
+.card-bleed .social-qr {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 0;
+  box-shadow: none; /* full-bleed looks cleaner without inner shadow */
+  border: none; /* remove inner border so it touches the edges */
+  object-fit: cover; /* ensure it fills the width nicely */
 }
 
 /* Posts section keeps default card styling */
@@ -1960,8 +2461,10 @@ button[disabled] {
 
 /* Featured section - Red background */
 #featured-content-section.card {
-  background-color: var(--redd);
+  /* Feature gets a strong sunset gradient (pink -> coral) */
+  background: linear-gradient(180deg, var(--pupil), var(--coral-orange));
   color: #fff;
+  border: 1px solid rgba(0,0,0,0.06);
 }
 
 #featured-content-section.card h2 {
@@ -1986,26 +2489,186 @@ button[disabled] {
     width: 100%;
   }
   
+  /* Primary two-column layout: main content + sidebar */
   #content-container {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 340px; /* main column + sidebar */
+    grid-template-rows: auto;
+    grid-template-areas:
+      "mission mission"
+      "posts insta"
+      "featured hours"
+      "posts social";
     gap: 2rem;
     align-items: start;
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
+    justify-items: stretch;
   }
-  
-  #posts-section,
-  #featured-content-section,
-  #hours-section,
-  #mission-statement {
+
+  /* Map sections to semantic grid areas for predictable layout */
+  #mission-statement { grid-area: mission; }
+  #posts-section { grid-area: posts; }
+  #featured-content-section { grid-area: featured; }
+  #insta-section { grid-area: insta; }
+  #hours-section { grid-area: hours; }
+  #social-section { grid-area: social; }
+
+  /* Ensure these flow correctly if content is narrower */
+  #posts-section, #featured-content-section, #hours-section, #mission-statement {
     width: 100%;
-    max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
+    max-width: none;
+    margin: 0;
   }
 }
+
+/* ==============================
+   Responsive Enhancements (Mobile-First Tweaks)
+   Breakpoints: 1200, 1000, 768, 480
+   These rules aim to ensure header/HOWDY, cards, images and footer scale and stack nicely.
+   ============================== */
+
+/* Large desktop: keep current layout, but ensure moderate spacing */
+@media (min-width: 1200px) {
+  body { padding: 40px; }
+  .header-container { max-width: 1400px; margin: 0 auto; }
+}
+
+/* Tablet / small desktop */
+@media (max-width: 1000px) {
+  body { padding: 28px; }
+  .grid-container, .griddy { gap: 20px; padding: 20px; }
+
+  /* Reduce HOWDY scale slightly to preserve vertical space */
+  .header-title .span2 { font-size: clamp(4.0rem, 11vw, 14rem); }
+  .diy-thrift-wrapper { gap: 0.4rem; }
+  .card { padding: 20px; }
+}
+
+/* Single-column layout for medium and small screens - stack grid areas */
+@media (max-width: 1000px) {
+  #content-container {
+    display: block;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  #content-container > section {
+    width: 100%;
+    margin-bottom: 1.25rem;
+  }
+}
+
+/* Clamp card headings for consistent responsive scale */
+.card h2 {
+  font-size: clamp(1.6rem, 2.8vw, 2.6rem);
+  line-height: 1.05;
+  margin-bottom: 0.8rem;
+}
+
+/* Small tablet / large phone */
+@media (max-width: 768px) {
+  body { padding: 18px; gap: 18px; }
+  header.feader { padding-top: 8px; padding-bottom: 8px; }
+
+  /* Stack header elements vertically and center */
+  .diy-thrift-wrapper { flex-direction: column; align-items: center; gap: 6px; }
+  .header-container { justify-content: center; }
+
+  /* Clamp HOWDY to a smaller max to avoid overflow */
+  .header-title .span2 { font-size: clamp(3.8rem, 14vw, 11rem); line-height: 0.92; margin-left: 0; }
+  .header-title { padding-top: 12px; }
+
+  /* Card sizing */
+  .card { padding: 18px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+
+  /* Make footer and logos scale down */
+  .main-logo { height: 96px !important; }
+  .footer-logo img { height: 88px !important; }
+
+  /* Reduce mission image size */
+  #mission-statement .main-logo { height: 120px !important; }
+}
+
+/* Phones */
+@media (max-width: 480px) {
+  body { padding: 12px; gap: 12px; }
+
+  /* HOWDY: ensure it never consumes too much vertical space */
+  .header-title .span2 { font-size: clamp(3rem, 18vw, 7.5rem); line-height: 0.9; }
+
+  /* Keep header compact */
+  header.feader { min-height: 88px; }
+  .diy-thrift-wrapper { gap: 4px; }
+
+  /* Cards: tighter, single-column flow */
+  .grid-container, .griddy { grid-template-columns: 1fr; padding: 10px; gap: 12px; }
+  .card { padding: 12px; margin-bottom: 12px; }
+
+  /* Make images responsive and not too tall */
+  .card img, .featured-item img, .social-section img { max-height: 220px; width: auto; }
+
+  /* Buttons bigger touch targets */
+  button, .admin-btn, .popup-ticket-link { padding: 12px 16px; font-size: 1rem; }
+
+  /* Reduce howdy letter animation travel to avoid clipping on tiny screens */
+  .howdy-letter { will-change: transform, opacity; }
+}
+
+/* Small fix: if viewport height is small, clamp HOWDY vertical starting offset via body data attribute (JS-friendly) */
+@media (max-height: 600px) {
+  .header-title .span2 { font-size: clamp(2.6rem, 16vw, 6.8rem); }
+}
+
+/* ==============================
+   Subtle Grain Overlay + Tactile Buttons
+   Adds a low-opacity grain texture and slightly rough/tactile button styles
+   without changing layout or adding extra DOM elements.
+   ============================== */
+
+  body {
+      background-image: url('./bg.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+    }
+
+
+/* Ensure main content sits above the grain overlay */
+header, main, footer, .admin-panel, .card, .modal, .popup-overlay {
+  position: relative;
+  z-index: 1;
+}
+
+/* Tactile button/tile style — subtle inset shadow and stronger border */
+button, .admin-btn, .popup-ticket-link, .admin-button {
+  border: 2px solid var(--nav-border-color);
+  background-image: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.03));
+  box-shadow: inset 0 -6px 10px rgba(0,0,0,0.06), 0 6px 0 rgba(0,0,0,0.04);
+  padding: 10px 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+}
+
+button:hover, .admin-btn:hover, .popup-ticket-link:hover {
+  transform: translateY(-2px);
+  box-shadow: inset 0 -4px 8px rgba(0,0,0,0.05), 0 8px 0 rgba(0,0,0,0.06);
+}
+
+button:active, .admin-btn:active, .popup-ticket-link:active {
+  transform: translateY(0) scale(0.995);
+  box-shadow: inset 0 -2px 6px rgba(0,0,0,0.04), 0 3px 0 rgba(0,0,0,0.03);
+}
+
+/* Keep smaller touch targets comfortable on mobile */
+@media (max-width: 480px) {
+  button, .admin-btn, .popup-ticket-link { padding: 12px 18px; font-size: 1rem; }
+}
+
 
 /* Mobile Layout - Stack posts and featured content in a column */
 @media (max-width: 768px) {
@@ -2052,44 +2715,189 @@ button[disabled] {
 .span2.flip .flip, .span2.flip .flipp {
   display: inline-block;
   transform-origin: center center;
-  transition: transform 0.3s ease, color 0.3s ease;
+  transition: transform 180ms cubic-bezier(.2,.9,.24,1), color 160ms ease;
   cursor: pointer !important;
   -webkit-backface-visibility: visible; /* Ensure transforms work properly in all browsers */
   backface-visibility: visible;
   will-change: transform, color; /* Optimize for animations */
   position: relative;
-  z-index: 20;
+  z-index: 99999 !important; /* aggressively sit above overlays during debug */
+  pointer-events: auto !important; /* ensure letters receive pointer events */
 }
 
-/* Fallback CSS hover effect in case JS doesn't work */
+/* Fallback CSS hover effect in case JS doesn't work - very visible for debugging */
 .span2.flip .flip:hover, .span2.flip .flipp:hover {
-  transform: scale(1.1) rotate(5deg) !important;
-  color: #ff6347 !important;
-  z-index: 30;
+  transform: scale(1.12) rotate(5deg) !important;
+  color: var(--pupil) !important;
+  z-index: 100001 !important;
+  /* Removed debug rectangle: no outline or box-shadow here */
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 /* Individual HOWDY letter styles for direct targeting */
 .howdy-letter {
   display: inline-block;
   transform-origin: center center;
-  transition: transform 0.3s ease, color 0.3s ease;
+  transition: transform 160ms ease, color 160ms ease, text-shadow 160ms ease;
   cursor: pointer !important;
   position: relative;
-  z-index: 20;
+  z-index: 99999 !important; /* keep consistent with container */
+  pointer-events: auto !important; /* explicit allow */
+  -webkit-user-select: none;
+  user-select: none;
 }
 
-/* Target specific letters by ID for better control */
-#howdy-h:hover, #howdy-o:hover, #howdy-w:hover, #howdy-d:hover, #howdy-y:hover {
-  transform: scale(1.2) rotate(5deg) !important;
-  color: #ff6347 !important;
-  z-index: 30;
+/* Force HOWDY letters and large span to use the pink pupil color so it's visible */
+.howdy-letter, .header-title .span2 {
+  color: var(--pupil) !important;
 }
 
-/* Specific hover styles for problematic letters */
+/* Target specific letters by ID for better control - very specific and forced */
+#howdy-h:hover, #howdy-o:hover, #howdy-w:hover, #howdy-d:hover, #howdy-y:hover,
+.header-title:hover #howdy-h, .header-title:hover #howdy-o, .header-title:hover #howdy-w, .header-title:hover #howdy-d, .header-title:hover #howdy-y {
+  transform: scale(1.22) rotate(6deg) !important;
+  color: var(--pupil) !important;
+  z-index: 100002 !important;
+  text-shadow: 0 8px 30px rgba(0,0,0,0.25) !important;
+}
+
+/* Specific hover styles for problematic letters - ensure pointer-events */
 #howdy-d, #howdy-y {
   pointer-events: auto !important;
+  z-index: 100003 !important;
 }
 
 .footer-logo img[style*="transition"] {
   transition: none !important;
 }
+
+/* ======================================================
+   Theme normalization / authoritative overrides
+   Ensures the modernized card style wins over earlier conflicting rules
+   ====================================================== */
+
+/* Page background: slightly warm off-white for contrast */
+body {
+  background-color: var(--page-bg-contrast);
+}
+
+/* Ensure all .card variants share the same visual tokens */
+.card {
+  background-color: var(--card-bg-color);
+  /* allow per-card background-image (sun-grad) to show through with a subtle overlay */
+  background-image: var(--card-bg-gradient-overlay);
+  background-blend-mode: multiply, overlay;
+  border-radius: var(--card-radius);
+  border: var(--card-border);
+  box-shadow: var(--card-shadow);
+  padding: 18px;
+}
+
+/* Per-card sunrise gradients (use !important to override the generic card bg)
+   These add variety while keeping the unified tokens for radius and shadow. */
+#mission-statement.card { background-image: var(--sun-grad-1), var(--card-bg-gradient-overlay) !important; background-blend-mode: multiply, overlay; }
+#posts-section.card       { background-image: var(--sun-grad-2), var(--card-bg-gradient-overlay) !important; background-blend-mode: multiply, overlay; }
+#insta-section.card      { background-image: var(--sun-grad-3), var(--card-bg-gradient-overlay) !important; background-blend-mode: multiply, overlay; }
+#featured-content-section.card { background-image: var(--sun-grad-4), var(--card-bg-gradient-overlay) !important; background-blend-mode: multiply, overlay; }
+#hours-section.card      { background-image: var(--sun-grad-5), var(--card-bg-gradient-overlay) !important; background-blend-mode: multiply, overlay; }
+#social-section.card     { background-image: var(--sun-grad-6), var(--card-bg-gradient-overlay) !important; background-blend-mode: multiply, overlay; }
+
+.admin-panel,
+.modal-content {
+  border-radius: var(--card-radius) !important;
+  border: var(--card-border) !important;
+  box-shadow: var(--card-shadow) !important;
+  overflow: hidden !important;
+  /* Slight translucency so the paper grain shows through */
+  background-color: rgba(255,255,255,0.86) !important;
+  background-blend-mode: overlay !important;
+}
+
+/* Ensure social-section uses the same shadow/border (authoritative) */
+#social-section.card {
+  border: var(--card-border) !important;
+  box-shadow: var(--card-shadow) !important;
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(246,238,240,0.95)) !important;
+}
+
+/* Neutralize older heavy offset shadows used in a few selectors */
+#mission-statement, #posts-section, #featured-content-section, #hours-section, .admin-panel, .modal-content {
+  box-shadow: var(--card-shadow) !important;
+  border: var(--card-border) !important;
+}
+
+/* Tighter hover tokens */
+.card:hover {
+  transform: translateY(-6px) !important;
+  box-shadow: var(--card-hover-shadow) !important;
+  border-color: rgba(0,0,0,0.12) !important;
+}
+
+/* Increase the grain opacity to make it more visible but still subtle */
+body::before {
+  opacity: var(--paper-grain-opacity) !important;
+}
+
+/* Make sure the full-bleed image does not accidentally add its own border/shadow */
+.card-bleed .social-qr {
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* Small responsive tweak: reduce radius on tiny screens so content breathes */
+@media (max-width: 480px) {
+  :root { --card-radius: 8px; }
+}
+
+/* =======================================================
+   Authoritative Card Normalization (highest priority)
+   Ensures all cards share the same radius, border and shadow
+   and neutralizes orphaned legacy rules that made them inconsistent
+   ======================================================= */
+
+/* Apply the master tokens to the most common card selectors */
+.card, section.card, div.card, .card[class] {
+  border-radius: var(--card-radius) !important;
+  border: var(--card-border) !important;
+  box-shadow: var(--card-shadow) !important;
+  background-color: var(--card-bg-color) !important;
+  background-image: var(--card-bg-gradient-overlay) !important;
+  background-blend-mode: overlay !important;
+  overflow: hidden; /* clip children to the rounded container */
+}
+
+/* Make sure images, pictures, svg and videos inside cards visually match the container
+   but avoid forcing shadows on inline media; images should sit flush inside the card */
+.card img, .card picture, .card svg, .card video, .card iframe {
+  border-radius: max(2px, calc(var(--card-radius) - 4px)) !important;
+  box-shadow: none !important;
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Elements that intentionally use full-bleed behavior keep their exception rules */
+.card-bleed, .card-bleed * { border-radius: 0 !important; box-shadow: none !important; }
+
+/* Clear out intermittent legacy offset shadows applied to header/main/footer so they don't
+   conflict with the card tokens (these selectors were used in older styles) */
+header, main, footer, .admin-panel, .modal, .popup-overlay {
+  box-shadow: var(--card-shadow) !important;
+  border-radius: var(--card-radius) !important;
+}
+
+/* Keep hover token consistent and authoritative */
+.card:hover {
+  transform: translateY(-6px) !important;
+  box-shadow: var(--card-hover-shadow) !important;
+  border-color: rgba(0,0,0,0.12) !important;
+}
+
+/* Ensure embedded third-party widgets conform where possible (instagram blockquote)
+   but preserve their internal layout — this reduces the jarring mix of radii */
+blockquote.instagram-media { border-radius: calc(var(--card-radius) - 4px) !important; box-shadow: var(--card-shadow) !important; }
+
+/* Fallback safety: enforce box-sizing within cards */
+.card, .card * { box-sizing: border-box; }
+

@@ -322,16 +322,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const showAdminPanel = () => {
         if (adminPanel && adminLoginButton) {
-            adminPanel.style.display = 'block';
-            adminLoginButton.style.display = 'none';
+            adminPanel.classList.add('is-visible');
+            adminLoginButton.classList.remove('is-visible');
             renderAdminContent();
         }
     };
 
     const hideAdminPanel = () => {
         if (adminPanel && adminLoginButton) {
-            adminPanel.style.display = 'none';
-            adminLoginButton.style.display = 'block';
+            adminPanel.classList.remove('is-visible');
+            adminLoginButton.classList.add('is-visible');
         }
     };
 
@@ -373,31 +373,31 @@ document.addEventListener('DOMContentLoaded', () => {
                     <input type="text" id="hours-title" placeholder="Section Title" class="admin-input" value="${hours.title || document.querySelector('#hours-section h2')?.textContent || 'Hours'}">
                     <div id="hours-editor" class="editor-container"></div>
                     
-                    <div class="hours-image-section" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #333;">
+                    <div class="hours-image-section border-top-subtle mt-1">
                         <h4>Hours Image</h4>
                         ${hours.image_url ? 
-                            `<div class="current-hours-image" style="margin-bottom: 10px;">
+                            `<div class="current-hours-image mb-10">
                                 <p>Current image:</p>
-                                <img src="${hours.image_url}" alt="Current hours image" style="max-width: 100%; max-height: 200px; border: 1px solid #444;">
+                                <img src="${hours.image_url}" alt="Current hours image" class="admin-image">
                              </div>` : 
                             '<p>No custom image set. Using default image.</p>'
                         }
-                        <div class="hours-image-upload" style="margin-top: 10px;">
+                        <div class="hours-image-upload mt-1">
                             <p>Upload a new hours image:</p>
                             <input type="file" id="hours-image-upload" accept="image/*" class="admin-input">
-                            <div class="button-group" style="display: flex; gap: 10px; margin-top: 10px;">
+                            <div class="button-group">
                                 <button id="upload-hours-image" class="admin-btn">Upload New Image</button>
                             </div>
                         </div>
                     </div>
                     
-                    <button id="save-hours" class="admin-btn" style="margin-top: 15px;">Save Hours Content</button>
+                    <button id="save-hours" class="admin-btn mt-1">Save Hours Content</button>
                 </div>
                 
                 <div class="admin-section">
                     <h3>Manage Posts</h3>
                     <input type="text" id="posts-section-title" placeholder="Section Title" class="admin-input" value="${document.querySelector('#posts-section h2')?.textContent || 'Posts'}">
-                    <button id="save-posts-title" class="admin-btn" style="margin-bottom: 15px;">Save Section Title</button>
+                    <button id="save-posts-title" class="admin-btn">Save Section Title</button>
                     
                     <div id="posts-admin">
                         ${posts.map(post => `
@@ -419,7 +419,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="admin-section">
                     <h3>Manage Featured Content</h3>
                     <input type="text" id="featured-section-title" placeholder="Section Title" class="admin-input" value="${document.querySelector('#featured-content-section h2')?.textContent || 'Featured'}">
-                    <button id="save-featured-title" class="admin-btn" style="margin-bottom: 15px;">Save Section Title</button>
+                    <button id="save-featured-title" class="admin-btn">Save Section Title</button>
                     
                     <div id="featured-admin">
                         ${featured.map(item => `
@@ -594,14 +594,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         // Create container if it doesn't exist
                         const hoursImageSection = document.querySelector('.hours-image-section');
                         imageContainer = document.createElement('div');
-                        imageContainer.className = 'current-hours-image';
-                        imageContainer.style.marginBottom = '10px';
+                        imageContainer.className = 'current-hours-image mb-10';
                         hoursImageSection.insertBefore(imageContainer, document.querySelector('.hours-image-upload'));
                     }
                     
                     imageContainer.innerHTML = `
                         <p>Current image:</p>
-                        <img src="${uploadResult.url}" alt="Current hours image" style="max-width: 100%; max-height: 200px; border: 1px solid #444;">
+                        <img src="${uploadResult.url}" alt="Current hours image" class="admin-image">
                     `;
                     
                     alert('Hours image uploaded successfully! Click "Save Hours Content" to save all changes.');
@@ -756,10 +755,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const contentField = document.getElementById('featured-content');
             
             if (this.value === 'html') {
-                uploadField.style.display = 'none';
+                if (uploadField) uploadField.classList.add('hidden');
                 contentField.placeholder = 'Enter HTML content here';
             } else {
-                uploadField.style.display = 'block';
+                if (uploadField) uploadField.classList.remove('hidden');
                 contentField.placeholder = 'URL or upload a file';
             }
         });
@@ -768,13 +767,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Modal utility functions
     function openModal(modal) {
         if (modal) {
-            modal.style.display = 'flex';
             modal.classList.add('show');
             // Focus management
             const firstInput = modal.querySelector('input, button, textarea, select');
             if (firstInput) firstInput.focus();
             // Prevent body scroll
-            document.body.style.overflow = 'hidden';
+            document.body.classList.add('no-scroll');
         }
     }
 
@@ -782,10 +780,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (modal) {
             modal.classList.remove('show');
             setTimeout(() => {
-                modal.style.display = 'none';
+                modal.classList.remove('is-visible');
             }, 300);
             // Restore body scroll
-            document.body.style.overflow = '';
+            document.body.classList.remove('no-scroll');
             // Return focus to trigger element
             if (adminLoginButton) adminLoginButton.focus();
         }

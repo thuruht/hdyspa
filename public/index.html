@@ -24,7 +24,7 @@
   <script defer src="./admin.js"></script>
 
   <style>
-    /* --- Popup Styles --- */
+  opup Styles --- */
     .popup-overlay {
       position: fixed;
       top: 0;
@@ -147,24 +147,100 @@
       }
     }
   </style>
+</style>
 
+  <!-- Sunset palette overrides (vivid sunset pink/orange) -->
+  <style>
+  :root {
+    /* Sunset palette (8-digit hex) */
+  /* Tuned palette: slightly desaturated/muted for a less "bubblegum" look */
+  --sunset-pink:   #E23A6BFF; /* slightly deeper/desaturated pink */
+  --coral-orange:  #FF6A3CFF; /* coral/orange */
+  --marigold:      #FFB84DFF; /* golden marigold */
+  --lavender:      #D8B4F8FF; /* soft lavender */
+  --teal-accent:   #46BFB6FF; /* muted teal for less neon green */
+  --sienna:        #7F4428FF; /* warm grounding */
+
+    /* Team palette (from print / Instagram) - kept as semantic variables */
+    --team-orange-1: #F25A2B;
+    --team-magenta-1: #BB67AA; /* note: may sample lighter on white */
+    --team-peach: #FD9D69;
+    --team-lavender: #DFBAE3;
+    --team-pink-1: #FB5C98;
+    --team-orange-2: #FE7D39;
+    --team-magenta-2: #FD2979;
+    --team-pink-2: #ED207B;
+    --team-gold-1: #E4BA65;
+    --team-marigold-2: #F5C44B;
+    --team-lime-pale: #F5FE91;
+    --team-gold-2: #F4C543;
+    --team-neon-y: #EFFE66;
+
+    /* Map a few UI variables to the team palette for cohesion */
+    --pupil: var(--team-magenta-2); /* stronger magenta as primary HOWDY color */
+    --coral-orange: var(--team-orange-2);
+    --marigold: var(--team-marigold-2);
+    --lavender: var(--team-lavender);
+
+    --pupil:         var(--sunset-pink);
+    --redd:          var(--coral-orange);
+
+    --primary-bg-color:  #FFF6F4FF; /* warm off-white */
+    --secondary-bg-color:#FFEFE8FF; /* peach wash */
+    --accent-color:      var(--marigold);
+    --text-color:        #261717FF; /* warm near-black */
+
+    --nav-bg-color:   #FFFFFFFF;
+    --nav-border-color: var(--sienna);
+  /* Slightly tinted card background so cards don't appear too stark white */
+  /* Slightly richer card background so cards read as warm/papery, not flat beige */
+  --card-bg-color:  #FFF0D9FF; /* warm peach - feels richer than the off-white */
+    --button-bg-color: var(--redd);
+    --button-text-color: #FFFFFFFF;
+
+  /* Slightly cooler/peachier header so it isn't too beige */
+  --header-bg: linear-gradient(140deg, #FFEFF5CC 0%, #FFF6F4AA 50%, #FFD8B8FF 100%), url('./bg4.png') center/cover no-repeat;
+  --howder-bg: linear-gradient(140deg, #FFF6F4CC 0%, #FFEFE8AA 100%), url('./bg7.png') center/cover no-repeat;
+    /* JS-readable theme variables for scroll tween */
+    --page-bg-start: var(--page-bg-contrast); /* top color for the page */
+    --page-bg-end: #00FFCCFF; /* end color for scroll (green) */
+    --scroll-start-percent: 0.10; /* start tween at 10% of total scroll */
+    --scroll-end-padding: 400px; /* minimum pixel distance for tween end */
+  }
+
+    body.howdy-active {
+      --pupil: var(--sunset-pink);
+      --redd:  var(--coral-orange);
+      --primary-bg-color: #FFF6F4FF;
+      --secondary-bg-color: #FFEFE8FF;
+      --text-color: #221212FF;
+      --header-bg: linear-gradient(140deg, #FFDCE8FF 0%, #FFE6D6AA 45%, #FF9A6AFF 100%), url('./bg3.png') center/cover no-repeat;
+    }
+
+    /* UI mappings */
+    nav ul li:hover { background-color: rgba(255,88,110,0.08); }
+    a:hover { color: var(--lavender); }
+    .popup-ticket-link, .popup-price, .admin-btn { background-color: var(--button-bg-color); color: var(--button-text-color); border-color: var(--sienna); }
+    .card { box-shadow: 0 10px 0px rgba(127,68,40,0.09); border: 1px solid var(--nav-border-color); background-color: var(--card-bg-color); }
+    .header-title .span2 { color: var(--pupil); text-shadow: 0 3px 0 rgba(0,0,0,0.08); }
+  </style>
 </head>
 <body class="howdy-active">
   <!-- Header  -->
-  <header class="feader howder" style="scale:0.87; min-height:128px; max-height:224px;">
-    <div class="header-container" style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0.5rem;">
-      <div class="diy-thrift-wrapper" style="display: flex; gap: 0.5rem; align-items: center; order: 1;">
-        <h2 style="color:var(--redd); font-size:clamp(2.5rem, 3.9vw, 6.5rem); scale:0.69; display: inline-block;">
+  <header class="feader howder header-scaled">
+    <div class="header-container">
+      <div class="diy-thrift-wrapper">
+        <h2 class="brand-subtext">
         <span class="flipp"> <span class="flip">D</span>I<span class="flip">Y</span></span> 
         </h2>
         
-        <h1 class="header-title drop-wiggle" style="scale:0.87; display:inline-block; font-family: 'mt'; white-space: nowrap;">
-          <span class="span2 flip" style="color:var(--blew); font-size:clamp(5.9rem, 11.6vw, 17rem);">
+        <h1 class="header-title drop-wiggle">
+          <span class="span2 flip">
             <span id="howdy-h" class="flip howdy-letter">H</span><span id="howdy-o" class="flipp howdy-letter">O</span><span id="howdy-w" class="flipp howdy-letter">W</span><span id="howdy-d" class="flip howdy-letter">D</span><span id="howdy-y" class="flipp howdy-letter">Y</span>
           </span>
         </h1>
         
-        <h2 style="color:var(--redd); font-size:clamp(2.5rem, 3.9vw, 6.5rem); scale:0.69; display: inline-block;">
+        <h2 class="brand-subtext">
           <span class="flip">
             T<span class="flipp">H</span><span class="flip">R</span>I<span class="flipp">
             F<span class="flip">T</span>
@@ -175,23 +251,23 @@
   </header>
 
   <!-- Admin Panel -->
-  <div id="admin-panel" class="admin-panel" style="display: none;">
+  <div id="admin-panel" class="admin-panel">
     <div class="admin-header">
       <h2>Admin Panel</h2>
-      <div style="text-align: center; margin-bottom: 1.5rem;">
-<img src="./A.png" alt="Howdy Thrift Logo" style="height: 128px; width: auto; opacity: 0.95;" class="main-logo"></div>
+        <div class="text-center mb-1-5rem">
+          <img src="./A.png" alt="Howdy Thrift Logo" class="main-logo"></div>
       <button id="logout-button" class="logout-btn">Logout</button>
     </div>
     <div id="admin-content"></div>
   </div>
 
   <!-- Login Modal -->
-  <div id="login-modal" class="modal" role="dialog" aria-labelledby="modal-title" aria-modal="true" style="display: none;">
+  <div id="login-modal" class="modal hidden" role="dialog" aria-labelledby="modal-title" aria-modal="true">
     <div class="modal-content">
       <button class="close-button" aria-label="Close modal">&times;</button>
       <h2 id="modal-title">Admin Login</h2>
-          <div style="text-align: center; margin-bottom: 1.5rem;">
-<img src="./A.png" alt="Howdy Thrift Logo" style="height: 128px; width: auto; opacity: 0.95;" class="main-logo"></div>
+          <div class="text-center mb-1-5rem">
+            <img src="./A.png" alt="Howdy Thrift Logo" class="main-logo"></div>
       <form id="login-form">
         <input type="password" id="password" placeholder="Password" required aria-label="Admin password">
         <button type="submit">Login</button>
@@ -202,14 +278,14 @@
   <!-- Mission Statement Section -->
   <section id="mission-statement" class="card">
     <!-- Logo accent -->
-    <div style="text-align: center; margin-bottom: 1.5rem;">
-      <img src="./B.png" alt="Howdy Thrift Logo" style="height: 156px; width: auto; opacity: 0.95;" class="main-logo">
+    <div class="text-center mb-1-5rem">
+      <img src="./B.png" alt="Howdy Thrift Logo" class="main-logo large">
     </div>
     <h2>THRIFT STORE BY DAY... DIY VENUE BY NIGHT!</h2>
     <div id="mission-content">
-      <p style="font-weight: bold; font-size: 1.2rem; text-align: center; margin-bottom: 1rem; font-family: var(--font-main);">
+  <p class="mission-lead">
 ...
-      </p>
+  </p>
     </div>
   </section>
 
@@ -220,8 +296,83 @@
       <h2>Posts</h2>
       <div id="posts-container"></div>
         <div id="fwr">
-    <img alt="mascot" src="./1z.png" style="width:212px;" class="squi-rmbreth">
+    <img alt="mascot" src="./1z.png" class="mascot">
   </div>
+    </section>
+    
+    <!-- Instagram Feed Section (inserted as 3rd card) -->
+    <section id="insta-section" class="card">
+      <h2>Instagram</h2>
+      <div id="insta-feed" class="insta-grid">
+        <!-- Try the quick Instagram embed (will fall back to your JS loader if blocked) -->
+        <blockquote class="instagram-media insta-embed" data-instgrm-permalink="https://www.instagram.com/howdydiythrift/" data-instgrm-version="14">
+          <div class="insta-padding">
+            <a href="https://www.instagram.com/howdydiythrift/" class="insta-link" target="_blank" rel="noopener">
+              <div class="placeholder-row">
+                <div class="placeholder-circle"></div>
+                <div class="insta-placeholder-col">
+                  <div class="placeholder-rect w-100"></div>
+                  <div class="placeholder-rect w-60"></div>
+                </div>
+              </div>
+              <div class="insta-aspect"></div>
+              <div class="spinner-box"> <!-- spinner svg placeholder -->
+                <svg width="50px" height="50px" viewBox="0 0 60 60" version="1.1" xmlns="https://www.w3.org/2000/svg" xmlns:xlink="https://www.w3.org/1999/xlink"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g transform="translate(-511.000000, -20.000000)" fill="#000000"><g><path d="M556.869,30.41 C554.814,30.41 553.148,32.076 553.148,34.131 C553.148,36.186 554.814,37.852 556.869,37.852 C558.924,37.852 560.59,36.186 560.59,34.131 C560.59,32.076 558.924,30.41 556.869,30.41 M541,60.657 C535.114,60.657 530.342,55.887 530.342,50 C530.342,44.114 535.114,39.342 541,39.342 C546.887,39.342 551.658,44.114 551.658,50 C551.658,55.887 546.887,60.657 541,60.657 M541,33.886 C532.1,33.886 524.886,41.1 524.886,50 C524.886,58.899 532.1,66.113 541,66.113 C549.9,66.113 557.115,58.899 557.115,50 C557.115,41.1 549.9,33.886 541,33.886 M565.378,62.101 C565.244,65.022 564.756,66.606 564.346,67.663 C563.803,69.06 563.154,70.057 562.106,71.106 C561.058,72.155 560.06,72.803 558.662,73.347 C557.607,73.757 556.021,74.244 553.102,74.378 C549.944,74.521 548.997,74.552 541,74.552 C533.003,74.552 532.056,74.521 528.898,74.378 C525.979,74.244 524.393,73.757 523.338,73.347 C521.94,72.803 520.942,72.155 519.894,71.106 C518.846,70.057 518.197,69.06 517.654,67.663 C517.244,66.606 516.755,65.022 516.623,62.101 C516.479,58.943 516.448,57.996 516.448,50 C516.448,42.003 516.479,41.056 516.623,37.899 C516.755,34.978 517.244,33.391 517.654,32.338 C518.197,30.938 518.846,29.942 519.894,28.894 C520.942,27.846 521.94,27.196 523.338,26.654 C524.393,26.244 525.979,25.756 528.898,25.623 C532.057,25.479 533.004,25.448 541,25.448 C548.997,25.448 549.943,25.479 553.102,25.623 C556.021,25.756 557.607,26.244 558.662,26.654 C560.06,27.196 561.058,27.846 562.106,28.894 C563.154,29.942 563.803,30.938 564.346,32.338 C564.756,33.391 565.244,34.978 565.378,37.899 C565.522,41.056 565.552,42.003 565.552,50 C565.552,57.996 565.522,58.943 565.378,62.101 M570.82,37.631 C570.674,34.438 570.167,32.258 569.425,30.349 C568.659,28.377 567.633,26.702 565.965,25.035 C564.297,23.368 562.623,22.342 560.652,21.575 C558.743,20.834 556.562,20.326 553.369,20.18 C550.169,20.033 549.148,20 541,20 C532.853,20 531.831,20.033 528.631,20.18 C525.438,20.326 523.257,20.834 521.349,21.575 C519.376,22.342 517.703,23.368 516.035,25.035 C514.368,26.702 513.342,28.377 512.574,30.349 C511.834,32.258 511.326,34.438 511.181,37.631 C511.035,40.831 511,41.851 511,50 C511,58.147 511.035,59.17 511.181,62.369 C511.326,65.562 511.834,67.743 512.574,69.651 C513.342,71.625 514.368,73.296 516.035,74.965 C517.703,76.634 519.376,77.658 521.349,78.425 C523.257,79.167 525.438,79.673 528.631,79.82 C531.831,79.965 532.853,80.001 541,80.001 C549.148,80.001 550.169,79.965 553.369,79.82 C556.562,79.673 558.743,79.167 560.652,78.425 C562.623,77.658 564.297,76.634 565.965,74.965 C567.633,73.296 568.659,71.625 569.425,69.651 C570.167,67.743 570.674,65.562 570.82,62.369 C570.966,59.17 571,58.147 571,50 C571,41.851 570.966,40.831 570.82,37.631"></path></g></g></g></svg>
+              </div>
+              <div style="padding-top: 8px;"> <div class="insta-view">View this profile on Instagram</div></div>
+              <div class="insta-aspect-small"></div>
+              <div class="insta-row">
+                <div>
+                  <div class="placeholder-circle small-12"></div>
+                  <div class="placeholder-rect tiny-12 rotate-diag"></div>
+                  <div class="placeholder-circle small-12 shifted"></div>
+                </div>
+                <div class="insta-row-mid">
+                  <div class="placeholder-circle mid-20"></div>
+                  <div class="triangle-mark"></div>
+                </div>
+                <div class="insta-row-right">
+                  <div class="pointer-mark"></div>
+                  <div class="placeholder-rect small-16"></div>
+                  <div class="pointer-mark-2"></div>
+                </div>
+              </div>
+            </a>
+            <p class="insta-caption"><a href="https://www.instagram.com/howdydiythrift/" class="insta-link" target="_blank" rel="noopener">howdydiythrift</a> • Instagram photos and videos</p>
+          </div>
+        </blockquote>
+
+        <noscript>
+          <p style="opacity:0.7">To view the Instagram profile, enable JavaScript or visit <a href="https://www.instagram.com/howdydiythrift/" target="_blank" rel="noopener">@howdydiythrift</a>.</p>
+        </noscript>
+
+        <!-- Put core social links here so we don't need the QR card -->
+        <div class="social-links text-center">
+          <p><a href="https://www.instagram.com/howdydiythrift/" target="_blank" rel="noopener">@howdydiythrift</a></p>
+          <p><a href="https://linktr.ee/howdydiythrift" target="_blank" rel="noopener">linktr.ee/howdydiythrift</a></p>
+          <p><a href="https://www.facebook.com/howdydiythrift" target="_blank" rel="noopener">Facebook</a></p>
+        </div>
+      </div>
+
+      <!-- Load Instagram's embed script explicitly over HTTPS and attempt to process embeds. If blocked, your existing JS loader will be used as fallback. -->
+      <script async src="https://www.instagram.com/embed.js"></script>
+      <script>
+        (function runInstagramEmbedProcessor(){
+          function tryProcess(retries){
+            if (window.instgrm && window.instgrm.Embeds && typeof window.instgrm.Embeds.process === 'function'){
+              try { window.instgrm.Embeds.process(); } catch(e){ /* swallow */ }
+              return;
+            }
+            if (retries <= 0) return;
+            setTimeout(function(){ tryProcess(retries - 1); }, 500);
+          }
+          if (document.readyState === 'complete' || document.readyState === 'interactive'){
+            tryProcess(6);
+          } else {
+            document.addEventListener('DOMContentLoaded', function(){ tryProcess(6); });
+          }
+        })();
+      </script>
     </section>
     
     <!-- Featured Content Section -->
@@ -241,14 +392,14 @@
   <!-- Social Media Section -->
   <section id="social-section" class="card">
     <h2>Follow Us</h2>
-    <div style="text-align: center;">
-      <ponnect with us on social media and check out our linktree for more!</p>
+    <div class="social-content" style="text-align: center;">
+      <p>Connect with us on social media and check out our linktree for more!</p>
       <p>
         <a href="https://linktr.ee/howdydiythrift" target="_blank" rel="noopener">linktr.ee/howdydiythrift</a>
-      </p><p id="facebook"><a href="https://www.facebook.com/howdydiythrift" target="_blank" rel="noopener">Facebook</a></p>
-      <a href="https://www.instagram.com/howdydiythrift/" target="_blank" rel="noopener" style="display: inline-block;">Instagram<br>
-        <img src="./hyqr.png" alt="Howdy DIY Thrift QR code for Instagram and social links" style="width: min(250px, 33vw); height: auto; border: 1px solid rgba(255,255,255,0.3);">
-      </a>
+      </p>
+      <p id="facebook"><a href="https://www.facebook.com/howdydiythrift" target="_blank" rel="noopener">Facebook</a></p>
+      <p><a href="https://www.instagram.com/howdydiythrift/" target="_blank" rel="noopener">Instagram</a></p>
+      <!-- QR removed: social links moved to the Instagram card for consistency -->
     </div>
   </section>
 </main>
@@ -262,14 +413,14 @@
       <p id="address">6523 STADIUM DRIVE, KANSAS CITY MISSOURI</p>
       <p id ="email"><a href="mailto:howdythrift@gmail.com">howdythrift@gmail.com</a> </p>
       <!-- Admin Login Button -->
-      <div id="admin-login-button-container" style="margin-top: 1rem;">
+  <div id="admin-login-button-container" class="admin-login-button-container">
         <button id="admin-login-button" class="admin-btn">Admin</button>
       </div>
     </div>
   </footer>
   <!-- Logo accent in footer -->
-      <div class="footer-logo" style="text-align: center; margin-bottom: 1.5rem;">
-        <img src="./1.png" alt="Howdy DIY Logo" style="height: 128px; width: auto; opacity: 0.9;">
+      <div class="footer-logo">
+        <img src="./1.png" alt="Howdy DIY Logo" class="main-logo">
       </div>
 </body>
 </html>

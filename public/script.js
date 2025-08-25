@@ -1,4 +1,43 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Centralized image error fallback handler used by image onerror attributes
+  window.handleImageError = function(imgEl) {
+    try {
+      console.warn('Image failed to load, applying fallback for', imgEl && imgEl.src);
+      const fallback = './hyph.png';
+      imgEl.onerror = null;
+      imgEl.src = fallback;
+      imgEl.alt = 'Image unavailable - fallback applied';
+      // Apply a utility class for fallback sizing instead of inline styles
+      imgEl.classList.add('image-fallback');
+    } catch (e) {
+      console.error('handleImageError failed', e);
+    }
+  };
+  // Aggressive HOWDY hover debug: attach forced inline handlers to every .howdy-letter
+  try {
+    const debugLetters = document.querySelectorAll('.howdy-letter');
+    debugLetters.forEach((el) => {
+      // mark for debugging
+      el.dataset.hoverDebug = 'true';
+      // ensure interactive via CSS class (centralized)
+      el.classList.add('howdy-debug');
+
+      const id = el.id || '(no-id)';
+      el.addEventListener('mouseenter', (ev) => {
+        console.log('DEBUG HOVER ENTER:', id, el.textContent, ev.target);
+        // toggle a centralized class to handle hover transform in CSS
+        el.classList.add('howdy-hovered');
+      });
+
+      el.addEventListener('mouseleave', (ev) => {
+        console.log('DEBUG HOVER LEAVE:', id, el.textContent, ev.target);
+        el.classList.remove('howdy-hovered');
+      });
+    });
+    console.log('Attached debug hover handlers to howdy letters:', debugLetters.length);
+  } catch (e) {
+    console.error('Failed to attach debug howdy handlers:', e);
+  }
   // --------------------------
   // DOM Elements
   // --------------------------
@@ -41,13 +80,19 @@ document.addEventListener('DOMContentLoaded', () => {
   // GSAP Animations
   // --------------------------
   function initAnimations() {
-    console.log('Initializing GSAP animations');
-    
+    // If ansik.js already consolidated animations, skip to avoid double-init
+    if (window.ANSIK_ANIMATIONS_INITIALIZED) {
+      console.log('Skipping initAnimations because ansik.js already initialized animations');
+      return;
+    }
+
+    console.log('Initializing GSAP animations (script.js fallback)');
+
     // First, ensure the header container is visible but letters will be animated
-    gsap.set(".header-title", { opacity: 1 });
+    if (window.gsap && gsap.set) gsap.set('.header-title', { opacity: 1 });
     
-    // Register CustomEase
-    gsap.registerPlugin(ScrollTrigger, MotionPathPlugin, CustomEase);
+    // Register CustomEase if available
+    if (window.gsap && gsap.registerPlugin) gsap.registerPlugin(ScrollTrigger, MotionPathPlugin, CustomEase);
     
     // Custom eases - simplified to use standard eases instead of custom paths that might be invalid
     try {
@@ -79,15 +124,19 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log("HOWDY Letters found:", howdyLetters.length);
     console.log("Letters:", Array.from(howdyLetters).map(el => el.textContent));
     
-    // Set initial state for HOWDY letters - each with different starting positions and rotations
+    // Set initial state for HOWDY letters with clamped offsets to avoid flying off-screen
     howdyLetters.forEach((letter, index) => {
+      const startY = -Math.min(70, 20 + Math.random() * 50); // -20..-70
+      const startX = (Math.random() * 24) - 12;
       gsap.set(letter, { 
         opacity: 0, 
-        y: -100 - (Math.random() * 50), // Random starting heights
-        x: (Math.random() * 40) - 20,   // Random horizontal offset
-        rotationX: (Math.random() * 90) - 45, // Random X rotation
-        rotationY: (Math.random() * 90) - 45  // Random Y rotation
+        y: startY,
+        x: startX,
+        rotationX: (Math.random() * 40) - 20,
+        rotationY: (Math.random() * 40) - 20
       });
+      // Keep gradient class applied for fallback animations
+      letter.classList.add('howdy-gradient');
     });
     
     // Create a staggered drop-in animation for each letter of HOWDY
@@ -128,12 +177,12 @@ document.addEventListener('DOMContentLoaded', () => {
           // Direct DOM event handlers for maximum browser compatibility
           letter.onmouseenter = function() {
             console.log(`Letter ${letter.textContent} (${id}) mouse enter`);
+            // Transform-only hover in fallback to preserve gradient color
             gsap.to(`#${id}`, {
-              scale: 1.2,
-              color: "#ff6347",
-              rotation: originalRotation + ((Math.random() * 10) - 5),
-              duration: 0.3,
-              ease: "back.out(1.7)",
+              scale: 1.18,
+              rotation: originalRotation + ((Math.random() * 8) - 4),
+              duration: 0.28,
+              ease: "back.out(1.4)",
               overwrite: "auto"
             });
           };
@@ -142,17 +191,16 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(`Letter ${letter.textContent} (${id}) mouse leave`);
             gsap.to(`#${id}`, {
               scale: 1,
-              color: "var(--blew)",
               rotation: originalRotation,
-              duration: 0.3,
-              ease: "back.out(1.7)",
+              duration: 0.28,
+              ease: "back.out(1.4)",
               overwrite: "auto"
             });
           };
           
           // Add a data attribute to visually confirm event binding
           letter.setAttribute('data-has-hover', 'true');
-          letter.style.pointerEvents = 'auto';
+          letter.classList.add('howdy-interactive');
         });
       }
     }, "-=0.3");
@@ -502,6 +550,20 @@ document.addEventListener('DOMContentLoaded', () => {
     createMissionLogoIdleAnimation();
   }
 
+    // Ensure pink is visible: force --pupil value as inline color on HOWDY elements (debug fallback)
+    try {
+      const pupilColor = getComputedStyle(document.documentElement).getPropertyValue('--pupil').trim() || '#FF3B7D';
+      const howdyLettersForce = document.querySelectorAll('.howdy-letter');
+      howdyLettersForce.forEach(el => {
+        try { el.style.setProperty('color', pupilColor, 'important'); } catch (e) { el.style.color = pupilColor; }
+      });
+      const span2 = document.querySelector('.header-title .span2');
+      if (span2) try { span2.style.setProperty('color', pupilColor, 'important'); } catch (e) { span2.style.color = pupilColor; }
+      console.log('FORCED HOWDY PINK (inline):', pupilColor, howdyLettersForce.length);
+    } catch (e) {
+      console.warn('Could not force HOWDY pink inline:', e);
+    }
+
   // Constants / Config
   // Determine the correct API base URL based on current domain
   const getCurrentDomain = () => window.location.hostname;
@@ -692,8 +754,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 return `
                   <figure class="featured-item">
-                    <img src="${imageUrl}" alt="${item.caption || 'Featured image'}" loading="lazy" 
-                         onerror="this.onerror=null; console.log('Image failed to load, using fallback'); this.src='./hyph.png'; this.style.maxWidth='180px'; this.style.margin='20px auto'; this.style.display='block'; this.alt='Image unavailable - please check media path';">
+        <img src="${imageUrl}" alt="${item.caption || 'Featured image'}" loading="lazy" 
+          onerror="window.handleImageError && window.handleImageError(this)">
                     <figcaption>${item.caption || ''}</figcaption>
                   </figure>
                 `;
@@ -709,8 +771,8 @@ document.addEventListener('DOMContentLoaded', () => {
               } else if (item.type === 'html') {
                 return `
                   <div class="featured-item featured-html">
-                    <div class="html-content" style="color: #333; background-color: transparent; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); text-shadow:1px 1px 2px #ffffff;">${item.content}</div>
-                    ${item.caption ? `<figcaption style="color: #c9c9c9;">${item.caption}</figcaption>` : ''}
+                    <div class="html-content">${item.content}</div>
+                    ${item.caption ? `<figcaption class="figcaption">${item.caption}</figcaption>` : ''}
                   </div>
                 `;
               }
@@ -718,9 +780,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }).join('');
             
             // Make the container visible in case it was hidden
-            featuredContainer.style.display = 'flex';
+            featuredContainer.classList.add('is-flex');
             const featuredSection = document.getElementById('featured-content-section');
-            if (featuredSection) featuredSection.style.display = 'block';
+            if (featuredSection) featuredSection.classList.add('is-block');
             
             // Update the featured section title if set in localStorage
             const featuredTitle = document.querySelector('#featured-content-section h2');
@@ -788,7 +850,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // Create hours image container if it doesn't exist
             hoursImageContainer = document.createElement('div');
             hoursImageContainer.className = 'hours-image-container';
-            hoursImageContainer.style.cssText = 'text-align: center; margin-top: 1rem;';
             hoursContainer.appendChild(hoursImageContainer);
           }
           
@@ -801,9 +862,7 @@ document.addEventListener('DOMContentLoaded', () => {
               this.onerror = null;
               console.log('Hours image failed to load, using fallback');
               this.src = './hyqr.png';
-              this.style.maxWidth = '180px';
-              this.style.margin = '20px auto';
-              this.style.display = 'block';
+              this.classList.add('image-fallback');
               this.alt = 'Image unavailable - please check media path';
             };
             
@@ -819,16 +878,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const newImg = document.createElement('img');
             newImg.src = imageUrl;
             newImg.alt = `${hours.title || 'Howdy DIY Thrift Hours'} - Updated Schedule`;
-            newImg.style = "max-width: 100%; height: auto; border: 1px solid var(--nav-border-color);";
+            newImg.className = 'featured-img admin-image';
             // Add error handling
             newImg.onerror = function() {
               this.onerror = null;
               console.log('Hours image failed to load:', imageUrl);
               console.log('Using fallback image');
               this.src = './hyph.png';
-              this.style.maxWidth = '180px';
-              this.style.margin = '20px auto';
-              this.style.display = 'block';
+              this.classList.add('image-fallback');
               this.alt = 'Image unavailable - please check media path';
             };
             console.log('Created new hours image element with src:', imageUrl);
@@ -878,9 +935,73 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initial content load
   loadContent();
+  // Load Instagram feed (non-blocking)
+  loadInstagramFeed();
   
   // Initialize GSAP animations after DOM content loaded
+  // This will be a no-op if ansik.js has already run and set the global flag
   initAnimations();
+  // Safety: ensure mission logo remains visible after intro animations
+  try {
+    const missionLogoEl = document.querySelector('#mission-statement img');
+    if (missionLogoEl) {
+      // kill any lingering GSAP tweens that might hide it
+      if (window.gsap) gsap.killTweensOf(missionLogoEl);
+      // force visible final state using a CSS helper class
+      missionLogoEl.classList.add('force-visible');
+    }
+  } catch (e) {
+    console.warn('Could not enforce mission logo visible state:', e);
+  }
+});
+
+// --- Fallback: ensure HOWDY D and Y get hover handlers and pointer events ---
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    const ensureIds = ['howdy-d', 'howdy-y'];
+    ensureIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) {
+        console.warn('HOWDY fallback: element not found:', id);
+        return;
+      }
+      // Force pointer events and stacking so the element is interactive
+  el.classList.add('howdy-interactive');
+      el.setAttribute('data-hover-fallback', 'true');
+
+      // If GSAP is available, use it for consistent animations; otherwise use tiny CSS tweak
+      const onEnter = () => {
+        try {
+          if (window.gsap) {
+            gsap.to(el, { scale: 1.2, color: '#ff6347', duration: 0.22, overwrite: 'auto' });
+          } else {
+            el.classList.add('howdy-hovered');
+            el.style.color = '#ff6347';
+          }
+        } catch (e) { console.warn('GSAP hover fallback failed', e); }
+      };
+
+      const onLeave = () => {
+        try {
+          if (window.gsap) {
+            gsap.to(el, { scale: 1, color: getComputedStyle(document.documentElement).getPropertyValue('--blew') || 'var(--blew)', duration: 0.22, overwrite: 'auto' });
+          } else {
+            el.classList.remove('howdy-hovered');
+            el.style.color = '';
+          }
+        } catch (e) { console.warn('GSAP hover fallback failed', e); }
+      };
+
+      // Attach only if not already attached
+      if (!el.dataset.hoverAttached) {
+        el.addEventListener('mouseenter', onEnter);
+        el.addEventListener('mouseleave', onLeave);
+        el.dataset.hoverAttached = 'true';
+      }
+    });
+  } catch (err) {
+    console.error('Error in HOWDY fallback setup:', err);
+  }
 });
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -1350,10 +1471,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Create popup content with enhanced styling and thumbnails
       let popupContent = `
-        <div style="padding: 20px; font-family: var(--font-hnm11); background: var(--card-bg-color); min-height: 100vh;">
-          <h2 style="text-align: center; margin-bottom: 30px; color: var(--text-color); border-bottom: 2px solid var(--nav-border-color); padding-bottom: 10px;">
-            ${venue.toUpperCase()} UPCOMING SHOWS
-          </h2>
+        <div class="event-popup-content">
+          <h2 class="event-popup-title">${venue.toUpperCase()} UPCOMING SHOWS</h2>
       `;
 
       if (upcomingEvents.length === 0) {
@@ -1383,73 +1502,24 @@ document.addEventListener('DOMContentLoaded', () => {
           const ticketUrl = event.ticket_url || event.ticketLink;
 
           popupContent += `
-            <div style="border: 1px solid var(--nav-border-color); margin: 15px 0; padding: 20px; 
-                        background: rgba(255,255,255,0.95); border-radius: 8px; 
-                        box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.2s ease;">
-              <div style="display: flex; gap: 20px; align-items: flex-start;">
+            <div class="event-card">
+              <div class="event-card-row">
                 ${thumbnailUrl ? `
-                  <img src="${thumbnailUrl}" alt="${event.title}" 
-                       style="width: 100px; height: 100px; object-fit: cover; border-radius: 6px; 
-                              flex-shrink: 0; border: 2px solid var(--nav-border-color);">
+                  <img src="${thumbnailUrl}" alt="${event.title}" class="event-thumb">
                 ` : `
-                  <div style="width: 100px; height: 100px; background: var(--nav-border-color); 
-                              border-radius: 6px; display: flex; align-items: center; justify-content: center; 
-                              color: white; font-size: 12px; text-align: center; flex-shrink: 0;">
-                    No Image
-                  </div>
+                  <div class="event-noimage">No Image</div>
                 `}
-                <div style="flex: 1;">
-                  <h3 style="margin: 0 0 12px 0; color: var(--text-color); font-size: 1.2em; 
-                             line-height: 1.3; font-weight: bold;">
-                    ${event.title}
-                  </h3>
-                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
-                              gap: 8px; margin-bottom: 12px;">
-                    <p style="margin: 0; color: var(--text-color); display: flex; align-items: center; gap: 8px;">
-                      <span style="font-size: 1.1em;">📅</span>
-                      <strong>${formattedDate}</strong>
-                    </p>
-                    ${eventTime ? `
-                      <p style="margin: 0; color: var(--text-color); display: flex; align-items: center; gap: 8px;">
-                        <span style="font-size: 1.1em;">🕐</span>
-                        ${eventTime}
-                      </p>
-                    ` : ''}
-                    <p style="margin: 0; color: var(--text-color); display: flex; align-items: center; gap: 8px;">
-                      <span style="font-size: 1.1em;">📍</span>
-                      <strong>${venueDisplay}</strong>
-                    </p>
-                    ${event.age_restriction ? `
-                      <p style="margin: 0; color: var(--text-color); display: flex; align-items: center; gap: 8px;">
-                        <span style="font-size: 1.1em;">🔞</span>
-                        ${event.age_restriction}
-                      </p>
-                    ` : ''}
-                    ${suggestedPrice ? `
-                      <p style="margin: 0; color: var(--text-color); display: flex; align-items: center; gap: 8px;">
-                        <span style="font-size: 1.1em;">💰</span>
-                        <strong>${suggestedPrice}</strong>
-                      </p>
-                    ` : ''}
+                <div class="event-card-body">
+                  <h3 class="event-title">${event.title}</h3>
+                  <div class="event-meta-grid">
+                    <p class="event-meta"><span class="meta-emoji">📅</span><strong>${formattedDate}</strong></p>
+                    ${eventTime ? `<p class="event-meta"><span class="meta-emoji">🕐</span>${eventTime}</p>` : ''}
+                    <p class="event-meta"><span class="meta-emoji">📍</span><strong>${venueDisplay}</strong></p>
+                    ${event.age_restriction ? `<p class="event-meta"><span class="meta-emoji">🔞</span>${event.age_restriction}</p>` : ''}
+                    ${suggestedPrice ? `<p class="event-meta"><span class="meta-emoji">💰</span><strong>${suggestedPrice}</strong></p>` : ''}
                   </div>
-                  ${event.description ? `
-                    <p style="margin: 12px 0; color: var(--text-color); font-size: 0.95em; 
-                              line-height: 1.5; padding: 10px; background: rgba(0,0,0,0.05); 
-                              border-radius: 4px; border-left: 3px solid var(--nav-border-color);">
-                      ${event.description.substring(0, 300)}${event.description.length > 300 ? '...' : ''}
-                    </p>
-                  ` : ''}
-                  ${ticketUrl ? `
-                    <a href="${ticketUrl}" target="_blank" rel="noopener" 
-                       style="display: inline-flex; align-items: center; gap: 8px; margin-top: 12px; 
-                              padding: 10px 16px; background: var(--button-bg-color); 
-                              color: var(--button-text-color); text-decoration: none; 
-                              border-radius: 6px; font-size: 0.95em; font-weight: bold; 
-                              transition: all 0.2s ease; border: 2px solid transparent;">
-                      <span style="font-size: 1.1em;">🎫</span>
-                      Get Tickets
-                    </a>
-                  ` : ''}
+                  ${event.description ? `<p class="event-desc">${event.description.substring(0, 300)}${event.description.length > 300 ? '...' : ''}</p>` : ''}
+                  ${ticketUrl ? `<a href="${ticketUrl}" target="_blank" rel="noopener" class="ticket-link"><span class="meta-emoji">🎫</span>Get Tickets</a>` : ''}
                 </div>
               </div>
             </div>
@@ -1458,10 +1528,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       popupContent += `
-          <div style="text-align: center; margin-top: 20px;">
-            <small style="color: var(--text-color); opacity: 0.7;">
-              Switch between HOWDY and FAREWELL modes to see different venue listings
-            </small>
+          <div class="popup-footer">
+            <small class="popup-footer-note">Switch between HOWDY and FAREWELL modes to see different venue listings</small>
           </div>
         </div>
       `;
@@ -1500,6 +1568,40 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       `;
     }
+  }
+
+  /**
+   * Load Instagram feed into #insta-feed. Tries an /api/instagram JSON endpoint first,
+   * falls back to a small set of local images shipped with the site.
+   */
+  async function loadInstagramFeed() {
+    const container = document.getElementById('insta-feed');
+    if (!container) return;
+    try {
+      // Attempt to fetch a JSON feed from a backend worker (optional)
+      const resp = await fetch('/api/instagram');
+      if (resp.ok) {
+        const data = await resp.json();
+        // Expect data.posts = [{image_url, caption, link}, ...]
+        const posts = data.posts || data.items || [];
+        if (posts.length) {
+          container.innerHTML = posts.slice(0, 6).map(p => `
+            <a class="insta-item" href="${p.link || '#'}" target="_blank" rel="noopener">
+              <img src="${p.image_url}" alt="${(p.caption||'Instagram image').replace(/"/g,'')}">
+            </a>
+          `).join('');
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn('Instagram API fetch failed (this is optional):', err);
+    }
+
+    // Fallback: local sample images bundled in public/
+    const fallback = ['./hyph.png','./hyqr.png','./1.png','./z1.png','./mxdiyjuly.png','./hyu.png'];
+    container.innerHTML = fallback.slice(0,6).map(src => `
+      <div class="insta-item"><img src="${src}" alt="Instagram fallback image"></div>
+    `).join('');
   }
 
   /* 
