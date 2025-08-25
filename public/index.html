@@ -194,7 +194,7 @@
     --nav-border-color: var(--sienna);
   /* Slightly tinted card background so cards don't appear too stark white */
   /* Slightly richer card background so cards read as warm/papery, not flat beige */
-  --card-bg-color:  #FFF0D9FF; /* warm peach - feels richer than the off-white */
+  --card-bg-color:  transparent; /* allow per-card gradients from ccssss.css to show through */
     --button-bg-color: var(--redd);
     --button-text-color: #FFFFFFFF;
 
@@ -221,7 +221,7 @@
     nav ul li:hover { background-color: rgba(255,88,110,0.08); }
     a:hover { color: var(--lavender); }
     .popup-ticket-link, .popup-price, .admin-btn { background-color: var(--button-bg-color); color: var(--button-text-color); border-color: var(--sienna); }
-    .card { box-shadow: 0 10px 0px rgba(127,68,40,0.09); border: 1px solid var(--nav-border-color); background-color: var(--card-bg-color); }
+  .card { box-shadow: 0 10px 0px rgba(127,68,40,0.09); border: 1px solid var(--nav-border-color); background-color: var(--card-bg-color); }
     .header-title .span2 { color: var(--pupil); text-shadow: 0 3px 0 rgba(0,0,0,0.08); }
   </style>
 </head>
@@ -346,12 +346,7 @@
           <p style="opacity:0.7">To view the Instagram profile, enable JavaScript or visit <a href="https://www.instagram.com/howdydiythrift/" target="_blank" rel="noopener">@howdydiythrift</a>.</p>
         </noscript>
 
-        <!-- Put core social links here so we don't need the QR card -->
-        <div class="social-links text-center">
-          <p><a href="https://www.instagram.com/howdydiythrift/" target="_blank" rel="noopener">@howdydiythrift</a></p>
-          <p><a href="https://linktr.ee/howdydiythrift" target="_blank" rel="noopener">linktr.ee/howdydiythrift</a></p>
-          <p><a href="https://www.facebook.com/howdydiythrift" target="_blank" rel="noopener">Facebook</a></p>
-        </div>
+        <!-- social links removed from Insta card (moved to Follow Us card) -->
       </div>
 
       <!-- Load Instagram's embed script explicitly over HTTPS and attempt to process embeds. If blocked, your existing JS loader will be used as fallback. -->

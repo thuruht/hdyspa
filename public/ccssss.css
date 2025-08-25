@@ -13,10 +13,10 @@
     --header-text-shadow: rgba(0, 0, 0, 0.5);
     --nav-bg-color: #ffffff;
     --nav-border-color: #000000;
-  --card-bg-color: #fff8f2ee; /* keep cards light but let gradient show through */
+  --card-bg-color: #fffdf9; /* near-white with subtle warmth (less beige) */
   /* much lighter overlay so the underlying gradient shows vibrant colors */
   /* Per-card overlay alpha (default subtle). JS can randomize --card-overlay-alpha per-card */
-  --card-overlay-alpha: 0.02;
+  --card-overlay-alpha: 0.04; /* slightly stronger to keep texture while letting gradients read */
   /* make gradient overlays a bit more visible so the vivid palette reads stronger */
   --card-overlay-alpha-visible: 0.08;
   --card-bg-gradient-overlay: linear-gradient(180deg, rgba(255,255,255,var(--card-overlay-alpha)), rgba(0,0,0,0.00));
@@ -139,40 +139,44 @@
 
 /* Popup / modal (moved from index.html) */
 .popup-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.8);
-  z-index: 1000;
-  cursor: pointer;
-}
+    background-color: transparent;
+    background-image: var(--card-bg-gradient-overlay);
+    background-blend-mode: overlay;
+    border: 1px solid rgba(0,0,0,0.06);
+    padding: var(--padding-medium);
+    margin-bottom: var(--padding-medium);
+    border-radius: var(--card-radius); /* match facelift radius */
+    box-shadow: var(--card-shadow);
+    width: 100%; /* Full width of grid cell */
+    max-width: none; /* Remove any width restrictions */
+    overflow: hidden; /* make sure child elements respect the radius */
 
 .event-popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #0d0d0d;
-  border: 1px solid #333;
-  padding: 2rem;
-  z-index: 1001;
-  width: 90%;
-  max-width: 600px;
-  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
-  max-height: 90vh;
-  overflow-y: auto;
-}
-.event-popup-content {
+    /* Use card styling for consistency */
+    background-color: transparent;
+    color: #000;
+    border: 1px solid var(--nav-border-color);
+    box-shadow: var(--card-shadow);
+    padding: var(--padding-medium);
+    position: relative;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  .modal.show .modal-content {
+    transform: scale(1);
+  }
   padding: 20px;
-  font-family: var(--font-hnm11);
-  background: var(--card-bg-color);
-  min-height: 100vh;
-}
-.event-popup-title {
-  text-align: center;
-  margin-bottom: 30px;
+    /* Use the same card styling as content sections */
+    background-color: transparent;
+    background-image: var(--card-bg-gradient-overlay);
+    background-blend-mode: overlay;
+    border: 1px solid var(--nav-border-color);
+    box-shadow: var(--card-shadow);
+    border-radius: var(--card-radius);
+    padding: var(--padding-small);
+    margin: 2rem auto;
   color: var(--text-color);
   border-bottom: 2px solid var(--nav-border-color);
   padding-bottom: 10px;
@@ -181,7 +185,7 @@
   border: 1px solid var(--nav-border-color);
   margin: 15px 0;
   padding: 20px;
-  background: rgba(255,255,255,0.95);
+  background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.86));
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   transition: all 0.18s ease;
@@ -448,7 +452,7 @@
 
   --nav-bg-color:   #FFFFFFFF;
   --nav-border-color: var(--sienna);
-  --card-bg-color:  #FFF0D9FF;
+  --card-bg-color:  transparent; /* prefer per-card gradients from authoritative overrides */
   --button-bg-color: var(--redd);
   --button-text-color: #FFFFFFFF;
 
@@ -474,7 +478,7 @@ body.howdy-active {
 nav ul li:hover { background-color: rgba(255,88,110,0.08); }
 a:hover { color: var(--lavender); }
 .popup-ticket-link, .popup-price, .admin-btn { background-color: var(--button-bg-color); color: var(--button-text-color); border-color: var(--sienna); }
-.card { box-shadow: 0 10px 0px rgba(127,68,40,0.09); border: 1px solid var(--nav-border-color); background-color: var(--card-bg-color); }
+.card { box-shadow: 0 10px 0px rgba(127,68,40,0.09); border: 1px solid var(--nav-border-color); background-color: transparent; background-image: var(--card-bg-gradient-overlay); background-blend-mode: overlay; }
 .header-title .span2 { color: var(--pupil); text-shadow: 0 3px 0 rgba(0,0,0,0.08); }
 
 body {
@@ -489,7 +493,7 @@ body {
      without replacing or removing the background image. The JS tween will update
      --page-bg-start / --page-bg-end to animate the wash while the image stays fixed. */
   background-image: linear-gradient(180deg, var(--page-bg-start, rgba(255,248,243,0.0)), var(--page-bg-end, rgba(0,255,204,0.12))), url('./bg.png');
-  background-size: cover;
+  background-size: contain; /* changed to allow background-image/gradient to show */
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
@@ -988,7 +992,9 @@ header {text-align:center; align-content:center; align-items:center; margin-bott
 ============================== */
 .card {
   /* Facelift: rounded, softer shadow, consistent border */
-  background-color: var(--card-bg-color);
+  background-color: transparent;
+  background-image: var(--card-bg-gradient-overlay);
+  background-blend-mode: overlay;
   padding: var(--padding-small);
   border: 1px solid rgba(0,0,0,0.06); /* softer border for modern look */
   border-radius: 12px; /* consistent rounded corners for all cards */
@@ -1427,11 +1433,11 @@ select, option {
 .force-visible { opacity: 1 !important; display: block !important; transform: none !important; visibility: visible !important; }
 
 .modal-content {
-    /* Use card styling for consistency */
-    background-color: var(--card-bg-color);
-    color: #000;
-    border: 1px solid var(--nav-border-color);
-    box-shadow: -17px 20px 0px var(--nav-border-color);
+  /* Use card styling for consistency */
+  background-color: transparent;
+  color: #000;
+  border: 1px solid var(--nav-border-color);
+  box-shadow: var(--card-shadow);
     padding: var(--padding-medium);
     position: relative;
     max-width: 500px;
@@ -2296,13 +2302,13 @@ button[disabled] {
 
 /* Content Section Styles - Maintain Card Styling */
 #mission-statement, #posts-section, #featured-content-section, #hours-section {
-    margin-bottom: 2rem;
-    /* Use card styling instead of overriding it */
-    background-color: var(--card-bg-color);
-    border: 1px solid var(--nav-border-color);
-    box-shadow: -17px 20px 0px var(--nav-border-color);
-    padding: var(--padding-small);
-    border-radius: 0; /* Keep card's sharp corners */
+  margin-bottom: 2rem;
+  /* Use card styling tokens; don't force a flat background so per-card gradients can show */
+  background-color: transparent;
+  border: 1px solid var(--nav-border-color);
+  box-shadow: var(--card-shadow);
+  padding: var(--padding-small);
+  border-radius: var(--card-radius);
 }
 
 /* ==============================
@@ -2311,8 +2317,13 @@ button[disabled] {
 
 /* Mission section - Light background like posts was */
 #mission-statement.card {
-  background-color: var(--card-bg-color); /* Light default background */
-  color: var(--text-color);
+  background-color: transparent !important;
+  background-image: var(--sun-grad-1), var(--card-bg-gradient-overlay) !important;
+  background-size: cover, cover !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  background-blend-mode: multiply, overlay !important;
+  color: #111;
 }
 
 #mission-statement.card h2 {
@@ -2331,8 +2342,12 @@ button[disabled] {
 
 /* Posts section - Blue background that mission had */
 #posts-section.card {
-  /* Warmer sunset variant: coral -> marigold */
-  background: linear-gradient(180deg, var(--coral-orange), var(--marigold));
+  background-color: transparent !important;
+  background-image: var(--sun-grad-2), var(--card-bg-gradient-overlay) !important;
+  background-size: cover, cover !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  background-blend-mode: multiply, overlay !important;
   color: #fff;
   border: 1px solid rgba(0,0,0,0.06);
 }
@@ -2346,9 +2361,13 @@ button[disabled] {
 
 /* Hours section - Muted teal background */
 #hours-section.card {
-  /* Muted teal accent for hours to avoid neon green */
-  background: linear-gradient(180deg, rgba(70,191,182,0.12), rgba(46,209,201,0.06));
-  color: #081717; /* dark text for readability */
+  background-color: transparent !important;
+  background-image: var(--sun-grad-5), var(--card-bg-gradient-overlay) !important;
+  background-size: cover, cover !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  background-blend-mode: multiply, overlay !important;
+  color: #081717;
   border: 1px solid rgba(0,0,0,0.06);
 }
 
@@ -2362,18 +2381,17 @@ button[disabled] {
 /* Social media section - Purple background using existing var */
 /* Social section: match the global card facelift and ensure images/QR inherit radius */
 #social-section.card {
-  background: linear-gradient(180deg, var(--lavender), var(--secondary-bg-color));
+  background-color: transparent !important;
+  background-image: var(--sun-grad-6), var(--card-bg-gradient-overlay) !important;
+  background-size: cover, cover !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  background-blend-mode: multiply, overlay !important;
   color: #111;
   border: 1px solid rgba(0,0,0,0.06);
   box-shadow: 0 6px 20px rgba(0,0,0,0.10);
-  border-radius: 12px; /* same radius as other cards */
-  overflow: hidden; /* clip children (images/gradients) to the radius */
-}
-
-/* Make the social card stand out a bit from the page background */
-#social-section.card {
-  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(246,238,240,0.95));
-  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: var(--card-radius);
+  overflow: hidden;
 }
 
 #social-section.card h2 {
@@ -2387,6 +2405,30 @@ button[disabled] {
   color: #000;
   text-decoration: underline;
   font-weight: bold;
+}
+
+/* Make social links inside the Follow Us card match the Insta card styling */
+#social-section.card .social-links, #social-section.card .social-content {
+  text-align: center;
+  display: block;
+  gap: 8px;
+}
+
+#social-section.card .social-links a, #social-section.card .social-content a {
+  display: inline-block;
+  padding: 8px 12px;
+  margin: 6px 4px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 8px;
+  color: inherit;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+#social-section.card .social-links a:hover, #social-section.card .social-content a:hover {
+  background: rgba(255,255,255,0.12);
+  transform: translateY(-2px);
 }
 
 /* Make any inline buttons/links in social feel like buttons */
@@ -2499,7 +2541,7 @@ button[disabled] {
       "posts insta"
       "featured hours"
       "posts social";
-    gap: 2rem;
+    gap: 2.5rem; /* increased gap so cards don't touch */
     align-items: start;
     width: 100%;
     max-width: 1200px;
@@ -2796,12 +2838,65 @@ body {
 
 /* Per-card sunrise gradients (use !important to override the generic card bg)
    These add variety while keeping the unified tokens for radius and shadow. */
-#mission-statement.card { background-image: var(--sun-grad-1), var(--card-bg-gradient-overlay) !important; background-blend-mode: multiply, overlay; }
-#posts-section.card       { background-image: var(--sun-grad-2), var(--card-bg-gradient-overlay) !important; background-blend-mode: multiply, overlay; }
-#insta-section.card      { background-image: var(--sun-grad-3), var(--card-bg-gradient-overlay) !important; background-blend-mode: multiply, overlay; }
-#featured-content-section.card { background-image: var(--sun-grad-4), var(--card-bg-gradient-overlay) !important; background-blend-mode: multiply, overlay; }
-#hours-section.card      { background-image: var(--sun-grad-5), var(--card-bg-gradient-overlay) !important; background-blend-mode: multiply, overlay; }
-#social-section.card     { background-image: var(--sun-grad-6), var(--card-bg-gradient-overlay) !important; background-blend-mode: multiply, overlay; }
+#mission-statement.card {
+  background-color: transparent !important;
+  background-image: var(--sun-grad-1), var(--card-bg-gradient-overlay) !important;
+  background-size: cover, cover !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  background-blend-mode: multiply, overlay !important;
+  color: #111 !important;
+}
+
+#posts-section.card {
+  background-color: transparent !important;
+  background-image: var(--sun-grad-2), var(--card-bg-gradient-overlay) !important;
+  background-size: cover, cover !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  background-blend-mode: multiply, overlay !important;
+  color: #111 !important;
+}
+
+#insta-section.card {
+  background-color: transparent !important;
+  background-image: var(--sun-grad-3), var(--card-bg-gradient-overlay) !important;
+  background-size: cover, cover !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  background-blend-mode: multiply, overlay !important;
+  color: #111 !important;
+}
+
+#featured-content-section.card {
+  background-color: transparent !important;
+  background-image: var(--sun-grad-4), var(--card-bg-gradient-overlay) !important;
+  background-size: cover, cover !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  background-blend-mode: multiply, overlay !important;
+  color: #111 !important;
+}
+
+#hours-section.card {
+  background-color: transparent !important;
+  background-image: var(--sun-grad-5), var(--card-bg-gradient-overlay) !important;
+  background-size: cover, cover !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  background-blend-mode: multiply, overlay !important;
+  color: #111 !important;
+}
+
+#social-section.card {
+  background-color: transparent !important;
+  background-image: var(--sun-grad-6), var(--card-bg-gradient-overlay) !important;
+  background-size: cover, cover !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  background-blend-mode: multiply, overlay !important;
+  color: #111 !important;
+}
 
 .admin-panel,
 .modal-content {
@@ -2818,7 +2913,9 @@ body {
 #social-section.card {
   border: var(--card-border) !important;
   box-shadow: var(--card-shadow) !important;
-  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(246,238,240,0.95)) !important;
+  /* Preserve per-card sunrise gradient instead of forcing white */
+  background-image: var(--sun-grad-6), var(--card-bg-gradient-overlay) !important;
+  background-blend-mode: multiply, overlay !important;
 }
 
 /* Neutralize older heavy offset shadows used in a few selectors */
@@ -2865,6 +2962,11 @@ body::before {
   background-image: var(--card-bg-gradient-overlay) !important;
   background-blend-mode: overlay !important;
   overflow: hidden; /* clip children to the rounded container */
+}
+
+/* Global spacing: ensure cards and sections have consistent vertical rhythm */
+main > section, #content-container > section, .card {
+  margin-bottom: 1.5rem; /* consistent vertical spacing between cards */
 }
 
 /* Make sure images, pictures, svg and videos inside cards visually match the container
