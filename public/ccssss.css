@@ -65,14 +65,14 @@
 
 /* === Utility Mix-in: Grain overlay (helps add depth to cards & header) === */
 .grain-overlay,
-.card, main, header, footer,
+.card, main, .header-card, .footer-card,
 .insta-card, .social-card,
 .modal-content, .dropdown {
   position: relative; /* ensures the grain overlay is positioned correctly */
 }
 
 .grain-overlay::before,
-.card::before, main::before, header::before, footer::before,
+.card::before, main::before, .header-card::before, .footer-card::before,
 .insta-card::before, .social-card::before,
 .modal-content::before, .dropdown::before {
   content: "";
@@ -310,8 +310,9 @@ a:hover {
 }
 
 header {
-    background: var(--header-bg);
-    padding: var(--padding-medium) 0;
+  /* header element remains full-width but visuals are applied to .header-card */
+  background: transparent;
+  padding: var(--padding-medium) 0;
     text-align: center;
 }
 
@@ -324,9 +325,10 @@ header {
   padding: 0 1rem;
 }
 
-header.feader {
+/* .header-card: use this inside <header> to visually constrain header background/border */
+.header-card {
   max-width: var(--site-max-width);
-  margin: 1rem auto;
+  margin: 0 auto;
   padding: var(--padding-medium);
   border: var(--card-border);
   border-radius: var(--card-radius);
@@ -337,7 +339,11 @@ header.feader {
 .header-inner {
     position: relative;
     z-index: 1;
-    padding: var(--padding-small);
+  padding: var(--padding-small);
+  /* Keep header content constrained to the same inner container used by main/cards */
+  width: 100%;
+  max-width: var(--site-max-width);
+  margin: 0 auto;
 }
 
 .brand-subtext,
@@ -474,7 +480,8 @@ button:active {
 
 /* Footer styles */
 footer {
-  background-color: var(--card-bg-color);
+  /* footer element remains full-width; visual background/border moved to .footer-card */
+  background-color: transparent;
   color: var(--text-color);
   text-align: center;
   padding: var(--padding-medium) 0;
@@ -485,6 +492,26 @@ footer {
 
 footer p {
   margin: 8px 0;
+}
+
+/* Footer inner constraint to match card/main container width */
+.footer-inner {
+  width: 100%;
+  max-width: var(--site-max-width);
+  margin: 0 auto;
+  padding: var(--padding-small);
+  box-sizing: border-box;
+}
+
+/* Style footer inner like a card container so borders/shadows align visually with the card grid */
+.footer-card {
+  display: block;
+  margin: 0 auto;
+  background-color: var(--card-bg-color);
+  border: var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  padding: var(--padding-medium);
 }
 
 /* Improve mission statement alignment */
