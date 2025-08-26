@@ -2,18 +2,21 @@
 
 :root {
     /* Colors */
-  --pupil: #D990FFFF;
-  --redd: #FF2B13FF;
+  /* Make HOWDY theme active by default so the site always uses the intended
+     sunset palette and header/bg (was previously applied only when
+     body.howdy-active was present). */
+  --pupil: var(--sunset-pink);
+  --redd: var(--coral-orange);
   --lima: #B0EE00FF;
   --blew: #00E2FFFF;
-  --primary-bg-color: #B0EE00FF;
-  --secondary-bg-color: #D090FFFF;
+  --primary-bg-color: #FFF6F4FF; /* warm off-white (howdy default) */
+  --secondary-bg-color: #FFEFE8FF; /* peach wash */
   --accent-color: #FF2B13FF;
-  --text-color: #204C4CFF;
+  --text-color: #221212FF; /* warm near-black used by howdy */
   --header-text-shadow: #00000080;
     --nav-bg-color: #FFFFFFFF;
     --nav-border-color: #000000FF;
-  --card-bg-color: #999DF9FF; /* near-#FFFFFFFF with subtle warmth (less beige) */
+  --card-bg-color: #FFFFFFDD; /* cards read as papery by default */
   /* much lighter overlay so the underlying gradient shows vibrant colors */
   /* Per-card overlay alpha (default subtle). JS can randomize --card-overlay-alpha per-card */
   --card-overlay-alpha: 0.06; /* slightly stronger to keep texture while letting gradients read */
@@ -533,7 +536,7 @@ footer p {
 .footer-logo { text-align: center; margin-bottom: 1.5rem; }
 .footer-logo img { height: 128px; width: auto; opacity: 0.9; }
 
-.insta-caption { color:#C9C8CDFF; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; #FFFFFFFF-space:nowrap; }
+.insta-caption { color:#C9C8CDFF; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space: nowrap; }
 .insta-caption a { color: #C9C8CDFF; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; }
 
 .insta-link { background:#FFFFFFFF; line-height:0; padding:0; text-align:center; text-decoration:none; width:100%; display:block; }
@@ -824,10 +827,39 @@ footer p {
   grid-column: 1 / span 2;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 895px) {
+  /* Stack content into a single column on narrow screens up to 895px */
   #content-container {
     display: block;
   }
+}
+
+/* Desktop override: force a strict 2 columns x 3 rows layout so none of the
+   six main cards sits alone. This places each section into a left/right
+   column and row (mission, posts, insta on left; featured, hours, social on right)
+   — adjust min-width breakpoint if you prefer a different desktop cutoff. */
+@media (min-width: 896px) {
+  #content-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: auto;
+    grid-gap: 1.5rem;
+  }
+
+  /* Top row */
+  #mission-statement { grid-column: 1; grid-row: 1; }
+  #featured-content-section { grid-column: 2; grid-row: 1; }
+
+  /* Middle row */
+  #posts-section { grid-column: 1; grid-row: 2; }
+  #hours-section { grid-column: 2; grid-row: 2; }
+
+  /* Bottom row */
+  #insta-section { grid-column: 1; grid-row: 3; }
+  #social-section { grid-column: 2; grid-row: 3; }
+
+  /* Ensure no element forces a full-span on desktop (override earlier span rules) */
+  #mission-statement, #hours-section, #social-section { grid-column: auto !important; }
 }
 
 /* Team palette mapping for cards 
@@ -1158,7 +1190,7 @@ input[type="submit"] {
 .featured-img { max-width: 100%; height: auto; border: 1px solid #0000000F; }
 .force-visible { opacity: 1 !important; display: block !important; transform: none !important; visibility: visible !important; }
 
-.modal-content {
+modal-content {
   /* Use card styling for consistency */
   background-color: #00000000;
   color: #000000FF;
@@ -1170,6 +1202,7 @@ input[type="submit"] {
     width: 90%;
     max-height: 80vh;
     overflow-y: auto;
+}
 .modal.show .modal-content {
     transform: scale(1);
 }
