@@ -153,8 +153,8 @@
 
 /* === Normalization Block (target & simplify legacy CSS) === */
 body {
-  /* Default body text should use the regular text weight/face */
-  font-family: var(--font-hnm11); /* hnm11 = regular text */
+  /* Default body text should use the kb face for most text as requested */
+  font-family: var(--font-secondary); /* kb for most text */
   color: var(--text-color);
   font-size: 16px;
   line-height: 1.5;
@@ -884,25 +884,37 @@ footer p {
   margin-top: 1.5rem;
 }
 
-/* Define grid areas for precise layout */
-#mission-statement {
-  grid-column: 1 / span 2;
+/* Place header inside the grid above the six cards. It will span both columns */
+#content-container > header.header-card {
+  grid-column: 1 / -1;
+  grid-row: 0; /* visually sits above the first row of cards */
+  align-self: start;
+  justify-self: center;
+  width: 100%;
+  max-width: var(--site-max-width);
+  box-sizing: border-box;
 }
 
-#posts-section {
-  grid-column: 1 / span 1;
-}
+/* New requested layout for desktop >=896px:
+   Row 1: Instagram (left) + Featured (right)
+   Row 2: Posts spanning both columns
+   Row 3: Hours (left) + Follow Us (right)
+*/
 
-#insta-section {
-  grid-column: 1 / span 1;
-}
+#insta-section { grid-column: 1; grid-row: 1; }
+#featured-content-section { grid-column: 2; grid-row: 1; }
+#posts-section { grid-column: 1 / span 2; grid-row: 2; }
+#hours-section { grid-column: 1; grid-row: 3; }
+#social-section { grid-column: 2; grid-row: 3; }
 
-#featured-content-section {
-  grid-column: 2 / span 1;
-}
-
-#hours-section, #social-section {
-  grid-column: 1 / span 2;
+/* Footer as a grid child: place it after the grid content and span both columns */
+.footer-card {
+  grid-column: 1 / -1;
+  grid-row: 4;
+  width: 100%;
+  max-width: var(--site-max-width);
+  margin: 1.25rem auto 0;
+  box-sizing: border-box;
 }
 
 @media (max-width: 895px) {
@@ -917,27 +929,10 @@ footer p {
    column and row (mission, posts, insta on left; featured, hours, social on right)
    — adjust min-width breakpoint if you prefer a different desktop cutoff. */
 @media (min-width: 896px) {
+  /* Desktop: the above explicit grid placements will apply; ensure auto rows */
   #content-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
     grid-auto-rows: auto;
-    grid-gap: 1.5rem;
   }
-
-  /* Top row */
-  #mission-statement { grid-column: 1; grid-row: 1; }
-  #featured-content-section { grid-column: 2; grid-row: 1; }
-
-  /* Middle row */
-  #posts-section { grid-column: 1; grid-row: 2; }
-  #hours-section { grid-column: 2; grid-row: 2; }
-
-  /* Bottom row */
-  #insta-section { grid-column: 1; grid-row: 3; }
-  #social-section { grid-column: 2; grid-row: 3; }
-
-  /* Ensure no element forces a full-span on desktop (override earlier span rules) */
-  #mission-statement, #hours-section, #social-section { grid-column: auto !important; }
 }
 
 /* Team palette mapping for cards 
@@ -1019,35 +1014,9 @@ footer p {
 }
 
 /* Style for the footer as a card */
-footer {
-  position: relative;
-  background-color: transparent;
-  background-image: var(--sun-grad-4, linear-gradient(110deg, #FB5C98FF 0%, #BB67AAFF 100%)), 
-                   linear-gradient(180deg, rgba(255,255,255,var(--card-overlay-alpha)), rgba(0,0,0,0) 100%);
-  background-blend-mode: overlay, normal;
-  background-size: cover;
-  background-position: center;
-  border-radius: var(--card-radius) 0 0 0; /* top-left only */
-  margin-top: var(--padding-large);
-  padding: var(--padding-medium) 0;
-  color: var(--text-color);
-  text-align: center;
-  box-shadow: var(--card-shadow);
-  border-top: var(--card-border);
-  z-index: 10;
-}
-
-/* Constrain footer to site width and give it card-like border so it doesn't
-   span edge-to-edge visually like a background block */
-.footer-container, footer {
-  max-width: var(--site-max-width);
-  margin: 1.25rem auto 0;
-  padding: 0 1rem;
-}
-footer {
-  border: var(--card-border);
-  border-radius: var(--card-radius);
-}
+/* Remove full-width footer visual rules; footer visuals are applied to .footer-card
+   which is now a grid child above. This avoids the old bleed issue and aligns
+   the footer visuals with the rest of the card grid. */
 
 /* Form styling */
 form {

@@ -109,10 +109,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const tl = gsap.timeline();
     
     // Header animation with sequential parts
-    tl.from("header .header-container", {
+    // Animate the header that's now a direct child of #content-container
+    tl.from("#content-container > header.header-card", {
       y: -50,
-      opacity: 0.69,
-      duration: 1,
+      opacity: 0.9,
+      duration: 0.9,
       ease: "power3.out"
     });
     
@@ -550,19 +551,11 @@ document.addEventListener('DOMContentLoaded', () => {
     createMissionLogoIdleAnimation();
   }
 
-    // Ensure pink is visible: force --pupil value as inline color on HOWDY elements (debug fallback)
+    // Apply gradient class for HOWDY letters so color is controlled via CSS
     try {
-      const pupilColor = getComputedStyle(document.documentElement).getPropertyValue('--pupil').trim() || '#FF3B7D';
       const howdyLettersForce = document.querySelectorAll('.howdy-letter');
-      howdyLettersForce.forEach(el => {
-        try { el.style.setProperty('color', pupilColor, 'important'); } catch (e) { el.style.color = pupilColor; }
-      });
-      const span2 = document.querySelector('.header-title .span2');
-      if (span2) try { span2.style.setProperty('color', pupilColor, 'important'); } catch (e) { span2.style.color = pupilColor; }
-      console.log('FORCED HOWDY PINK (inline):', pupilColor, howdyLettersForce.length);
-    } catch (e) {
-      console.warn('Could not force HOWDY pink inline:', e);
-    }
+      howdyLettersForce.forEach(el => el.classList.add('howdy-gradient'));
+    } catch (e) { console.warn('Could not ensure howdy-gradient on letters', e); }
 
   // Constants / Config
   // Determine the correct API base URL based on current domain
