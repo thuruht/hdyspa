@@ -884,15 +884,13 @@ footer p {
   margin-top: 1.5rem;
 }
 
-/* Place header inside the grid above the six cards. It will span both columns */
-#content-container > header.header-card {
-  grid-column: 1 / -1;
-  grid-row: 0; /* visually sits above the first row of cards */
-  align-self: start;
-  justify-self: center;
+/* Header card: constrained, sits above main content by default */
+.header-card {
   width: 100%;
   max-width: var(--site-max-width);
+  margin: 0 auto 1rem;
   box-sizing: border-box;
+  padding: var(--padding-medium);
 }
 
 /* New requested layout for desktop >=896px:
