@@ -1676,6 +1676,69 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleImages(initialState); 
     updateSocialLinks(initialState); 
   }
+  // Auto-detect anchors that are styled with our marigold / team-gold-2 color
+  // and add the `.yellow-link` utility class so they get the accessible stroke.
+  // This targets anchors that have an inline color or whose computed color matches
+  // the CSS variables used for the yellow/gold tones.
+  (function applyYellowLinkClass() {
+    try {
+      const rootStyles = getComputedStyle(document.documentElement);
+      const marigoldVar = rootStyles.getPropertyValue('--marigold').trim();
+      const teamGoldVar = rootStyles.getPropertyValue('--team-gold-2').trim();
+
+      // Helper to convert a CSS color token (hex, 8-digit hex, var(...) etc)
+      // into a computed rgb(...) string for reliable comparison.
+      const colorToComputed = (token) => {
+        if (!token) return null;
+        const tmp = document.createElement('div');
+        tmp.style.position = 'absolute';
+        tmp.style.left = '-9999px';
+        // If token is a CSS var reference, set directly; otherwise set raw token
+        tmp.style.color = token;
+        document.body.appendChild(tmp);
+        const c = getComputedStyle(tmp).color;
+        document.body.removeChild(tmp);
+        return c;
+      };
+
+      const marigoldComputed = colorToComputed(marigoldVar);
+      const teamGoldComputed = colorToComputed(teamGoldVar);
+
+      document.querySelectorAll('a').forEach(a => {
+        try {
+          const inlineStyle = a.getAttribute('style') || '';
+          const inlineColor = (a.style && a.style.color) ? a.style.color.trim() : '';
+          const computed = getComputedStyle(a).color;
+
+          const matchesInlineToken = inlineStyle.includes('--marigold') || inlineStyle.includes('--team-gold-2') ||
+            (marigoldVar && inlineStyle.includes(marigoldVar)) ||
+            (teamGoldVar && inlineStyle.includes(teamGoldVar));
+
+          const matchesComputed = (marigoldComputed && computed === marigoldComputed) ||
+                                  (teamGoldComputed && computed === teamGoldComputed);
+
+          if (matchesInlineToken || (inlineColor && (matchesComputed || inlineColor === marigoldVar || inlineColor === teamGoldVar))) {
+            a.classList.add('yellow-link');
+            // ensure the link is visible to assistive tech
+            a.setAttribute('data-yellow-contrast', 'applied');
+          }
+        } catch (innerErr) {
+          // don't let one bad link break the whole loop
+          console.warn('applyYellowLinkClass: link check failed', innerErr, a);
+        }
+      });
+
+      // Re-run after dynamic content updates (simple debounced observer)
+      let timeout = null;
+      const mo = new MutationObserver(() => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => applyYellowLinkClass(), 250);
+      });
+      mo.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class'] });
+    } catch (err) {
+      console.warn('applyYellowLinkClass failed', err);
+    }
+  })();
 
   // NOTE: Removed initSlideshow call (Issue 3.1)
   // Slideshow-related code has been removed as it's not needed for the Thrift app

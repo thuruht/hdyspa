@@ -284,6 +284,25 @@ header {
     text-align: center;
 }
 
+/* Constrain header visually like a card and center it, restore original
+   header layout so it doesn't bleed full-width and retains border/shadow. */
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+}
+
+header.feader {
+  max-width: var(--site-max-width);
+  margin: 1rem auto;
+  padding: var(--padding-medium);
+  border: var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  background: var(--header-bg);
+}
+
 .header-inner {
     position: relative;
     z-index: 1;
@@ -302,7 +321,7 @@ header {
 }
 
 .brand-subtext {
-  font-family: var(--font-howder);
+  font-family: var(--font-howder) !important;
   font-size: clamp(1.5rem, 6vw, 2.8rem);
   margin-top: -10px;
   display: block;
@@ -310,7 +329,8 @@ header {
 }
 
 .header-title {
-  font-family: var(--font-howder);
+  /* Use the display font for the H1 to match the original look */
+  font-family: var(--font-mt) !important;
   font-size: clamp(3.4rem, 11vw, 5rem);
   margin-bottom: 0;
 }
@@ -959,6 +979,18 @@ footer {
   z-index: 10;
 }
 
+/* Constrain footer to site width and give it card-like border so it doesn't
+   span edge-to-edge visually like a background block */
+.footer-container, footer {
+  max-width: var(--site-max-width);
+  margin: 1.25rem auto 0;
+  padding: 0 1rem;
+}
+footer {
+  border: var(--card-border);
+  border-radius: var(--card-radius);
+}
+
 /* Form styling */
 form {
   margin-bottom: 20px;
@@ -1292,13 +1324,16 @@ blockquote.instagram-media { border-radius: calc(var(--card-radius) - 4px) !impo
 }
 
 /* Fix header styling for Featured and Instagram cards */
+/* Featured & Instagram heading styling: use the site's display font and
+   preserve normal casing (avoid forcing uppercase). Ensure strong contrast. */
 #featured-content-section.card .card-title,
 #featured-content-section.card h2,
 #insta-section.card .card-title,
 #insta-section.card h2 {
   color: var(--pupil, #FF3B7DFF) !important;
   font-weight: 700 !important;
-  font-family: var(--header-font, 'Arial') !important;
+  font-family: var(--font-mt) !important; /* display font */
+  text-transform: none !important; /* prevent forced uppercase */
   text-shadow: 0 1px 0 rgba(255,255,255,0.1) !important;
   margin-bottom: 0.75rem !important;
   font-size: clamp(1.6rem, 2.8vw, 2.4rem) !important;
@@ -1310,6 +1345,16 @@ blockquote.instagram-media { border-radius: calc(var(--card-radius) - 4px) !impo
   color: var(--card-text-color, #111111FF) !important;
   text-shadow: 0 1px 0 rgba(255,255,255,0.05);
 }
+
+/* Ensure Featured has a fallback vivid gradient and doesn't get overwritten */
+#featured-content-section.card {
+  background-image: var(--sun-grad-4) !important;
+}
+
+/* High-contrast stroke for yellow links (e.g., team gold) used across cards/footer */
+.yellow-link, a.yellow { -webkit-text-stroke: 1px var(--team-gold-2); }
+/* If you need JS to apply the .yellow-link class to anchors with inline yellow color,
+   we can add a small script to do that at runtime. */
 
 /* Override any inline styles that might force white backgrounds */
 #featured-content-section[style*="background"],
